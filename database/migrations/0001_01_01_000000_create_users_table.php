@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete();
-            $table->foreignId('ministry_id')->nullable()->constrained('ministries')->onDelete();
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete();
-            $table->foreignId('leader_id')->nullable()->constrained('leaders')->onDelete();
+            $table->foreignId('role_id')->nullable()->constrained('roles')->nullOnDelete();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
+            $table->foreignId('leader_id')->nullable()->constrained('leaders')->nullOnDelete();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -24,6 +23,19 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Schema::create('ministry_user', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('ministry_id')->constrained()->cascadeOnDelete();
+            $table->primary(['user_id', 'ministry_id']);
+            $table->timestamps();
+        });
+
+
+
+
+
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -46,6 +58,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('ministry_user');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
