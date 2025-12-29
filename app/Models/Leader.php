@@ -13,6 +13,8 @@ class Leader extends Model
     protected $fillable = [
         'name',
         'nickname',
+        'cell_name',
+        'is_active',
     ];
 
     public function users()

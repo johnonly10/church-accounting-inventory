@@ -24,6 +24,7 @@ class User extends Authenticatable
         'leader_id',
         'role_id',
         'name',
+        'path',
         'email',
         'password',
     ];
@@ -66,12 +67,12 @@ class User extends Authenticatable
     }
 
 
-    public function departments()
+    public function department()
     {
         return $this->belongsTo(Department::class);
     }
 
-    public function leaders()
+    public function leader()
     {
         return $this->belongsTo(Leader::class);
     }
@@ -79,10 +80,5 @@ class User extends Authenticatable
     public function ministries()
     {
         return $this->belongsToMany(Ministry::class)->withTimestamps();
-    }
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
     }
 }

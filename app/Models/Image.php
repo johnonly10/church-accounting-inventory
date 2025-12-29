@@ -6,17 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Role extends Model
+class Image extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name,',
-
+        'name',
+        'type',
+        'path',
+        'is_active'
     ];
-
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
 }

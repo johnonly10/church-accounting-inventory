@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['logo', 'background', 'background_2']);
             $table->string('name');
+            $table->string('path');
+            $table->boolean('is_active')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('images');
     }
 };
