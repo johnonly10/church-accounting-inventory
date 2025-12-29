@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('nickname');
+            $table->string('cell_name');
+            $table->boolean('is_active')->default(false);
             $table->softDeletes();
+
             $table->timestamps();
         });
     }
