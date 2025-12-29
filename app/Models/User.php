@@ -20,6 +20,9 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'department_id',
+        'leader_id',
+        'role_id',
         'name',
         'email',
         'password',
@@ -58,7 +61,28 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+
+    public function departments()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function leaders()
+    {
+        return $this->belongsTo(Leader::class);
+    }
+
+    public function ministries()
+    {
+        return $this->belongsToMany(Ministry::class)->withTimestamps();
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }
