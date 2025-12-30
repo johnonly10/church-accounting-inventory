@@ -24,14 +24,23 @@ new class extends Component {
         $this->bgPath = $images['background']->path ?? null;
         $this->bg2Path = $images['background_2']->path ?? null;
     }
-
     public function login(): void
     {
         $this->validate();
         $this->form->authenticate();
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $user = auth()->user();
+
+        if ($user->roletype === 'STAFF') {
+            $this->redirectIntended(default: route('staff.index', absolute: false), navigate: true);
+            return;
+        }
+
+        if ($user->roletype === 'PASTOR') {
+            $this->redirectIntended(default: route('pastor.index', absolute: false), navigate: true);
+            return;
+        }
     }
 };
 ?>
