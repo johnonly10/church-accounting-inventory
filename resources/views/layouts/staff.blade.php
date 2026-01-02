@@ -4,6 +4,7 @@
 <head>
     {{-- CS --}}
     @include('includes.staff-head')
+    @stack('styles')
 </head>
 
 <body class="crm_body_bg">
@@ -37,7 +38,7 @@
 
     {{-- JS --}}
     @include('includes.staff-scripts')
-
+    @stack('scripts')
 </body>
 
 </html>

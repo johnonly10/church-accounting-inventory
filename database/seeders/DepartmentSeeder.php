@@ -14,10 +14,10 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         $departments = [
-            ['name' => 'youth'],
-            ['name' => 'elder'],
-            ['name' => 'volunteer'],
-            ['name' => 'leader'],
+            ['name' => 'Youth'],
+            ['name' => 'Elder'],
+            ['name' => 'Volunteer'],
+            ['name' => 'Leader'],
         ];
 
         foreach ($departments as $department) {

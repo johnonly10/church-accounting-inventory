@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
         $music = Ministry::where('name', 'Music Ministry')->first();
         $media = Ministry::where('name', 'Media Ministry')->first();
 
-        $pastor = User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'pastor@example.com'],
             [
                 'name' => 'Main Pastor',
@@ -30,11 +30,12 @@ class UserSeeder extends Seeder
                 'roletype' => 'PASTOR',
                 'department_id' => $deptLeaders?->id,
                 'leader_id' => $leaderJoshua?->id,
+                'ministry_id' => $music?->id,
                 'email_verified_at' => now(),
             ]
         );
 
-        $staff = User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'staff@example.com'],
             [
                 'name' => 'Sample Staff',
@@ -42,11 +43,9 @@ class UserSeeder extends Seeder
                 'roletype' => 'STAFF',
                 'department_id' => $deptYouth?->id,
                 'leader_id' => $leaderJhaezel?->id,
+                'ministry_id' => $media?->id,
                 'email_verified_at' => now(),
             ]
         );
-
-        if ($music) $pastor->ministries()->syncWithoutDetaching([$music->id]);
-        if ($media) $staff->ministries()->syncWithoutDetaching([$media->id]);
     }
 }
