@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
             $table->foreignId('leader_id')->nullable()->constrained('leaders')->nullOnDelete();
+            $table->foreignId('ministry_id')->nullable()->constrained('ministries')->nullOnDelete();
             $table->string('name');
             $table->string('email')->unique();
             $table->enum('roletype', ['PASTOR', 'STAFF'])->default('STAFF');
@@ -22,13 +23,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->timestamps();
-        });
-
-        Schema::create('ministry_user', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('ministry_id')->constrained()->cascadeOnDelete();
-            $table->primary(['user_id', 'ministry_id']);
             $table->timestamps();
         });
 
@@ -59,7 +53,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ministry_user');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

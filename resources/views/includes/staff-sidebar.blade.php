@@ -11,122 +11,27 @@
             @else
                 <img src="{{ asset('img/logo.png') }}" alt="Logo">
             @endif
-
         </a>
-
 
         <div class="sidebar_close_icon d-lg-none">
             <i class="ti-close"></i>
         </div>
     </div>
+    {{-- 
+    {{ route('staff.index') }} Dashboard
+    {{ route('staff.users.index') }} Users --}}
 
     <ul id="sidebar_menu">
-        <li class="">
-            <a href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/dashboard.svg') }}" alt="Dashboard">
-                </div>
-                <div class="nav_title">
-                    <span>Dashboard </span>
-                </div>
-            </a>
-        </li>
-        <li class="">
-            <a class="has-arrow" href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/17.svg') }}" alt="Brand">
-                </div>
-                <div class="nav_title">
-                    <span>Brand </span>
-                </div>
-            </a>
-            <ul>
-                <li><a href="#">Add Brand</a></li>
-                <li><a href="#">Brands</a></li>
-            </ul>
-        </li>
-        <li class="">
-            <a class="has-arrow" href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/13.svg') }}" alt="Category">
-                </div>
-                <div class="nav_title">
-                    <span>Category </span>
-                </div>
-            </a>
-            <ul>
-                <li><a href="#">Add Category</a></li>
-                <li><a href="#">Categories</a></li>
-            </ul>
-        </li>
-        <li class="">
-            <a class="has-arrow" href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/9.svg') }}" alt="Product">
-                </div>
-                <div class="nav_title">
-                    <span>Product </span>
-                </div>
-            </a>
-            <ul>
-                <li><a href="#">Add Product</a></li>
-                <li><a href="#">Products</a></li>
-            </ul>
-        </li>
 
-        <li class="">
-            <a href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/11.svg') }}" alt="Orders">
-                </div>
-                <div class="nav_title">
-                    <span>Orders </span>
-                </div>
-            </a>
-        </li>
+        <x-includes.sidebar-item title="Dashboard" route="{{ route('staff.index') }}" icon="fas fa-tachometer-alt" />
+        <x-includes.sidebar-item title="Users" icon="fas fa-users" :hasArrow="true">
+            <li><a href="{{ route('staff.users.index') }}">Manage Users</a></li>
+            <li><a href="{{ route('staff.users.create') }}">Add Users</a></li>
+        </x-includes.sidebar-item>
 
-        <li class="">
-            <a href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/6.svg') }}" alt="Sliders">
-                </div>
-                <div class="nav_title">
-                    <span>Sliders </span>
-                </div>
-            </a>
-        </li>
-
-        <li class="">
-            <a href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/20.svg') }}" alt="Coupons">
-                </div>
-                <div class="nav_title">
-                    <span>Coupons </span>
-                </div>
-            </a>
-        </li>
-
-        <li class="">
-            <a href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/4.svg') }}" alt="Users">
-                </div>
-                <div class="nav_title">
-                    <span>Users </span>
-                </div>
-            </a>
-        </li>
-
-        <li class="">
-            <a href="#" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="{{ asset('img/menu-icon/10.svg') }}" alt="Settings">
-                </div>
-                <div class="nav_title">
-                    <span>Settings </span>
-                </div>
-            </a>
-        </li>
+        <x-includes.sidebar-item title="Leader" icon="fas fa-user-tie" :hasArrow="true">
+            <li><a href=""> Manage Leaders </a></li>
+            <li><a href=""> Add Leaders</a></li>
+        </x-includes.sidebar-item>
     </ul>
 </nav>
