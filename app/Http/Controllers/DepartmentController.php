@@ -12,7 +12,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $departments = Department::orderBy('id')->paginate(10);
+        return view('staff.departments.index', compact('departments'));
     }
 
     /**
@@ -20,7 +21,7 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
+        return view('staff.departments.create');
     }
 
     /**
@@ -28,7 +29,12 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:departments,name'
+        ]);
+
+        Department::create($validated);
+        return redirect()->route('staff.departments.index')->with('success', 'Department Successfully Created');
     }
 
     /**
@@ -44,7 +50,7 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        //
+        return view('staff.departments.edit', compact('department'));
     }
 
     /**
@@ -52,7 +58,12 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:departments,name,' . $department->id,
+        ]);
+
+        $department->update($validated);
+        return redirect()->route('staff.departments.index')->with('success', 'Department Successfully Updated');
     }
 
     /**
@@ -61,5 +72,31 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         //
+    }
+
+    public function archived()
+    {
+        $departments = Department::onlyTrashed()->paginate(10);
+        return view('staff.departments.archive', compact('departments'));
+    }
+
+    public function archive(Department $department)
+    {
+        $department->delete();
+        return redirect()->route('staff.departments.index')->with('success', 'Department Successfully Archive');
+    }
+
+    public function restore($id)
+    {
+        $department = Department::onlyTrashed()->findorFail($id);
+        $department->restore();
+        return redirect()->route('staff.departments.archived')->with('success', 'Department Successfull Restored');
+    }
+
+    public function forceDelete($id)
+    {
+        $deparmtent = Department::onlyTrashed()->findOrFail($id);
+        $deparmtent->forceDelete();
+        return redirect()->route('staff.departments.archived')->with('success', 'Department Successfully Deleted');
     }
 }

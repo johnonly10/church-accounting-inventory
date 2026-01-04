@@ -31,8 +31,12 @@
 
         <x-includes.sidebar-item title="Leader" icon="fas fa-user-tie" :hasArrow="true">
             <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
-            <li><a href=""> Add Leaders</a></li>
+            <li><a href="{{ route('staff.leaders.create') }}"> Add Leaders</a></li>
         </x-includes.sidebar-item>
 
+        <x-includes.sidebar-item title="Department" icon="fas fa-building" :hasArrow="true">
+            <li><a href="{{ route('staff.departments.index') }}">Departments </a></li>
+            <li><a href="#"> Add Departments</a></li>
+        </x-includes.sidebar-item>
     </ul>
 </nav>

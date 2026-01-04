@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\LeaderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,13 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('leaders/{leader}/archive', [LeaderController::class, 'archive'])->name('leaders.archive');
     Route::patch('leaders/{id}/restore', [LeaderController::class, 'restore'])->name('leaders.restore');
     Route::delete('leaders/{id}/force-delete', [LeaderController::class, 'forceDelete'])->name('leaders.forceDelete');
+
+    // Department Routes
+    Route::resource('departments', DepartmentController::class)->names('departments');
+    Route::get('deparments-archive', [DepartmentController::class, 'archived'])->name('departments.archived');
+    Route::patch('departments/{department}/archive', [DepartmentController::class, 'archive'])->name('departments.archive');
+    Route::patch('department/{id}/restore', [DepartmentController::class, 'restore'])->name('departments.restore');
+    Route::delete('departments/{id}/force-delete', [DepartmentController::class, 'forceDelete'])->name('departments.forceDelete');
 });
 
 require __DIR__ . '/auth.php';
