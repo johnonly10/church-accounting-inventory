@@ -24,10 +24,6 @@
     <ul id="sidebar_menu">
 
         <x-includes.sidebar-item title="Dashboard" route="{{ route('staff.index') }}" icon="fas fa-tachometer-alt" />
-        <x-includes.sidebar-item title="Users" icon="fas fa-users" :hasArrow="true">
-            <li><a href="{{ route('staff.users.index') }}">Manage Users</a></li>
-            <li><a href="{{ route('staff.users.create') }}">Add Users</a></li>
-        </x-includes.sidebar-item>
 
         <x-includes.sidebar-item title="Leader" icon="fas fa-user-tie" :hasArrow="true">
             <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
@@ -36,7 +32,18 @@
 
         <x-includes.sidebar-item title="Department" icon="fas fa-building" :hasArrow="true">
             <li><a href="{{ route('staff.departments.index') }}">Departments </a></li>
-            <li><a href="#"> Add Departments</a></li>
+            <li><a href="{{ route('staff.departments.create') }}"> Add Departments</a></li>
         </x-includes.sidebar-item>
+
+        <x-includes.sidebar-item title="Ministry" icon="fas fa-church" :hasArrow="true">
+            <li><a href="{{ route('staff.ministries.index') }}">Ministry </a></li>
+            <li><a href="{{ route('staff.ministries.create') }}"> Add Ministry</a></li>
+        </x-includes.sidebar-item>
+
+        <x-includes.sidebar-item title="Users" icon="fas fa-users" :hasArrow="true">
+            <li><a href="{{ route('staff.users.index') }}">Manage Users</a></li>
+            <li><a href="{{ route('staff.users.create') }}">Add Users</a></li>
+        </x-includes.sidebar-item>
+
     </ul>
 </nav>

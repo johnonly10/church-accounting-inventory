@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,13 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('departments/{department}/archive', [DepartmentController::class, 'archive'])->name('departments.archive');
     Route::patch('department/{id}/restore', [DepartmentController::class, 'restore'])->name('departments.restore');
     Route::delete('departments/{id}/force-delete', [DepartmentController::class, 'forceDelete'])->name('departments.forceDelete');
+
+    // Ministry Routes
+    Route::resource('ministries', MinistryController::class)->names('ministries');
+    Route::get('ministries-archive', [MinistryController::class, 'archived'])->name('ministries.archived');
+    Route::patch('ministries/{ministry}/archive', [MinistryController::class, 'archive'])->name('ministries.archive');
+    Route::patch('ministries{id}/restore', [MinistryController::class, 'restore'])->name('ministries.restore');
+    Route::delete('ministries/{id}/force-delete', [MinistryController::class, 'forceDelete'])->name('ministries.forceDelete');
 });
 
 require __DIR__ . '/auth.php';
