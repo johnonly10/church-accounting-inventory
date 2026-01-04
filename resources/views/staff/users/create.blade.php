@@ -6,19 +6,12 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="white_card card_height_100 mb_30">
-                    <div class="white_card_header">
-                        <div class="box_header m-0">
-                            <div class="main-title">
-                                <h3 class="m-0">User Information</h3>
-                                <p class="text-muted mb-0">Fill in the details to create a new user account</p>
-                            </div>
-                        </div>
-                    </div>
+                    <x-white-card-header title="User Information"
+                        subTitle="Fill in the details to create a new user account" />
 
                     <div class="white_card_body">
                         <div class="card-body pt-4">
-                            <form action="{{ route('staff.users.store') }}" method="POST" class="needs-validation"
-                                novalidate>
+                            <form action="{{ route('staff.users.store') }}" method="POST">
                                 @csrf
 
                                 <div class="mb-4">
@@ -148,8 +141,8 @@
                                                     pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$"
                                                     title="Password must be at least 8 characters and include an uppercase letter, a number, and a special character.">
 
-                                                <button class="btn btn-outline-secondary" type="button"
-                                                    id="togglePassword" aria-label="Toggle password visibility">
+                                                <button class="btn btn-outline-secondary" type="button" id="togglePassword"
+                                                    aria-label="Toggle password visibility">
                                                     <i class="fas fa-eye" id="togglePasswordIcon"></i>
                                                 </button>
                                             </div>

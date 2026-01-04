@@ -14,7 +14,7 @@ class Leader extends Model
         'name',
         'nickname',
         'cell_name',
-        'is_active',
+
     ];
 
     public function users()

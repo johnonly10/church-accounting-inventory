@@ -30,8 +30,9 @@
         </x-includes.sidebar-item>
 
         <x-includes.sidebar-item title="Leader" icon="fas fa-user-tie" :hasArrow="true">
-            <li><a href=""> Manage Leaders </a></li>
+            <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
             <li><a href=""> Add Leaders</a></li>
         </x-includes.sidebar-item>
+
     </ul>
 </nav>

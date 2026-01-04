@@ -15,9 +15,9 @@ class LeaderSeeder extends Seeder
     {
 
         $leaders = [
-            ['name' => 'Joshua Addangna', 'nickname' => 'PJ', 'cell_name' => 'Cell ng mga Pogi', 'is_active' => true],
-            ['name' => 'Jhaezel Advincula',  'nickname' => 'Zel', 'cell_name' => 'Cell ng mga Ganda', 'is_active' => true],
-            ['name' => 'Camille Hernandez', 'nickname' => 'Cams', 'cell_name' => 'Cell', 'is_active' => true],
+            ['name' => 'Joshua Addangna', 'nickname' => 'PJ', 'cell_name' => 'Cell ng mga Pogi'],
+            ['name' => 'Jhaezel Advincula',  'nickname' => 'Zel', 'cell_name' => 'Cell ng mga Ganda'],
+            ['name' => 'Camille Hernandez', 'nickname' => 'Cams', 'cell_name' => 'Cell'],
 
         ];
 
