@@ -4,6 +4,8 @@
     'archiveRoute' => null,
     'createLabel' => 'Add New',
     'archiveLabel' => 'Archive',
+    'homeRoute' => null,
+    'homeLabel' => '',
 ])
 
 <div class="row">
@@ -24,6 +26,12 @@
                                 </a>
                             @endif
 
+                            @if ($homeRoute)
+                                <a href="{{ $homeRoute }}" class="btn_1 btn-enhanced">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span class="btn-text">{{ $homeLabel }} {{ $title }}</span>
+                                </a>
+                            @endif
                             @if ($archiveRoute)
                                 <a href="{{ $archiveRoute }}" class="btn_1 gray_btn btn-enhanced">
                                     <i class="fas fa-archive icon-enhanced"></i>

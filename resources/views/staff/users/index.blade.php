@@ -26,10 +26,7 @@
                                 <td>{{ $user->ministry->name }}</td>
                                 <td>{{ $user->leader->name }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('staff.users.edit', $user) }}"
-                                        class="btn btn-sm btn-outline-primary border-0" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                    <x-icons.action-edit :route="route('staff.users.edit', $user)" />
                                 </td>
                             </tr>
                         @empty
