@@ -12,7 +12,7 @@
                             <th>Name</th>
                             <th>Nickname</th>
                             <th>Cell Name</th>
-                            <th>Action</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
 

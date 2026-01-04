@@ -61,16 +61,17 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        // dd($request->all());
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|',
+            'email' => 'required|string|unique:users,email,' . $user->id,
             'department_id' => 'nullable|exists:departments,id',
             'leader_id' => 'nullable|exists:leaders,id',
             'ministry_id' => 'nullable|exists:ministries,id',
 
         ]);
 
-        $user->updated($validated);
+        $user->update($validated);
         return redirect()->route('staff.users.index')->with('success', 'User Updated Successfully');
     }
 
