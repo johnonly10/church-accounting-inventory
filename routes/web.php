@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\LeaderController;
-use App\Http\Controllers\MinistryController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\RevenueController;
+use App\Http\Controllers\MinistryController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\RevenueCashCountController;
+use App\Http\Controllers\RevenueCollectionController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -44,6 +47,17 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('ministries/{ministry}/archive', [MinistryController::class, 'archive'])->name('ministries.archive');
     Route::patch('ministries{id}/restore', [MinistryController::class, 'restore'])->name('ministries.restore');
     Route::delete('ministries/{id}/force-delete', [MinistryController::class, 'forceDelete'])->name('ministries.forceDelete');
+
+    Route::resource('revenues', RevenueController::class)->names('revenues');
+    Route::get('revenues-archive', [RevenueController::class, 'archived'])->name('revenues.archived');
+    Route::patch('revenues/{revenue}/archive', [RevenueController::class, 'archive'])->name('revenues.archive');
+    Route::patch('revenues/{id}/restore', [RevenueController::class, 'restore'])->name('revenues.restore');
+    Route::delete('revenues/{id}/force-delete', [RevenueController::class, 'forceDelete'])->name('revenues.forceDelete');
+
+    Route::resource('revenue_collections', RevenueCollectionController::class)
+        ->names('staff.revenue_collections');
+
+    Route::resource('revenue_cash_counts', RevenueCollectionController::class)->names('revenue_cash_counts');
 });
 
 require __DIR__ . '/auth.php';

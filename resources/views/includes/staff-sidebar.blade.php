@@ -24,7 +24,7 @@
     <ul id="sidebar_menu">
 
         <x-includes.sidebar-item title="Dashboard" route="{{ route('staff.index') }}" icon="fas fa-tachometer-alt" />
-
+        {{-- 
         <x-includes.sidebar-item title="Leader" icon="fas fa-user-tie" :hasArrow="true">
             <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
             <li><a href="{{ route('staff.leaders.create') }}"> Add Leaders</a></li>
@@ -38,11 +38,32 @@
         <x-includes.sidebar-item title="Ministry" icon="fas fa-church" :hasArrow="true">
             <li><a href="{{ route('staff.ministries.index') }}">Ministry </a></li>
             <li><a href="{{ route('staff.ministries.create') }}"> Add Ministry</a></li>
-        </x-includes.sidebar-item>
+        </x-includes.sidebar-item> --}}
 
         <x-includes.sidebar-item title="Users" icon="fas fa-users" :hasArrow="true">
+
+            <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
+            <li><a href="{{ route('staff.leaders.create') }}"> Add Leaders</a></li>
+
+            <li class="sidebar-divider"></li>
+
+            <li><a href="{{ route('staff.departments.index') }}">Manage Departments </a></li>
+            <li><a href="{{ route('staff.departments.create') }}"> Add Departments</a></li>
+
+            <li class="sidebar-divider"></li>
+
+            <li><a href="{{ route('staff.ministries.index') }}">Manage Ministry </a></li>
+            <li><a href="{{ route('staff.ministries.create') }}"> Add Ministry</a></li>
+
+            <li class="sidebar-divider"></li>
+
             <li><a href="{{ route('staff.users.index') }}">Manage Users</a></li>
             <li><a href="{{ route('staff.users.create') }}">Add Users</a></li>
+        </x-includes.sidebar-item>
+
+        <x-includes.sidebar-item title="Revenue" icon="fas fa-donate" :hasArrow="true">
+            <li><a href="{{ route('staff.revenues.index') }}"> Revenue </a></li>
+            <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li>
         </x-includes.sidebar-item>
 
     </ul>

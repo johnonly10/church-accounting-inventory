@@ -5,6 +5,14 @@
     {{-- CS --}}
     @include('includes.staff-head')
     @stack('styles')
+
+    <style>
+        .sidebar-divider {
+            list-style: none;
+            margin: 12px 20px;
+            border-top: 1px solid #e2e6e6;
+        }
+    </style>
 </head>
 
 <body class="crm_body_bg">

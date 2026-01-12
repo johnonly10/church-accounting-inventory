@@ -14,3 +14,6 @@
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/colors/default.css') }}" id="colorSkinCSS">
 <link rel="stylesheet" href="{{ asset('vendors/package/dist/sweetalert2.min.css') }}">
+
+
+@vite(['resources/css/app.css'])
