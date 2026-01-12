@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="containerr-fluid p-0">
-        <x-page-title title="Create New Revenue Type" active="Create New Revenue Type" home="Revenue Type" :home-route="route('staff.revenue-types.index')" />
+        <x-page-title title="Edit Revenue Type" active="Edit Revenue Type" home="Revenue Type" :home-route="route('staff.revenue-types.index')" />
 
         <div class="row">
             <div class="col-lg-12">

@@ -61,15 +61,16 @@
             <li><a href="{{ route('staff.users.create') }}">Add Users</a></li>
         </x-includes.sidebar-item>
 
-        <x-includes.sidebar-item title="Revenue" icon="fas fa-donate" :hasArrow="true">
+        <x-includes.sidebar-item title="Revenue" icon="fas fa-coins" :hasArrow="true">
             <li><a href="{{ route('staff.revenue-types.index') }}"> Revenue Type </a></li>
-            {{-- <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li> --}}
+            <li><a href="{{ route('staff.revenue-types.create') }}"> Add Revenue Type</a></li>
 
             <li class="sidebar-divider"></li>
 
             <li><a href="{{ route('staff.revenues.index') }}"> Revenue </a></li>
             <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li>
         </x-includes.sidebar-item>
+
 
     </ul>
 </nav>
