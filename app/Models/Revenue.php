@@ -13,9 +13,10 @@ class Revenue extends Model
     protected $fillable = [
         'amount',
         'payment_method',
-        'types',
+        'revenue_type_id',
         'name',
         'revenue_collection_id',
+        'beneficiary',
     ];
 
     public function revenueCollection()
@@ -23,8 +24,13 @@ class Revenue extends Model
         return $this->belongsTo(RevenueCollection::class);
     }
 
-    public function revenue_cash_count()
+    public function revenueCashCount()
     {
         return $this->hasOne(RevenueCashCount::class);
+    }
+
+    public function revenueType()
+    {
+        return $this->belongsTo(RevenueType::class);
     }
 }

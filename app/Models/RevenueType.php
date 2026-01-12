@@ -6,19 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class RevenueCollection extends Model
+class RevenueType extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'collection_date',
+        'name',
     ];
 
-    protected $casts = [
-        'collection_date' => 'datetime',
-    ];
     public function revenues()
     {
-        return $this->hasOne(Revenue::class);
+        return $this->hasMany(Revenue::class);
     }
 }

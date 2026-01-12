@@ -264,8 +264,7 @@
     </style>
 
     @php
-        $revenue = $collection->revenue->first(); // pick the first revenue in the collection
-        $cashCount = optional($revenue)->revenue_cash_count?->first();
+        $cashCount = $revenue->revenueCashCount;
     @endphp
 
     <div class="container-fluid p-0">
@@ -292,11 +291,9 @@
 
                                     <div class="revenue-fields">
                                         <div>
-                                            <label class="field-label">
-                                                Name <span class="required-asterisk">*</span>
-                                            </label>
+                                            <label class="field-label">Name</label>
                                             <input class="field-input" type="text" name="name"
-                                                value="{{ old('name', $revenue->name) }}" required>
+                                                value="{{ old('name', $revenue->name) }}">
                                             @error('name')
                                                 <span class="error-message">{{ $message }}</span>
                                             @enderror
@@ -304,20 +301,40 @@
 
                                         <div>
                                             <label class="field-label">
-                                                Type <span class="required-asterisk">*</span>
+                                                Revenue Type <span class="required-asterisk">*</span>
                                             </label>
-                                            <select class="field-input" name="types" required>
-                                                <option value="" disabled>Select type</option>
-                                                <option value="tithes"
-                                                    {{ old('types', $revenue->types) === 'tithes' ? 'selected' : '' }}>
-                                                    Tithes
+                                            <select class="field-input" name="revenue_type_id" required>
+                                                <option value="" disabled
+                                                    {{ old('revenue_type_id', $revenue->revenue_type_id) ? '' : 'selected' }}>
+                                                    Select type
                                                 </option>
-                                                <option value="offering"
-                                                    {{ old('types', $revenue->types) === 'offering' ? 'selected' : '' }}>
-                                                    Offering
+                                                @foreach ($revenueTypes as $type)
+                                                    <option value="{{ $type->id }}"
+                                                        {{ (string) old('revenue_type_id', $revenue->revenue_type_id) === (string) $type->id ? 'selected' : '' }}>
+                                                        {{ $type->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('revenue_type_id')
+                                                <span class="error-message">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="field-label">
+                                                Beneficiary <span class="required-asterisk">*</span>
+                                            </label>
+                                            <select class="field-input" name="beneficiary" required>
+                                                <option value="general"
+                                                    {{ old('beneficiary', $revenue->beneficiary) === 'general' ? 'selected' : '' }}>
+                                                    General
+                                                </option>
+                                                <option value="pastor"
+                                                    {{ old('beneficiary', $revenue->beneficiary) === 'pastor' ? 'selected' : '' }}>
+                                                    Pastor
                                                 </option>
                                             </select>
-                                            @error('types')
+                                            @error('beneficiary')
                                                 <span class="error-message">{{ $message }}</span>
                                             @enderror
                                         </div>
@@ -366,7 +383,6 @@
                                         </div>
 
                                         <div class="cash-breakdown-content expanded">
-                                            {{-- Bills --}}
                                             <div class="denomination-group">
                                                 <div class="denomination-group-title">
                                                     <i class="fas fa-money-bill"></i> Bills
@@ -400,7 +416,6 @@
                                                 </div>
                                             </div>
 
-                                            {{-- Coins --}}
                                             <div class="denomination-group">
                                                 <div class="denomination-group-title">
                                                     <i class="fas fa-coins"></i> Coins
@@ -432,7 +447,6 @@
                                                 </div>
                                             </div>
 
-                                            {{-- Centimos --}}
                                             <div class="denomination-group">
                                                 <div class="denomination-group-title">
                                                     <i class="fas fa-money-bill-wave"></i> Centimos
@@ -492,7 +506,6 @@
                                     <x-buttons.form-action primaryTitle="Update Revenue" primaryId="updateRevenueBtn"
                                         :cancel-route="route('staff.revenues.index')" />
                                 </div>
-
                             </form>
 
                         </div>
