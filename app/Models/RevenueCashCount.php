@@ -49,7 +49,7 @@ class RevenueCashCount extends Model
         'centimo_1'  => 'integer',
     ];
 
-    public function revenue()
+    public function revenues()
     {
         return $this->belongsTo(Revenue::class);
     }

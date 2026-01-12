@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Models\RevenueCashCount;
 use App\Models\RevenueCollection;
 use App\Models\Revenue_collection;
-
+use App\Models\RevenueType;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\delete;
@@ -20,27 +20,27 @@ class RevenueController extends Controller
 
     public function index()
     {
-        $revenues = Revenue::with(['revenueCollection'])->orderBy('id')->paginate(10);
+        $revenues = Revenue::with(['revenueCollection', 'revenueType'])->orderBy('id')->paginate(10);
         return view('staff.revenue.index', compact('revenues'));
     }
 
     public function create()
     {
-        return view('staff.revenue.create');
+        $revenueTypes = RevenueType::orderBy('name')->get();
+        return view('staff.revenue.create', compact('revenueTypes'));
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
         $validated = $request->validate([
-
-
             'revenues' => ['required', 'array', 'min:1'],
 
-            'revenues.*.name' => ['required', 'string', 'max:255'],
-            'revenues.*.types' => ['required', 'string', 'in:tithes,offering'],
-            'revenues.*.payment_method' => ['required', 'string', 'in:gcash,cash'],
-            'revenues.*.amount' => ['required', 'integer', 'min:0'],
+            'revenues.*.name' => ['nullable', 'string', 'max:255'],
+            'revenues.*.revenue_type_id' => ['required', 'integer', 'exists:revenue_types,id'],
+            'revenues.*.beneficiary' => ['required', 'in:pastor,general'],
+            'revenues.*.payment_method' => ['required', 'in:gcash,cash'],
+            'revenues.*.amount' => ['required', 'numeric', 'min:0'],
+
             'revenues.*.bill_1000' => ['nullable', 'integer', 'min:0'],
             'revenues.*.bill_500' => ['nullable', 'integer', 'min:0'],
             'revenues.*.bill_200' => ['nullable', 'integer', 'min:0'],
@@ -55,30 +55,25 @@ class RevenueController extends Controller
             'revenues.*.centimo_10' => ['nullable', 'integer', 'min:0'],
             'revenues.*.centimo_5' => ['nullable', 'integer', 'min:0'],
             'revenues.*.centimo_1' => ['nullable', 'integer', 'min:0'],
-
         ]);
 
         DB::transaction(function () use ($validated) {
-
-
+            $collection = RevenueCollection::create([
+                'collection_date' => Carbon::now(),
+            ]);
 
             foreach ($validated['revenues'] as $revenueData) {
-
-                $collection = RevenueCollection::create([
-                    'collection_date' => Carbon::now(),
-                ]);
-
                 $revenue = Revenue::create([
                     'revenue_collection_id' => $collection->id,
+                    'revenue_type_id' => $revenueData['revenue_type_id'],
                     'name' => $revenueData['name'] ?? null,
-                    'types' => $revenueData['types'] ?? null,
-                    'payment_method' => $revenueData['payment_method'] ?? null,
-                    'amount' => $revenueData['amount'] ?? null,
-
+                    'beneficiary' => $revenueData['beneficiary'],
+                    'payment_method' => $revenueData['payment_method'],
+                    'amount' => $revenueData['amount'],
                 ]);
 
                 RevenueCashCount::create([
-                    'revenue_id' => $revenue->id ?? null,
+                    'revenue_id' => $revenue->id,
                     'bill_1000' => $revenueData['bill_1000'] ?? 0,
                     'bill_500' => $revenueData['bill_500'] ?? 0,
                     'bill_200' => $revenueData['bill_200'] ?? 0,
@@ -100,77 +95,86 @@ class RevenueController extends Controller
         return redirect()->route('staff.revenues.index')->with('success', 'Revenue Successfully Created');
     }
 
-    public function edit($collectionId)
+
+    public function edit(Revenue $revenue)
     {
-        $collection = RevenueCollection::with(['revenue.revenue_cash_count'])->findOrFail($collectionId);
-        return view('staff.revenue.edit', compact('collection'));
+        $revenue->load(['revenueCashCount', 'revenueCollection']);
+        $revenueTypes = RevenueType::orderBy('name')->get();
+
+        return view('staff.revenue.edit', compact('revenue', 'revenueTypes'));
     }
 
     public function update(Request $request, Revenue $revenue)
     {
-        // dd($request->all());
-
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'types' => 'required|string|in:tithes,offerrinng',
-            'payment_method' => 'required|string|in:gcash,cash',
-            'amount' => 'required|numeric',
-            'bill_1000' => 'nullable|integer|min:0',
-            'bill_500' => 'nullable|integer|min:0',
-            'bill_200' => 'nullable|integer|min:0',
-            'bill_100' => 'nullable|integer|min:0',
-            'bill_50' => 'nullable|integer|min:0',
-            'bill_20' => 'nullable|integer|min:0',
-            'coin_20' => 'nullable|integer|min:0',
-            'coin_10' => 'nullable|integer|min:0',
-            'coin_5' => 'nullable|integer|min:0',
-            'coin_1' => 'nullable|integer|min:0',
-            'centimo_25' => 'nullable|integer|min:0',
-            'centimo_10' => 'nullable|integer|min:0',
-            'centimo_5' => 'nullable|integer|min:0',
-            'centimo_1' => 'nullable|integer|min:0',
+            'name' => ['nullable', 'string', 'max:255'],
+            'revenue_type_id' => ['required', 'integer', 'exists:revenue_types,id'],
+            'beneficiary' => ['required', 'in:pastor,general'],
+            'payment_method' => ['required', 'in:gcash,cash'],
+            'amount' => ['required', 'numeric', 'min:0'],
+
+            'bill_1000' => ['nullable', 'integer', 'min:0'],
+            'bill_500' => ['nullable', 'integer', 'min:0'],
+            'bill_200' => ['nullable', 'integer', 'min:0'],
+            'bill_100' => ['nullable', 'integer', 'min:0'],
+            'bill_50' => ['nullable', 'integer', 'min:0'],
+            'bill_20' => ['nullable', 'integer', 'min:0'],
+            'coin_20' => ['nullable', 'integer', 'min:0'],
+            'coin_10' => ['nullable', 'integer', 'min:0'],
+            'coin_5' => ['nullable', 'integer', 'min:0'],
+            'coin_1' => ['nullable', 'integer', 'min:0'],
+            'centimo_25' => ['nullable', 'integer', 'min:0'],
+            'centimo_10' => ['nullable', 'integer', 'min:0'],
+            'centimo_5' => ['nullable', 'integer', 'min:0'],
+            'centimo_1' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $revenue->update([
-            'name' => $validated['name'],
-            'types' => $validated['types'],
+            'name' => $validated['name'] ?? null,
+            'revenue_type_id' => $validated['revenue_type_id'],
+            'beneficiary' => $validated['beneficiary'],
             'payment_method' => $validated['payment_method'],
             'amount' => $validated['amount'],
         ]);
 
         if ($validated['payment_method'] === 'cash') {
-            RevenueCashCount::updateOrCreate(
-                [
-                    'revenue_id' => $revenue->id
-                ],
-                [
-                    'bill_1000' => $validated['bill_1000'] ?? 0,
-                    'bill_500'  => $validated['bill_500'] ?? 0,
-                    'bill_200'  => $validated['bill_200'] ?? 0,
-                    'bill_100'  => $validated['bill_100'] ?? 0,
-                    'bill_50'   => $validated['bill_50'] ?? 0,
-                    'bill_20'   => $validated['bill_20'] ?? 0,
-                    'coin_20'   => $validated['coin_20'] ?? 0,
-                    'coin_10'   => $validated['coin_10'] ?? 0,
-                    'coin_5'    => $validated['coin_5'] ?? 0,
-                    'coin_1'    => $validated['coin_1'] ?? 0,
-                    'centimo_25' => $validated['centimo_25'] ?? 0,
-                    'centimo_10' => $validated['centimo_10'] ?? 0,
-                    'centimo_5' => $validated['centimo_5'] ?? 0,
-                    'centimo_1' => $validated['centimo_1'] ?? 0,
-                ]
-            );
+            $data = [
+                'bill_1000' => $validated['bill_1000'] ?? 0,
+                'bill_500' => $validated['bill_500'] ?? 0,
+                'bill_200' => $validated['bill_200'] ?? 0,
+                'bill_100' => $validated['bill_100'] ?? 0,
+                'bill_50' => $validated['bill_50'] ?? 0,
+                'bill_20' => $validated['bill_20'] ?? 0,
+                'coin_20' => $validated['coin_20'] ?? 0,
+                'coin_10' => $validated['coin_10'] ?? 0,
+                'coin_5' => $validated['coin_5'] ?? 0,
+                'coin_1' => $validated['coin_1'] ?? 0,
+                'centimo_25' => $validated['centimo_25'] ?? 0,
+                'centimo_10' => $validated['centimo_10'] ?? 0,
+                'centimo_5' => $validated['centimo_5'] ?? 0,
+                'centimo_1' => $validated['centimo_1'] ?? 0,
+            ];
+
+            $cash = RevenueCashCount::withTrashed()->firstOrNew(['revenue_id' => $revenue->id]);
+            $cash->fill($data);
+            $cash->deleted_at = null;
+            $cash->revenue_id = $revenue->id;
+            $cash->save();
         } else {
-            RevenueCashCount::where('revenue_id', $revenue->id)->delete();
+            $revenue->revenueCashCount()->delete();
         }
 
         return redirect()->route('staff.revenues.index')->with('success', 'Revenue Updated Successfully');
     }
 
+
     public function archived()
     {
         $revenues = Revenue::onlyTrashed()
-            ->with(['revenueCollection' => fn($q) => $q->withTrashed()])
+            ->with([
+                'revenueCollection' => fn($q) => $q->withTrashed(),
+                'revenueType' => fn($q) => $q->withTrashed()
+            ])
             ->paginate(10);
         return view('staff.revenue.archive', compact('revenues'));
     }
@@ -179,7 +183,7 @@ class RevenueController extends Controller
     {
         $revenue->delete();
         $revenue->revenueCollection()->delete();
-        $revenue->revenue_cash_count()->delete();
+        $revenue->revenueCashCount()->delete();
         return redirect()->route('staff.revenues.index')->with('success', 'Revenue Successfully Archive');
     }
 
@@ -187,7 +191,7 @@ class RevenueController extends Controller
     {
         $revenues = Revenue::onlyTrashed()->findOrFail($id);
         $revenues->restore($id);
-        $revenues->revenue_cash_count()->withTrashed()->restore();
+        $revenues->revenueCashCount()->withTrashed()->restore();
         $revenues->revenueCollection()->withTrashed()->restore();
         return redirect()->route('staff.revenues.archived')->with('success', 'Revenue Successfully Restored');
     }
@@ -196,7 +200,7 @@ class RevenueController extends Controller
     {
         $revenues = Revenue::onlyTrashed()->findOrFail($id);
         $revenues->forceDelete($id);
-        $revenues->revenue_cash_count()->withTrashed()->forceDelete();
+        $revenues->revenueCashCount()->withTrashed()->forceDelete();
         $revenues->revenueCollection()->withTrashed()->forceDelete();
 
         return redirect()->route('staff.revenues.archived')->with('success', 'Revenue Successfully Deleted');

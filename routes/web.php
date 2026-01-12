@@ -8,6 +8,7 @@ use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
+use App\Http\Controllers\RevenueTypeController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -48,6 +49,14 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('ministries{id}/restore', [MinistryController::class, 'restore'])->name('ministries.restore');
     Route::delete('ministries/{id}/force-delete', [MinistryController::class, 'forceDelete'])->name('ministries.forceDelete');
 
+    // Revenue Type Routes
+    Route::resource('revenue-types', RevenueTypeController::class)->names('revenue-types');
+    Route::get('revenue-types-archive', [RevenueTypeController::class, 'archived'])->name('revenue-types.archived');
+    Route::patch('revenue-types/{revenueType}/archive', [RevenueTypeController::class, 'archive'])->name('revenue-types.archive');
+    Route::patch('revenue-type/{id}/restore', [RevenueTypeController::class, 'restore'])->name('revenue-types.restore');
+    Route::delete('revenue-type/{id}/delete', [RevenueTypeController::class, 'forceDelete'])->name('revenue-type.forceDelete');
+
+    // Revenue Routes
     Route::resource('revenues', RevenueController::class)->names('revenues');
     Route::get('revenues-archive', [RevenueController::class, 'archived'])->name('revenues.archived');
     Route::patch('revenues/{revenue}/archive', [RevenueController::class, 'archive'])->name('revenues.archive');

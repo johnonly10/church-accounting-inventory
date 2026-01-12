@@ -62,6 +62,11 @@
         </x-includes.sidebar-item>
 
         <x-includes.sidebar-item title="Revenue" icon="fas fa-donate" :hasArrow="true">
+            <li><a href="{{ route('staff.revenue-types.index') }}"> Revenue Type </a></li>
+            {{-- <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li> --}}
+
+            <li class="sidebar-divider"></li>
+
             <li><a href="{{ route('staff.revenues.index') }}"> Revenue </a></li>
             <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li>
         </x-includes.sidebar-item>

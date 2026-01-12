@@ -1,4 +1,5 @@
 @extends('layouts.staff')
+
 @section('content')
     <style>
         .revenues-container {
@@ -409,6 +410,12 @@
         }
     </style>
 
+    @php
+        $revenueTypeItems = collect($revenueTypes ?? [])
+            ->map(fn($t) => ['id' => $t->id, 'name' => $t->name])
+            ->values();
+    @endphp
+
     <div class="container-fluid p-0">
         <x-page-title title="Create Revenue Collection" active="Create Revenue Collection" home="Revenue" :home-route="route('staff.revenues.index')" />
         <div class="row">
@@ -444,22 +451,40 @@
 
                                             <div class="field-group">
                                                 <label class="field-label">
-                                                    Type <span class="required-asterisk">*</span>
+                                                    Revenue Type <span class="required-asterisk">*</span>
                                                 </label>
-                                                <select class="field-input" name="revenues[0][types]" required>
+                                                <select class="field-input" name="revenues[0][revenue_type_id]" required>
                                                     <option value="" disabled
-                                                        {{ old('revenues.0.types') ? '' : 'selected' }}>Select type
+                                                        {{ old('revenues.0.revenue_type_id') ? '' : 'selected' }}>
+                                                        Select type
                                                     </option>
-                                                    <option value="tithes"
-                                                        {{ old('revenues.0.types') === 'tithes' ? 'selected' : '' }}>
-                                                        Tithes
+                                                    @foreach ($revenueTypes as $type)
+                                                        <option value="{{ $type->id }}"
+                                                            {{ (string) old('revenues.0.revenue_type_id') === (string) $type->id ? 'selected' : '' }}>
+                                                            {{ $type->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('revenues.0.revenue_type_id')
+                                                    <span class="error-message">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="field-group">
+                                                <label class="field-label">
+                                                    Beneficiary <span class="required-asterisk">*</span>
+                                                </label>
+                                                <select class="field-input" name="revenues[0][beneficiary]" required>
+                                                    <option value="general"
+                                                        {{ old('revenues.0.beneficiary', 'general') === 'general' ? 'selected' : '' }}>
+                                                        General
                                                     </option>
-                                                    <option value="offering"
-                                                        {{ old('revenues.0.types') === 'offering' ? 'selected' : '' }}>
-                                                        Offering
+                                                    <option value="pastor"
+                                                        {{ old('revenues.0.beneficiary') === 'pastor' ? 'selected' : '' }}>
+                                                        Pastor
                                                     </option>
                                                 </select>
-                                                @error('revenues.0.types')
+                                                @error('revenues.0.beneficiary')
                                                     <span class="error-message">{{ $message }}</span>
                                                 @enderror
                                             </div>
@@ -725,6 +750,26 @@
         $(document).ready(function() {
             let revenueCount = 1;
 
+            const revenueTypes = @json($revenueTypeItems);
+
+            function buildRevenueTypeOptions(selectedId = null) {
+                let html = '<option value="" disabled ' + (selectedId ? '' : 'selected') + '>Select type</option>';
+                for (const t of revenueTypes) {
+                    const selected = selectedId && String(selectedId) === String(t.id) ? 'selected' : '';
+                    html += `<option value="${t.id}" ${selected}>${escapeHtml(t.name)}</option>`;
+                }
+                return html;
+            }
+
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
             const phpCurrency = new Intl.NumberFormat('en-PH', {
                 style: 'currency',
                 currency: 'PHP',
@@ -892,22 +937,20 @@
                     validationMsg.addClass('success')
                         .html(
                             '<i class="fas fa-check-circle"></i> Cash breakdown matches the revenue amount perfectly!'
-                        )
+                            )
                         .show();
                 } else if (breakdownTotal > revenueAmount) {
                     validationMsg.addClass('error')
-                        .html(
-                            '<i class="fas fa-exclamation-circle"></i> Cash breakdown (' + fmtPHP(breakdownTotal) +
-                            ') exceeds revenue amount (' + fmtPHP(revenueAmount) + ') by ' + fmtPHP(difference)
-                        )
+                        .html('<i class="fas fa-exclamation-circle"></i> Cash breakdown (' + fmtPHP(
+                            breakdownTotal) +
+                            ') exceeds revenue amount (' + fmtPHP(revenueAmount) + ') by ' + fmtPHP(difference))
                         .show();
                 } else {
                     validationMsg.addClass('warning')
-                        .html(
-                            '<i class="fas fa-exclamation-triangle"></i> Cash breakdown (' + fmtPHP(
+                        .html('<i class="fas fa-exclamation-triangle"></i> Cash breakdown (' + fmtPHP(
                                 breakdownTotal) +
                             ') is less than revenue amount (' + fmtPHP(revenueAmount) + ') by ' + fmtPHP(difference)
-                        )
+                            )
                         .show();
                 }
 
@@ -1002,6 +1045,8 @@
             }
 
             $('#add-revenue').click(function() {
+                const typeOptions = buildRevenueTypeOptions(null);
+
                 const newEntry = `
                     <div class="revenue-card" id="revenue-${revenueCount}" data-index="${revenueCount}">
                         <div class="revenue-header">
@@ -1022,12 +1067,20 @@
 
                             <div class="field-group">
                                 <label class="field-label">
-                                    Type <span class="required-asterisk">*</span>
+                                    Revenue Type <span class="required-asterisk">*</span>
                                 </label>
-                                <select class="field-input" name="revenues[${revenueCount}][types]" required>
-                                    <option value="" disabled selected>Select type</option>
-                                    <option value="tithes">Tithes</option>
-                                    <option value="offering">Offering</option>
+                                <select class="field-input" name="revenues[${revenueCount}][revenue_type_id]" required>
+                                    ${typeOptions}
+                                </select>
+                            </div>
+
+                            <div class="field-group">
+                                <label class="field-label">
+                                    Beneficiary <span class="required-asterisk">*</span>
+                                </label>
+                                <select class="field-input" name="revenues[${revenueCount}][beneficiary]" required>
+                                    <option value="general" selected>General</option>
+                                    <option value="pastor">Pastor</option>
                                 </select>
                             </div>
 
@@ -1268,7 +1321,10 @@
                     $(this).find('.remove-revenue').data('id', index);
 
                     $(this).find('input[name*="[name]"]').attr('name', 'revenues[' + index + '][name]');
-                    $(this).find('select[name*="[types]"]').attr('name', 'revenues[' + index + '][types]');
+                    $(this).find('select[name*="[revenue_type_id]"]').attr('name', 'revenues[' + index +
+                        '][revenue_type_id]');
+                    $(this).find('select[name*="[beneficiary]"]').attr('name', 'revenues[' + index +
+                        '][beneficiary]');
                     $(this).find('select[name*="[payment_method]"]').attr('name', 'revenues[' + index +
                         '][payment_method]');
                     $(this).find('input[name*="[amount]"]').attr('name', 'revenues[' + index + '][amount]');

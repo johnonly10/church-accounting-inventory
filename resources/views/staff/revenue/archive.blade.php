@@ -23,7 +23,7 @@
                             <tr>
                                 <td>{{ $revenue->revenueCollection->collection_date->format('F d, Y') }} </td>
                                 <td class="name">{{ $revenue->name }} </td>
-                                <td>{{ $revenue->types }} </td>
+                                <td>{{ $revenue->revenueType->name }} </td>
                                 <td>{{ $revenue->payment_method }}</td>
                                 <td>{{ $revenue->amount }}</td>
                                 <td class="text-center">
