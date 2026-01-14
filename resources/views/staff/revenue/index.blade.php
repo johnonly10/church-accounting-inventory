@@ -39,6 +39,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                {{ $revenues->links() }}
             </div>
         </x-white-card>
         <x-sweet-alert entity="Revenue" />

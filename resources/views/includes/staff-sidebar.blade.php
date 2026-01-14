@@ -33,32 +33,37 @@
         <x-includes.sidebar-item title="Department" icon="fas fa-building" :hasArrow="true">
             <li><a href="{{ route('staff.departments.index') }}">Departments </a></li>
             <li><a href="{{ route('staff.departments.create') }}"> Add Departments</a></li>
-        </x-includes.sidebar-item>
+        {{-- </x-includes.sidebar-item>   --}}
 
-        <x-includes.sidebar-item title="Ministry" icon="fas fa-church" :hasArrow="true">
-            <li><a href="{{ route('staff.ministries.index') }}">Ministry </a></li>
-            <li><a href="{{ route('staff.ministries.create') }}"> Add Ministry</a></li>
-        </x-includes.sidebar-item> --}}
+        <x-includes.sidebar-item title="Categories" icon="fas fa-solid fa-list" :hasArrow="true">
+            <li><a href="{{ route('staff.categories.index') }}">Categories </a></li>
+            <li><a href="{{ route('staff.categories.create') }}"> Add Category</a></li>
+        </x-includes.sidebar-item>
 
         <x-includes.sidebar-item title="Users" icon="fas fa-users" :hasArrow="true">
 
-            <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
-            <li><a href="{{ route('staff.leaders.create') }}"> Add Leaders</a></li>
+            <li><a href="{{ route('staff.leaders.index') }}"> Leaders </a></li>
+            <li><a href="{{ route('staff.leaders.create') }}"> Add Leader</a></li>
 
             <li class="sidebar-divider"></li>
 
-            <li><a href="{{ route('staff.departments.index') }}">Manage Departments </a></li>
-            <li><a href="{{ route('staff.departments.create') }}"> Add Departments</a></li>
+            <li><a href="{{ route('staff.departments.index') }}">Departments </a></li>
+            <li><a href="{{ route('staff.departments.create') }}"> Add Department</a></li>
 
             <li class="sidebar-divider"></li>
 
-            <li><a href="{{ route('staff.ministries.index') }}">Manage Ministry </a></li>
+            <li><a href="{{ route('staff.ministries.index') }}">Ministries </a></li>
             <li><a href="{{ route('staff.ministries.create') }}"> Add Ministry</a></li>
 
             <li class="sidebar-divider"></li>
 
-            <li><a href="{{ route('staff.users.index') }}">Manage Users</a></li>
-            <li><a href="{{ route('staff.users.create') }}">Add Users</a></li>
+            <li><a href="{{ route('staff.positions.index') }}">Positions </a></li>
+            <li><a href="{{ route('staff.positions.create') }}">Add Position</a></li>
+
+            <li class="sidebar-divider"></li>
+
+            <li><a href="{{ route('staff.users.index') }}">Users</a></li>
+            <li><a href="{{ route('staff.users.create') }}">Add User</a></li>
         </x-includes.sidebar-item>
 
         <x-includes.sidebar-item title="Revenue" icon="fas fa-coins" :hasArrow="true">
@@ -70,6 +75,25 @@
             <li><a href="{{ route('staff.revenues.index') }}"> Revenue </a></li>
             <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li>
         </x-includes.sidebar-item>
+
+        {{-- <x-includes.sidebar-item title="Expenses" icon="fas fa-file-invoice-dollar" :hasArroow="true">
+            <li><a href="{{ route('staff.expenses.index') }}"> Expenses</a></li>
+            <li><a href="{{ route('staff.revenue-types.create') }}"> Add Revenue Type</a></li>
+        </x-includes.sidebar-item> --}}
+
+        <x-includes.sidebar-item title="Expenses" icon="fas fa-solid fa-money-bill" :hasArrow="true">
+            <li><a href="{{ route('staff.expenses.index') }}"> Expenses</a></li>
+            <li><a href="{{ route('staff.expenses.create') }}"> Add Expense</a></li>
+        </x-includes.sidebar-item>
+
+        {{-- <x-includes.sidebar-item title="Expenses" icon="fas fa-file-invoice-dollar" :hasArrow="true">
+            <li><a href="{{ route('staff.expense-categories.index') }}">Categories </a></li>
+            <li><a href="{{ route('staff.expense-categories.create') }}"> Add Categories</a></li>
+
+
+            </x-inclues.sidebar-item> --}}
+
+
 
 
     </ul>

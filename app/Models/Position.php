@@ -6,17 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ExpenseCategory extends Model
+class Position extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
-        'code',
     ];
 
-    public function expenses()
+    public function users()
     {
-        return $this->hasOne(Expense::class);
+        return $this->hasOne(User::class);
     }
 }

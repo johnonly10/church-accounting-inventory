@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Leader;
 use App\Models\Ministry;
 use App\Models\Department;
+use App\Models\Position;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -22,7 +23,8 @@ class UserController extends Controller
         $departments = Department::orderBy('name')->get();
         $leaders = Leader::orderBy('name')->get();
         $ministries = Ministry::orderBy('name')->get();
-        return view('staff.users.create', compact('departments', 'leaders', 'ministries'));
+        $positions = Position::orderBy('name')->get();
+        return view('staff.users.create', compact('departments', 'leaders', 'ministries', 'positions'));
     }
 
     public function store(Request $request)
@@ -33,6 +35,7 @@ class UserController extends Controller
                 'department_id' => 'nullable|exists:departments,id',
                 'leader_id' => 'nullable|exists:leaders,id',
                 'ministry_id' => 'nullable|exists:ministries,id',
+                'position_id'  => 'required|exists:positions,id',
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|max:255|unique:users,email',
                 'password' => 'required|string|max:255',
@@ -56,7 +59,8 @@ class UserController extends Controller
         $departments = Department::orderBy('name')->get();
         $leaders = Leader::orderBy('name')->get();
         $ministries = Ministry::orderBy('name')->get();
-        return view('staff.users.edit', compact('user', 'departments', 'leaders', 'ministries'));
+        $positions = Position::orderBy('name')->get();
+        return view('staff.users.edit', compact('user', 'departments', 'leaders', 'ministries', 'positions'));
     }
 
     public function update(Request $request, User $user)
@@ -68,6 +72,7 @@ class UserController extends Controller
             'department_id' => 'nullable|exists:departments,id',
             'leader_id' => 'nullable|exists:leaders,id',
             'ministry_id' => 'nullable|exists:ministries,id',
+            'position_id' => 'required|exists:positions,id',
 
         ]);
 

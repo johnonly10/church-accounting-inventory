@@ -98,7 +98,7 @@
 
                                 <div class="mb-4">
                                     <div class="row g-3">
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <label class="form-label fw-semibold" for="leader_id">
                                                 Assigned Leader
                                             </label>
@@ -117,8 +117,29 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold" for="position_id">
+                                                Position
+                                            </label>
+                                            <select class="form-select @error('position_id') is-invalid @enderror"
+                                                id="position_id" name="position_id" required>
+                                                <option value="">-- Select Position --</option>
+                                                @foreach ($positions as $position)
+                                                    <option value="{{ $position->id }}"
+                                                        {{ old('position_id') == $position->id ? 'selected' : '' }}>
+                                                        {{ $position->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('position_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
+
+
 
                                 <hr class="my-4">
 
@@ -141,8 +162,8 @@
                                                     pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$"
                                                     title="Password must be at least 8 characters and include an uppercase letter, a number, and a special character.">
 
-                                                <button class="btn btn-outline-secondary" type="button" id="togglePassword"
-                                                    aria-label="Toggle password visibility">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    id="togglePassword" aria-label="Toggle password visibility">
                                                     <i class="fas fa-eye" id="togglePasswordIcon"></i>
                                                 </button>
                                             </div>

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container-fliud p-0">
-        <x-page-title title="Revenue" active="Revenue" />
+        <x-page-title title="Archived Revenue" active="Archived Revenue" home="Revenue" :home-route="route('staff.revenues.index')" />
         <x-white-card title="Back to Index Page" :home-route="route('staff.revenues.index')">
             <div class="table-responsive m-b-30">
                 <table class="table table-striped table-bordered">
@@ -40,6 +40,7 @@
                             </tr>
                         @endforelse
                     </tbody>
+                    {{ $positions->links() }}
                 </table>
             </div>
         </x-white-card>

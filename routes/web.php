@@ -1,14 +1,19 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaderController;
 use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 use App\Http\Controllers\RevenueTypeController;
+use App\Models\ExpenseCategory;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -28,7 +33,10 @@ Route::middleware(['auth', 'roletype:PASTOR'])
 Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->group(function () {
     Route::view('/', 'staff.index')->name('index');
 
+    // Users Routes
     Route::resource('users', UserController::class)->names('users');
+
+    // Leader Routes
     Route::resource('leaders', LeaderController::class)->names('leaders');
     Route::get('leaders-archive', [LeaderController::class, 'archived'])->name('leaders.archived');
     Route::patch('leaders/{leader}/archive', [LeaderController::class, 'archive'])->name('leaders.archive');
@@ -49,6 +57,13 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('ministries{id}/restore', [MinistryController::class, 'restore'])->name('ministries.restore');
     Route::delete('ministries/{id}/force-delete', [MinistryController::class, 'forceDelete'])->name('ministries.forceDelete');
 
+    // Position Routes
+    Route::resource('positions', PositionController::class);
+    Route::get('position-archive', [PositionController::class, 'archived'])->name('positions.archived');
+    Route::patch('positions/{position}/archive', [PositionController::class, 'archive'])->name('positions.archive');
+    Route::patch('positions/{id}/restore', [PositionController::class, 'restore'])->name('positions.restore');
+    Route::delete('positions/{id}/force-delete', [PositionController::class, 'forceDelete'])->name('positions.forceDelete');
+
     // Revenue Type Routes
     Route::resource('revenue-types', RevenueTypeController::class)->names('revenue-types');
     Route::get('revenue-types-archive', [RevenueTypeController::class, 'archived'])->name('revenue-types.archived');
@@ -65,8 +80,28 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 
     Route::resource('revenue_collections', RevenueCollectionController::class)
         ->names('staff.revenue_collections');
-
     Route::resource('revenue_cash_counts', RevenueCollectionController::class)->names('revenue_cash_counts');
+
+    // Expense Category Routes
+    Route::get('expense-category/archive',  [ExpenseCategoryController::class, 'archived'])->name('expense-categories.archived');
+    Route::patch('expense-category/{expenseCategory}/archive', [ExpenseCategoryController::class, 'archive'])->name('expense-categories.archive');
+    Route::patch('expense-category/{id}/restore', [ExpenseCategoryController::class, 'restore'])->name('expense-categories.restore');
+    Route::delete('expense-category/{id}/force-delete', [ExpenseCategoryController::class, 'forceDelete'])->name('expense-categories.forceDelete');
+    Route::resource('expense-category', ExpenseCategoryController::class)->names('expense-categories');
+
+    // Categories Routes
+    Route::resource('categories', CategoryController::class);
+    Route::get('category-archive', [CategoryController::class, 'archived'])->name('categories.archived');
+    Route::patch('category/{category}archive', [CategoryController::class, 'archive'])->name('categories.archive');
+    Route::patch('category/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+    Route::delete('category/{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
+
+    // Expenses Routes
+    Route::resource('expenses', ExpenseController::class);
+    Route::get('expense-archive', [ExpenseController::class, 'archived'])->name('expenses.archived');
+    Route::patch('expense/{expense}/archive', [ExpenseController::class, 'archive'])->name('expenses.archive');
+    Route::patch('expense/{id}/restore', [ExpenseController::class, 'restore'])->name('expenses.restore');
+    Route::delete('expense/{id}/force-delete', [ExpenseController::class, 'forceDelete'])->name('expenses.forceDelete');
 });
 
 require __DIR__ . '/auth.php';
