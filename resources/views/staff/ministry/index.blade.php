@@ -32,6 +32,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                {{ $ministries->links() }}
                 <x-sweet-alert entity="Ministry" />
             </div>
         </x-white-card>

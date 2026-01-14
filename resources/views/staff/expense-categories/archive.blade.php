@@ -3,39 +3,40 @@
 @section('content')
     <div class="container-fluid p-0">
 
-        <x-page-title title="Archived Ministry" active="Archive" home="Ministry" :home-route="route('staff.ministries.index')" />
-        <x-white-card title="Back to Index Page" :home-route="route('staff.ministries.index')">
+        <x-page-title title="Archived Expense Category" active="Expense Category" />
+        <x-white-card title="Back to Index Page" :home-route="route('staff.expense-categories.index')">
 
             <div class="table-responsive m-b-30">
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Code </th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @forelse ($ministries as $ministry)
+                        @forelse ($ecategories as $ecategory)
                             <tr>
-                                <td class="name">{{ $ministry->name }} </td>
-
+                                <td class="name">{{ $ecategory->name }} </td>
+                                <td>{{ $ecategory->code }} </td>
                                 <td class="text-center">
-                                    <x-icons.action-form :route="route('staff.ministries.restore', $ministry->id)" aClass="btn btn-sm btn-outline-success border-0"
+                                    <x-icons.action-form :route="route('staff.expense-categories.restore', $ecategory->id)" aClass="btn btn-sm btn-outline-success border-0"
                                         title="Restore" icon="fas fa-undo" name="restore" />
-                                    <x-icons.action-form :route="route('staff.ministries.forceDelete', $ministry->id)" icon="fas fa-trash" title="Delete"
+                                    <x-icons.action-form :route="route('staff.expense-categories.forceDelete', $ecategory->id)" icon="fas fa-trash" title="Delete"
                                         method="DELETE" aClass="btn btn-sm btn-outline-danger border-0"
                                         name="force-delete" />
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="1" class="text-center">No ministry found.</td>
+                                <td colspan="3" class="text-center">No Expense Category found.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-                {{ $ministries->links() }}
-                <x-sweet-alert entity="Ministry" />
+                <x-sweet-alert entity="Expense Category" />
             </div>
         </x-white-card>
     </div>

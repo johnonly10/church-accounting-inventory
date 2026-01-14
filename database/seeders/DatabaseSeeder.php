@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             LeaderSeeder::class,
             UserSeeder::class,
+            RevenueTypeSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

@@ -44,7 +44,6 @@
                     </tbody>
                 </table>
                 <x-sweet-alert entity="Leader" />
-
                 {{ $leaders->links() }}
             </div>
         </x-white-card>

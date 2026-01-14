@@ -36,6 +36,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                {{ $users->links() }}
             </div>
         </x-white-card>
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
             $table->foreignId('leader_id')->nullable()->constrained('leaders')->nullOnDelete();
             $table->foreignId('ministry_id')->nullable()->constrained('ministries')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             $table->string('name');
             $table->string('email')->unique();
             $table->enum('roletype', ['PASTOR', 'STAFF', 'MEMBER'])->default('STAFF');

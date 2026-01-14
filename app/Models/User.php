@@ -24,6 +24,7 @@ class User extends Authenticatable
         'leader_id',
         'role_id',
         'ministry_id',
+        'position_id',
         'name',
         'path',
         'email',
@@ -81,5 +82,10 @@ class User extends Authenticatable
     public function ministry()
     {
         return $this->belongsTo(Ministry::class);
+    }
+
+    public function positions()
+    {
+        return $this->belongsTo(Position::class);
     }
 }
