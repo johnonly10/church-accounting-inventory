@@ -13,6 +13,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RevenueTypeController;
 use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RevenueCashCountController;
@@ -112,6 +113,12 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::resource('images', ImageController::class);
 
     Route::resource('signatures', SignatureController::class);
+
+    Route::get('/expense-reports', [ExpenseReportController::class, 'index'])
+        ->name('expense-reports.index');
+
+    Route::get('/staff/expense-reports/pdf', [ExpenseReportController::class, 'pdf'])
+        ->name('expense-reports.pdf');
 });
 
 require __DIR__ . '/auth.php';
