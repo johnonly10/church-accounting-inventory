@@ -40,6 +40,12 @@
             <li><a href="{{ route('staff.categories.create') }}"> Add Category</a></li>
         </x-includes.sidebar-item>
 
+        <x-includes.sidebar-item title="Images" icon="fas fa-solid fa-image" :hasArrow="true">
+            <li><a href="{{ route('staff.images.index') }}">Images </a></li>
+            <li><a href="{{ route('staff.images.create') }}"> Add Category</a></li>
+        </x-includes.sidebar-item>
+
+
         <x-includes.sidebar-item title="Users" icon="fas fa-users" :hasArrow="true">
 
             <li><a href="{{ route('staff.leaders.index') }}"> Leaders </a></li>
