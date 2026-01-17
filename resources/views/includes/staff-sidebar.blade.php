@@ -92,14 +92,11 @@
             <li><a href="{{ route('staff.expenses.create') }}"> Add Expense</a></li>
         </x-includes.sidebar-item>
 
-        {{-- <x-includes.sidebar-item title="Expenses" icon="fas fa-file-invoice-dollar" :hasArrow="true">
-            <li><a href="{{ route('staff.expense-categories.index') }}">Categories </a></li>
-            <li><a href="{{ route('staff.expense-categories.create') }}"> Add Categories</a></li>
 
-
-            </x-inclues.sidebar-item> --}}
-
-
+        <x-includes.sidebar-item title="Signatures" icon="fas fa-signature" :hasArrow="true">
+            <li><a href="{{ route('staff.signatures.index') }}">Signatures </a></li>
+            <li><a href="{{ route('staff.signatures.create') }}"> Add Signature</a></li>
+        </x-includes.sidebar-item>
 
 
     </ul>
