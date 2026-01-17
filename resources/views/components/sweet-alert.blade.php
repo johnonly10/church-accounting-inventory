@@ -14,6 +14,14 @@
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
                 backdrop-filter: blur(10px) !important;
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.95)) !important;
+
+                --swal-confirm-from: #f59e0b;
+                --swal-confirm-to: #d97706;
+                --swal-confirm-shadow: rgba(245, 158, 11, 0.3);
+
+                --swal-confirm-from-hover: #d97706;
+                --swal-confirm-to-hover: #b45309;
+                --swal-confirm-shadow-hover: rgba(245, 158, 11, 0.4);
             }
 
             .swal2-title {
@@ -50,17 +58,6 @@
                 border: none !important;
                 cursor: pointer !important;
                 transition: all 0.3s ease !important;
-            }
-
-            /* ✅ Enhanced: allow confirm button theme per action without changing your base look */
-            .swal2-popup {
-                --swal-confirm-from: #f59e0b;
-                --swal-confirm-to: #d97706;
-                --swal-confirm-shadow: rgba(245, 158, 11, 0.3);
-
-                --swal-confirm-from-hover: #d97706;
-                --swal-confirm-to-hover: #b45309;
-                --swal-confirm-shadow-hover: rgba(245, 158, 11, 0.4);
             }
 
             .swal2-confirm {
@@ -184,10 +181,22 @@
                     backdrop: true,
                 };
 
-                function fire(options) {
+                function mergeCustomClass(base = {}, extra = {}) {
+                    const out = {
+                        ...base
+                    };
+                    Object.keys(extra).forEach((k) => {
+                        out[k] = [base[k], extra[k]].filter(Boolean).join(" ");
+                    });
+                    return out;
+                }
+
+                function fire(options = {}) {
+                    const mergedCustomClass = mergeCustomClass(baseConfig.customClass, options.customClass || {});
                     return Swal.fire({
                         ...baseConfig,
-                        ...options
+                        ...options,
+                        customClass: mergedCustomClass
                     });
                 }
 
@@ -198,25 +207,78 @@
                         },
                         title: "Operation Successful!",
                         html: `
-                            <div style="text-align: center; line-height: 1.6;">
-                                <p style="font-size: 16px; color: #22c55e; margin-bottom: 15px;">
-                                    <strong>${message ?? ""}</strong>
-                                </p>
-                                <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #22c55e;">
-                                    <p style="margin: 0; color: #166534; font-weight: 500;">
-                                        <i class="icon-check-circle" style="margin-right: 8px;"></i>
-                                        The operation has been completed successfully.
-                                    </p>
-                                </div>
-                                <p style="color: #64748b; font-size: 14px; margin-top: 15px;">
-                                    Your changes have been saved and are now active.
-                                </p>
-                            </div>
-                        `,
+                    <div style="text-align: center; line-height: 1.6;">
+                        <p style="font-size: 16px; color: #22c55e; margin-bottom: 15px;">
+                            <strong>${message ?? ""}</strong>
+                        </p>
+                        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #22c55e;">
+                            <p style="margin: 0; color: #166534; font-weight: 500;">
+                                <i class="icon-check-circle" style="margin-right: 8px;"></i>
+                                The operation has been completed successfully.
+                            </p>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin-top: 15px;">
+                            Your changes have been saved and are now active.
+                        </p>
+                    </div>
+                `,
                         confirmButtonText: '<i class="icon-check"></i> Great!',
                         timer: 5000,
                         timerProgressBar: true,
                         showCloseButton: true,
+                        didOpen: () => {
+                            const popup = Swal.getPopup();
+                            if (popup) {
+                                popup.style.setProperty("--swal-confirm-from", "#22c55e");
+                                popup.style.setProperty("--swal-confirm-to", "#16a34a");
+                                popup.style.setProperty("--swal-confirm-shadow", "rgba(34, 197, 94, 0.3)");
+                                popup.style.setProperty("--swal-confirm-from-hover", "#16a34a");
+                                popup.style.setProperty("--swal-confirm-to-hover", "#15803d");
+                                popup.style.setProperty("--swal-confirm-shadow-hover",
+                                    "rgba(34, 197, 94, 0.4)");
+                            }
+                        },
+                        ...opts,
+                    });
+                }
+
+                function error(message, opts = {}) {
+                    return fire({
+                        customClass: {
+                            popup: "swal2-error"
+                        },
+                        title: "Operation Failed!",
+                        html: `
+                    <div style="text-align: center; line-height: 1.6;">
+                        <p style="font-size: 16px; color: #ef4444; margin-bottom: 15px;">
+                            <strong>${message ?? ""}</strong>
+                        </p>
+                        <div style="background: linear-gradient(135deg, #fef2f2, #fecaca); padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #ef4444;">
+                            <p style="margin: 0; color: #991b1b; font-weight: 500;">
+                                <i class="icon-alert-triangle" style="margin-right: 8px;"></i>
+                                Something went wrong. Please try again.
+                            </p>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin-top: 15px;">
+                            If the problem persists, contact support or check the logs.
+                        </p>
+                    </div>
+                `,
+                        confirmButtonText: '<i class="icon-x"></i> Okay',
+                        showCloseButton: true,
+                        didOpen: () => {
+                            const popup = Swal.getPopup();
+                            if (popup) {
+                                popup.classList.add("swal2-error");
+                                popup.style.setProperty("--swal-confirm-from", "#ef4444");
+                                popup.style.setProperty("--swal-confirm-to", "#dc2626");
+                                popup.style.setProperty("--swal-confirm-shadow", "rgba(239, 68, 68, 0.3)");
+                                popup.style.setProperty("--swal-confirm-from-hover", "#dc2626");
+                                popup.style.setProperty("--swal-confirm-to-hover", "#b91c1c");
+                                popup.style.setProperty("--swal-confirm-shadow-hover",
+                                    "rgba(239, 68, 68, 0.4)");
+                            }
+                        },
                         ...opts,
                     });
                 }
@@ -225,27 +287,27 @@
                     return Swal.fire({
                         title,
                         html: `
-                            <div style="text-align: center;">
-                                <div style="margin: 20px 0;">
-                                    <div class="loading-spinner" style="
-                                        width: 40px;
-                                        height: 40px;
-                                        border: 4px solid #f3f4f6;
-                                        border-top: 4px solid #ef4444;
-                                        border-radius: 50%;
-                                        animation: swalKitSpin 1s linear infinite;
-                                        margin: 0 auto 15px auto;
-                                    "></div>
-                                    <p style="color: #64748b; margin: 0;">${subtitle}</p>
-                                </div>
-                            </div>
-                            <style>
-                                @keyframes swalKitSpin {
-                                    0% { transform: rotate(0deg); }
-                                    100% { transform: rotate(360deg); }
-                                }
-                            </style>
-                        `,
+                    <div style="text-align: center;">
+                        <div style="margin: 20px 0;">
+                            <div class="loading-spinner" style="
+                                width: 40px;
+                                height: 40px;
+                                border: 4px solid #f3f4f6;
+                                border-top: 4px solid #ef4444;
+                                border-radius: 50%;
+                                animation: swalKitSpin 1s linear infinite;
+                                margin: 0 auto 15px auto;
+                            "></div>
+                            <p style="color: #64748b; margin: 0;">${subtitle}</p>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes swalKitSpin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                `,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                         showConfirmButton: false,
@@ -263,22 +325,22 @@
                     return fire({
                         title: `Archive ${entity} Confirmation`,
                         html: `
-                            <div style="text-align: left; line-height: 1.6;">
-                                <p style="margin-bottom: 15px; text-align: center;">You are about to archive the following ${entity.toLowerCase()}:</p>
-                                <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #f59e0b;">
-                                    <strong style="color: #92400e; font-size: 16px;">${name ?? ""}</strong>
-                                </div>
-                                <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #fcd34d;">
-                                    <p style="margin: 0; color: #92400e; font-size: 14px;">
-                                        <i class="icon-info" style="margin-right: 8px;"></i>
-                                        <strong>Note:</strong> Archiving will move this ${entity.toLowerCase()} to the archived section. It can be restored later if needed.
-                                    </p>
-                                </div>
-                                <p style="margin-top: 20px; color: #64748b; text-align: center;">
-                                    This action is reversible. The ${entity.toLowerCase()} will remain in the system but will be hidden from the main list.
-                                </p>
-                            </div>
-                        `,
+                    <div style="text-align: left; line-height: 1.6;">
+                        <p style="margin-bottom: 15px; text-align: center;">You are about to archive the following ${entity.toLowerCase()}:</p>
+                        <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #f59e0b;">
+                            <strong style="color: #92400e; font-size: 16px;">${name ?? ""}</strong>
+                        </div>
+                        <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #fcd34d;">
+                            <p style="margin: 0; color: #92400e; font-size: 14px;">
+                                <i class="icon-info" style="margin-right: 8px;"></i>
+                                <strong>Note:</strong> Archiving will move this ${entity.toLowerCase()} to the archived section. It can be restored later if needed.
+                            </p>
+                        </div>
+                        <p style="margin-top: 20px; color: #64748b; text-align: center;">
+                            This action is reversible. The ${entity.toLowerCase()} will remain in the system but will be hidden from the main list.
+                        </p>
+                    </div>
+                `,
                         customClass: {
                             popup: "swal2-warning"
                         },
@@ -295,7 +357,6 @@
                     });
                 }
 
-                /* ✅ ADDED: Restore confirmation */
                 function confirmRestore({
                     entity,
                     name,
@@ -305,22 +366,22 @@
                     return fire({
                         title: `Restore ${entity} Confirmation`,
                         html: `
-                            <div style="text-align: left; line-height: 1.6;">
-                                <p style="margin-bottom: 15px; text-align: center;">You are about to restore the following ${entity.toLowerCase()}:</p>
-                                <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #22c55e;">
-                                    <strong style="color: #166534; font-size: 16px;">${name ?? ""}</strong>
-                                </div>
-                                <div style="background: #dcfce7; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #86efac;">
-                                    <p style="margin: 0; color: #166534; font-size: 14px;">
-                                        <i class="icon-info" style="margin-right: 8px;"></i>
-                                        <strong>Note:</strong> Restoring will bring this ${entity.toLowerCase()} back to the active list.
-                                    </p>
-                                </div>
-                                <p style="margin-top: 20px; color: #64748b; text-align: center;">
-                                    This action is safe and can be reversed again by archiving.
-                                </p>
-                            </div>
-                        `,
+                    <div style="text-align: left; line-height: 1.6;">
+                        <p style="margin-bottom: 15px; text-align: center;">You are about to restore the following ${entity.toLowerCase()}:</p>
+                        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #22c55e;">
+                            <strong style="color: #166534; font-size: 16px;">${name ?? ""}</strong>
+                        </div>
+                        <div style="background: #dcfce7; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #86efac;">
+                            <p style="margin: 0; color: #166534; font-size: 14px;">
+                                <i class="icon-info" style="margin-right: 8px;"></i>
+                                <strong>Note:</strong> Restoring will bring this ${entity.toLowerCase()} back to the active list.
+                            </p>
+                        </div>
+                        <p style="margin-top: 20px; color: #64748b; text-align: center;">
+                            This action is safe and can be reversed again by archiving.
+                        </p>
+                    </div>
+                `,
                         customClass: {
                             popup: "swal2-question"
                         },
@@ -347,7 +408,6 @@
                     });
                 }
 
-                /* ✅ ADDED: Force delete confirmation */
                 function confirmForceDelete({
                     entity,
                     name,
@@ -357,22 +417,22 @@
                     return fire({
                         title: `Permanently Delete ${entity}?`,
                         html: `
-                            <div style="text-align: left; line-height: 1.6;">
-                                <p style="margin-bottom: 15px; text-align: center;">You are about to permanently delete the following ${entity.toLowerCase()}:</p>
-                                <div style="background: linear-gradient(135deg, #fef2f2, #fecaca); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #ef4444;">
-                                    <strong style="color: #991b1b; font-size: 16px;">${name ?? ""}</strong>
-                                </div>
-                                <div style="background: #fecaca; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #fca5a5;">
-                                    <p style="margin: 0; color: #991b1b; font-size: 14px;">
-                                        <i class="icon-alert-triangle" style="margin-right: 8px;"></i>
-                                        <strong>Warning:</strong> This action cannot be undone. The ${entity.toLowerCase()} will be removed permanently.
-                                    </p>
-                                </div>
-                                <p style="margin-top: 20px; color: #64748b; text-align: center;">
-                                    Please confirm only if you are absolutely sure.
-                                </p>
-                            </div>
-                        `,
+                    <div style="text-align: left; line-height: 1.6;">
+                        <p style="margin-bottom: 15px; text-align: center;">You are about to permanently delete the following ${entity.toLowerCase()}:</p>
+                        <div style="background: linear-gradient(135deg, #fef2f2, #fecaca); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #ef4444;">
+                            <strong style="color: #991b1b; font-size: 16px;">${name ?? ""}</strong>
+                        </div>
+                        <div style="background: #fecaca; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #fca5a5;">
+                            <p style="margin: 0; color: #991b1b; font-size: 14px;">
+                                <i class="icon-alert-triangle" style="margin-right: 8px;"></i>
+                                <strong>Warning:</strong> This action cannot be undone. The ${entity.toLowerCase()} will be removed permanently.
+                            </p>
+                        </div>
+                        <p style="margin-top: 20px; color: #64748b; text-align: center;">
+                            Please confirm only if you are absolutely sure.
+                        </p>
+                    </div>
+                `,
                         customClass: {
                             popup: "swal2-error"
                         },
@@ -402,21 +462,17 @@
                 function bindArchive(entity, selector = ".archive", getName, onSubmit) {
                     $(document).on("click", selector, function(e) {
                         e.preventDefault();
-
                         const $btn = $(this);
                         const form = $btn.closest("form");
-
-                        const name = typeof getName === "function" ?
-                            getName($btn) :
-                            $btn.closest("tr").find(".name").text().trim();
-
+                        const name = typeof getName === "function" ? getName($btn) : $btn.closest("tr").find(
+                            ".name").text().trim();
                         confirmArchive({
                             entity,
                             name,
                             onConfirm: () => {
                                 loading(`Archiving ${entity}...`,
                                     `Please wait while we archive the ${entity.toLowerCase()}...`
-                                );
+                                    );
                                 if (typeof onSubmit === "function") return onSubmit(form, $btn);
                                 form.submit();
                             },
@@ -424,25 +480,20 @@
                     });
                 }
 
-                /* ✅ ADDED: bind restore */
                 function bindRestore(entity, selector = ".restore", getName, onSubmit) {
                     $(document).on("click", selector, function(e) {
                         e.preventDefault();
-
                         const $btn = $(this);
                         const form = $btn.closest("form");
-
-                        const name = typeof getName === "function" ?
-                            getName($btn) :
-                            $btn.closest("tr").find(".name").text().trim();
-
+                        const name = typeof getName === "function" ? getName($btn) : $btn.closest("tr").find(
+                            ".name").text().trim();
                         confirmRestore({
                             entity,
                             name,
                             onConfirm: () => {
                                 loading(`Restoring ${entity}...`,
                                     `Please wait while we restore the ${entity.toLowerCase()}...`
-                                );
+                                    );
                                 if (typeof onSubmit === "function") return onSubmit(form, $btn);
                                 form.submit();
                             },
@@ -450,25 +501,20 @@
                     });
                 }
 
-                /* ✅ ADDED: bind force delete */
                 function bindForceDelete(entity, selector = ".force-delete", getName, onSubmit) {
                     $(document).on("click", selector, function(e) {
                         e.preventDefault();
-
                         const $btn = $(this);
                         const form = $btn.closest("form");
-
-                        const name = typeof getName === "function" ?
-                            getName($btn) :
-                            $btn.closest("tr").find(".name").text().trim();
-
+                        const name = typeof getName === "function" ? getName($btn) : $btn.closest("tr").find(
+                            ".name").text().trim();
                         confirmForceDelete({
                             entity,
                             name,
                             onConfirm: () => {
                                 loading(`Deleting ${entity}...`,
                                     `Please wait while we permanently delete the ${entity.toLowerCase()}...`
-                                );
+                                    );
                                 if (typeof onSubmit === "function") return onSubmit(form, $btn);
                                 form.submit();
                             },
@@ -479,11 +525,10 @@
                 return {
                     fire,
                     success,
+                    error,
                     loading,
                     confirmArchive,
                     bindArchive,
-
-                    /* ✅ ADDED exports */
                     confirmRestore,
                     bindRestore,
                     confirmForceDelete,
@@ -499,6 +544,22 @@
         <script>
             $(function() {
                 window.SwalKit.success(@json(Session::get('success')));
+            });
+        </script>
+    @endif
+
+    @if (Session::has('error'))
+        <script>
+            $(function() {
+                window.SwalKit.error(@json(Session::get('error')));
+            });
+        </script>
+    @endif
+
+    @if (Session::has('failed'))
+        <script>
+            $(function() {
+                window.SwalKit.error(@json(Session::get('failed')));
             });
         </script>
     @endif

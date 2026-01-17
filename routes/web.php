@@ -14,6 +14,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RevenueTypeController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\FinanceDashboardController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 
@@ -106,6 +107,8 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::delete('expense/{id}/force-delete', [ExpenseController::class, 'forceDelete'])->name('expenses.forceDelete');
 
     Route::resource('finance-dashboard', FinanceDashboardController::class)->names('finance-dashboard');
+
+    Route::resource('images', ImageController::class);
 });
 
 require __DIR__ . '/auth.php';
