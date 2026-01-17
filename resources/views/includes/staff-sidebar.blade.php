@@ -98,6 +98,11 @@
             <li><a href="{{ route('staff.signatures.create') }}"> Add Signature</a></li>
         </x-includes.sidebar-item>
 
+        <x-includes.sidebar-item title="Reports" icon="fas fa-file" :hasArrow="true">
+            <li><a href="{{ route('staff.expense-reports.index') }}">Expense Report </a></li>
+            {{-- <li><a href="{{ route('staff.signatures.create') }}"> Add Signature</a></li> --}}
+        </x-includes.sidebar-item>
+
 
     </ul>
 </nav>
