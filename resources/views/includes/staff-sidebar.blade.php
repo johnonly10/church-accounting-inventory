@@ -24,16 +24,16 @@
     <ul id="sidebar_menu">
 
         <x-includes.sidebar-item title="Dashboard" route="{{ route('staff.index') }}" icon="fas fa-tachometer-alt" />
-        {{-- 
-        <x-includes.sidebar-item title="Leader" icon="fas fa-user-tie" :hasArrow="true">
-            <li><a href="{{ route('staff.leaders.index') }}"> Manage Leaders </a></li>
-            <li><a href="{{ route('staff.leaders.create') }}"> Add Leaders</a></li>
+
+        <x-includes.sidebar-item title="Dashboard" icon="fas fa-chart-line" :hasArrow="true">
+            <li><a href="{{ route('staff.finance-dashboard.index') }}"> Finance Dashboard</a></li>
+            {{-- <li><a href="{{ route('staff.leaders.create') }}"> Add Leaders</a></li> --}}
         </x-includes.sidebar-item>
 
-        <x-includes.sidebar-item title="Department" icon="fas fa-building" :hasArrow="true">
+        {{-- <x-includes.sidebar-item title="Department" icon="fas fa-building" :hasArrow="true">
             <li><a href="{{ route('staff.departments.index') }}">Departments </a></li>
             <li><a href="{{ route('staff.departments.create') }}"> Add Departments</a></li>
-        {{-- </x-includes.sidebar-item>   --}}
+        </x-includes.sidebar-item> --}}
 
         <x-includes.sidebar-item title="Categories" icon="fas fa-solid fa-list" :hasArrow="true">
             <li><a href="{{ route('staff.categories.index') }}">Categories </a></li>

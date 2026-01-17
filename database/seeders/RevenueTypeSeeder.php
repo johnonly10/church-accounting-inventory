@@ -16,7 +16,7 @@ class RevenueTypeSeeder extends Seeder
         $types = [
             ['name' => 'Tithes'],
             ['name' => 'Offering'],
-            ['name' => 'Shower of Blessings'],
+
         ];
 
         foreach ($types as $type) {

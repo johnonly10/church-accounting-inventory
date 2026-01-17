@@ -83,11 +83,14 @@
                         <img src="{{ asset('img/client_img.png') }}" alt="#">
                         <div class="profile_info_iner">
                             <div class="profile_author_name">
-                                <p>Admin </p>
+                                <p>{{ auth()->user()->name }}</p>
                             </div>
                             <div class="profile_info_details">
                                 <a href="profile.html">My Profile </a>
-                                <a href="#">Log Out </a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"> Log Out </button>
+                                </form>
                             </div>
                         </div>
                     </div>

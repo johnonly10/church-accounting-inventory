@@ -1,19 +1,21 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
+use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FinanceDashboard;
 use App\Http\Controllers\LeaderController;
-use App\Http\Controllers\RevenueController;
-use App\Http\Controllers\MinistryController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\RevenueController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\RevenueTypeController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
-use App\Http\Controllers\RevenueTypeController;
-use App\Models\ExpenseCategory;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -102,6 +104,8 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('expense/{expense}/archive', [ExpenseController::class, 'archive'])->name('expenses.archive');
     Route::patch('expense/{id}/restore', [ExpenseController::class, 'restore'])->name('expenses.restore');
     Route::delete('expense/{id}/force-delete', [ExpenseController::class, 'forceDelete'])->name('expenses.forceDelete');
+
+    Route::resource('finance-dashboard', FinanceDashboardController::class)->names('finance-dashboard');
 });
 
 require __DIR__ . '/auth.php';
