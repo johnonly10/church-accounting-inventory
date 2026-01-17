@@ -6,21 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Position extends Model
+class Signature extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
+        'label',
+        'position_id',
+        'is_active',
     ];
 
-    public function users()
+    public function position()
     {
-        return $this->hasMany(User::class);
-    }
-
-    public function signatures()
-    {
-        return $this->hasMany(Signature::class);
+        return $this->belongsTo(Position::class);
     }
 }

@@ -17,6 +17,7 @@ use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
+use App\Http\Controllers\SignatureController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -109,6 +110,8 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::resource('finance-dashboard', FinanceDashboardController::class)->names('finance-dashboard');
 
     Route::resource('images', ImageController::class);
+
+    Route::resource('signatures', SignatureController::class);
 });
 
 require __DIR__ . '/auth.php';

@@ -19,6 +19,6 @@ class RevenueCollection extends Model
     ];
     public function revenues()
     {
-        return $this->hasOne(Revenue::class);
+        return $this->hasMany(Revenue::class);
     }
 }
