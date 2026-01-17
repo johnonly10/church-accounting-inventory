@@ -38,7 +38,7 @@
 
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold" for="description">
-                                                Description <span class="text-danger">*</span>
+                                                Description
                                             </label>
                                             <input type="text"
                                                 class="form-control @error('description') is-invalid @enderror"

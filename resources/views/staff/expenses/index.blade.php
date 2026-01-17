@@ -20,10 +20,10 @@
                     <tbody>
                         @forelse ($expenses as $expense)
                             <tr>
-                                <td class="name">{{ $expense->date }} </td>
+                                <td class="name">{{ $expense->date->toDateString() }} </td>
                                 <td>{{ $expense->category->code }} </td>
                                 <td>{{ $expense->name }} - {{ $expense->description }}</td>
-                                <td>{{ number_format($expense->amount) }} </td>
+                                <td>₱{{ number_format($expense->amount, 2) }} </td>
                                 <td class="text-center">
                                     <x-icons.action-edit :route="route('staff.expenses.edit', $expense->id)" />
                                     <x-icons.action-form :route="route('staff.expenses.archive', $expense->id)" />

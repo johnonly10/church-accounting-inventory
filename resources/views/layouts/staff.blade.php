@@ -46,6 +46,8 @@
 
     {{-- JS --}}
     @include('includes.staff-scripts')
+
+    @vite(['resources/js/app.js'])
     @stack('scripts')
 </body>
 

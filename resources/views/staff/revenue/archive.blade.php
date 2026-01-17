@@ -40,7 +40,7 @@
                             </tr>
                         @endforelse
                     </tbody>
-                    {{ $positions->links() }}
+                    {{ $revenues->links() }}
                 </table>
             </div>
         </x-white-card>
