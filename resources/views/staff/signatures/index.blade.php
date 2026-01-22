@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-fluid p-0">
         <x-page-title title="Signatures" active="Signatures" />
-        <x-white-card title="Signatures" :create-route="route('staff.signatures.create')" :showFilters="true" :filterProps="[
+        <x-white-card title="Signatures" :create-route="route('staff.signatures.create')" :archive-route="route('staff.signatures.archived')" :showFilters="true" :filterProps="[
             'searchPlaceholder' => 'Search by name or label...',
         ]">
 
@@ -35,7 +35,7 @@
                                     </td>
                                     <td class="text-center">
                                         <x-icons.action-edit :route="route('staff.signatures.edit', $signature->id)" />
-                                        {{-- <x-icons.action-form :route="route('staff.Signatures.archive', $signature->id)" /> --}}
+                                        <x-icons.action-form :route="route('staff.signatures.archive', $signature->id)" />
                                     </td>
                                 </tr>
                             @empty

@@ -99,4 +99,32 @@ class SignatureController extends Controller
     {
         //
     }
+
+    public function archived(Request $request)
+    {
+        $query = Signature::onlyTrashed()->with('position');
+        $this->applyFilters($query, $request);
+        $signatures = $query->orderBy('deleted_at', 'desc')->paginate(10);
+        return view('staff.signatures.archive', compact('signatures'));
+    }
+
+    public function archive(Signature $signature)
+    {
+        $signature->delete();
+        return redirect()->route('staff.signatures.index')->with('success', 'Signature Successfully Archived');
+    }
+
+    public function restore($id)
+    {
+        $signatures = Signature::onlyTrashed()->findOrFail($id);
+        $signatures->restore($id);
+        return  redirect()->route('staff.signatures.archived')->with('success', 'Signature Successfully Restored');
+    }
+
+    public function forceDelete($id)
+    {
+        $signatures = Signature::onlyTrashed()->findOrFail($id);
+        $signatures->forceDelete($id);
+        return redirect()->route('staff.signatures.archived')->with('success', 'Signature Successfully Deleted');
+    }
 }

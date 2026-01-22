@@ -2,44 +2,56 @@
 
 @section('content')
     <div class="container-fluid p-0">
+        <x-page-title title="Signatures" active="Signatures" />
+        <x-white-card title="Back to Index Page" :home-route="route('staff.signatures.index')" :showFilters="true" :filterProps="[
+            'searchPlaceholder' => 'Search by name or label...',
+        ]">
 
-        <x-page-title title="Archived Expenses" active="Archived Expenses" home="Expenses" :home-route="route('staff.expenses.index')" />
-        <x-white-card title="Back to Index Page" :home-route="route('staff.expenses.index')">
-            <div class="table-responsive m-b-30">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Amount </th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($expenses as $expense)
+            <div id="ajax-results-container">
+                <div class="table-responsive m-b-30">
+                    <table class="table table-striped table-bordered">
+                        <thead>
                             <tr>
-                                <td class="name">{{ $expense->date }} </td>
-                                <td>{{ $expense->category->code }} </td>
-                                <td>{{ $expense->name }} - {{ $expense->description }}</td>
-                                <td>{{ number_format($expense->amount) }} </td>
-                                <td class="text-center">
-                                    <x-icons.action-form :route="route('staff.expenses.restore', $expense->id)" aClass="btn btn-sm btn-outline-success border-0"
-                                        title="Restore" icon="fas fa-undo" name="restore" />
-                                    <x-icons.action-form :route="route('staff.expenses.forceDelete', $expense->id)" icon="fas fa-trash" title="Delete"
-                                        method="DELETE" aClass="btn btn-sm btn-outline-danger border-0"
-                                        name="force-delete" />
-                                </td>
+                                <th>Name</th>
+                                <th>Label</th>
+                                <th>Position</th>
+                                <th class="text-center">Active</th>
+                                <th class="text-center">Action</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center">No Expenses found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-                {{ $expenses->links() }}
-                <x-sweet-alert entity="Expenses" />
+                        </thead>
+
+                        <tbody>
+                            @forelse ($signatures as $signature)
+                                <tr>
+                                    <td class="name">{{ $signature->name }} </td>
+                                    <td>{{ $signature->label }} </td>
+                                    <td>{{ $signature->position->name }}</td>
+                                    <td class="text-center">
+                                        @if ($signature->is_active)
+                                            <span class="badge bg-success">Yes</span>
+                                        @else
+                                            <span class="badge bg-secondary">No</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <x-icons.action-form :route="route('staff.signatures.restore', $signature->id)"
+                                            aClass="btn btn-sm btn-outline-success border-0" title="Restore"
+                                            icon="fas fa-undo" name="restore" />
+                                        <x-icons.action-form :route="route('staff.signatures.forceDelete', $signature->id)" icon="fas fa-trash" title="Delete"
+                                            method="DELETE" aClass="btn btn-sm btn-outline-danger border-0"
+                                            name="force-delete" />
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">No Signatures found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    {{ $signatures->links() }}
+                    <x-sweet-alert entity="Signatures" />
+                </div>
             </div>
         </x-white-card>
     </div>
