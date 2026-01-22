@@ -78,7 +78,8 @@
         @endif
     </div>
 
-    <div class="filters-dropdown-panel show" id="filtersDropdownPanel">
+    <!-- REMOVED the 'show' class to hide by default -->
+    <div class="filters-dropdown-panel" id="filtersDropdownPanel">
         <form id="filterForm" method="GET" class="filter-form">
             <div class="filters-grid">
                 @if (!empty($searchPlaceholder))
@@ -243,6 +244,7 @@
     .filters-container-dropdown {
         margin-bottom: 1.25rem;
         position: relative;
+        min-width: 140px;
     }
 
     .filters-header {
@@ -343,22 +345,31 @@
         font-size: 0.875rem;
     }
 
+    /* CHANGED: Removed initial show state, hidden by default */
     .filters-dropdown-panel {
+        position: absolute;
+        z-index: 1050;
+        width: 100%;
+        min-width: 600px;
+        max-width: 800px;
+        left: 0;
         max-height: 0;
         overflow: hidden;
         opacity: 0;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         background: #fff;
         border-radius: 0.75rem;
-        margin-top: 0;
+        margin-top: 0.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        visibility: hidden;
     }
 
+    /* CHANGED: Only show when 'show' class is added */
     .filters-dropdown-panel.show {
         max-height: 1000px;
         opacity: 1;
-        margin-top: 1rem;
         border: 1.5px solid #e4e9f2;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        visibility: visible;
     }
 
     .filter-form {
@@ -586,20 +597,43 @@
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
     }
 
-    @media (max-width: 1200px) {
-        .filters-grid {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        }
-    }
-
+    /* Mobile adjustments */
     @media (max-width: 768px) {
+        .filters-dropdown-panel {
+            min-width: 100%;
+            max-width: 100%;
+            left: 0;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .filters-dropdown-panel.show {
+            max-height: 80vh;
+        }
+
+        .filter-form {
+            padding: 1rem;
+        }
+
         .filters-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            grid-template-columns: 1fr;
         }
 
         .search-item {
-            grid-column: span 2;
+            grid-column: 1;
+        }
+
+        .filters-header {
+            justify-content: flex-start;
+        }
+
+        .quick-clear-btn {
+            margin-left: auto;
         }
     }
 
@@ -639,12 +673,28 @@
 <script>
     const RESULTS_CONTAINER_ID = '{{ $resultsContainerId }}';
     let ajaxRequestController = null;
+    let filtersPanelVisible = false;
 
     function toggleFiltersDropdown() {
         const panel = document.getElementById('filtersDropdownPanel');
         const btn = document.getElementById('filtersToggleBtn');
-        panel.classList.toggle('show');
-        btn.classList.toggle('active');
+        filtersPanelVisible = !filtersPanelVisible;
+
+        if (filtersPanelVisible) {
+            panel.classList.add('show');
+            btn.classList.add('active');
+        } else {
+            panel.classList.remove('show');
+            btn.classList.remove('active');
+        }
+    }
+
+    function closeFiltersDropdown() {
+        const panel = document.getElementById('filtersDropdownPanel');
+        const btn = document.getElementById('filtersToggleBtn');
+        panel.classList.remove('show');
+        btn.classList.remove('active');
+        filtersPanelVisible = false;
     }
 
     function getFilterParams() {
@@ -890,13 +940,11 @@
         validateDates();
     });
 
+    // Close filters when clicking outside
     document.addEventListener('click', function(event) {
         const container = document.querySelector('.filters-container-dropdown');
-        const panel = document.getElementById('filtersDropdownPanel');
-        const btn = document.getElementById('filtersToggleBtn');
-        if (container && !container.contains(event.target) && panel.classList.contains('show')) {
-            panel.classList.remove('show');
-            btn.classList.remove('active');
+        if (container && !container.contains(event.target) && filtersPanelVisible) {
+            closeFiltersDropdown();
         }
     });
 
