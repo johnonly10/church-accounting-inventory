@@ -13,6 +13,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RevenueTypeController;
 use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpensePDFControlleer;
 use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\ImageController;
@@ -114,11 +115,15 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 
     Route::resource('signatures', SignatureController::class);
 
-    Route::get('/expense-reports', [ExpenseReportController::class, 'index'])
-        ->name('expense-reports.index');
+    // Reports for Expenses
+    Route::get('/expense-reports', [ExpenseReportController::class, 'index'])->name('expense-reports.index');
 
-    Route::get('/staff/expense-reports/pdf', [ExpenseReportController::class, 'pdf'])
-        ->name('expense-reports.pdf');
+    // PDF FOR Expenses
+    Route::get('/staff/expense-reports/pdf', [ExpensePDFControlleer::class, 'index'])->name('expense-reports.pdf');
+
+    // Rrevenue Cash Count
+    Route::resource('revenue-cash-counts', RevenueCashCountController::class);
+    Route::get('revenueCashCount', [RevenueCashCountController::class, 'archived'])->name('revenue-demonination.archived');
 });
 
 require __DIR__ . '/auth.php';

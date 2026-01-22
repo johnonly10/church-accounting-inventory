@@ -16,4 +16,13 @@ class Image extends Model
         'path',
         'is_active'
     ];
+
+    public static function getTypeOptions()
+    {
+        return [
+            'background_2' => 'Background 2',
+            'background' => 'Background',
+            'logo' => 'Logo',
+        ];
+    }
 }

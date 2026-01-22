@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('revenue_cash_counts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('revenue_id')->constrained('revenues')->cascadeOnDelete();
+            $table->datetime('date');
             $table->unsignedInteger('bill_1000')->default(0);
             $table->unsignedInteger('bill_500')->default(0);
             $table->unsignedInteger('bill_200')->default(0);

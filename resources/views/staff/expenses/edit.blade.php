@@ -90,8 +90,8 @@
                                                 Date <span class="text-danger">*</span>
                                             </label>
                                             <input type="date" class="form-control @error('date') is-invalid @enderror"
-                                                id="date" name="date" value="{{ old('date', $expense->date) }}"
-                                                required>
+                                                id="date" name="date"
+                                                value="{{ old('date', $expense->date)->format('Y-m-d') }}" required>
 
                                             @error('date')
                                                 <div class="invalid-feedback">{{ $message }}</div>

@@ -10,7 +10,7 @@
                     <h6 class="mb-0 fw-semibold text-gray-800">
                         <i class="fas fa-filter me-2"></i>Filter Reports
                     </h6>
-                    <small class="text-muted">Refine your expense data</small>
+
                 </div>
             </div>
 
@@ -61,30 +61,6 @@
                             </a>
                         </div>
                     </div>
-
-                    @if (request()->hasAny(['date_from', 'date_to', 'category_id']))
-                        <div class="mt-3 d-flex gap-2 flex-wrap align-items-center">
-                            <span class="text-muted small">Active filters:</span>
-
-                            @if (request('date_from'))
-                                <span class="badge bg-light text-dark border">
-                                    From: {{ \Carbon\Carbon::parse(request('date_from'))->format('M d, Y') }}
-                                </span>
-                            @endif
-
-                            @if (request('date_to'))
-                                <span class="badge bg-light text-dark border">
-                                    To: {{ \Carbon\Carbon::parse(request('date_to'))->format('M d, Y') }}
-                                </span>
-                            @endif
-
-                            @if (request('category_id'))
-                                <span class="badge bg-light text-dark border">
-                                    Category: {{ $categories->find(request('category_id'))->name ?? 'N/A' }}
-                                </span>
-                            @endif
-                        </div>
-                    @endif
                 </form>
             </div>
         </div>
@@ -337,7 +313,7 @@
 
         @media (min-width: 1400px) {
             .container-fluid {
-                max-width: 1400px;
+                max-width: none;
                 margin-left: auto;
                 margin-right: auto;
             }

@@ -11,9 +11,18 @@ class MinistryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ministries = Ministry::orderBy('id')->paginate(10);
+        $query = Ministry::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        $ministries = $query->orderBy('id')->paginate(10)->withQueryString();
         return view('staff.ministry.index', compact('ministries'));
     }
 
@@ -75,9 +84,18 @@ class MinistryController extends Controller
         //
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $ministries = Ministry::onlyTrashed()->paginate(10);
+        $query = Ministry::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        $ministries = $query->orderBy('deleted_at', 'desc')->paginate(10);
         return view('staff.ministry.archive', compact('ministries'));
     }
 

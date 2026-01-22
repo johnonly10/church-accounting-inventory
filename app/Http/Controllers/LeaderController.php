@@ -10,9 +10,19 @@ class LeaderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $leaders = Leader::orderBy('id')->paginate(10);
+        $query = Leader::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nickname', 'like', "%{$search}%")
+                    ->orWhere('cell_name', 'like', "%{$search}%");
+            });
+        }
+        $leaders = $query->orderBy('id')->paginate(10)->withQueryString();
         return view('staff.leaders.index', compact('leaders'));
     }
 
@@ -78,9 +88,21 @@ class LeaderController extends Controller
         return redirect()->route('staff.leaders.index')->with('success', 'Leader archived Successfully');
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $leaders = Leader::onlyTrashed()->paginate(10);
+        $query = Leader::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nickname', 'like', "%{$search}%")
+                    ->orWhere('cell_name', 'like', "%{$search}%");
+            });
+        }
+
+
+        $leaders = $query->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
         return view('staff.leaders.archive', compact('leaders'));
     }
 

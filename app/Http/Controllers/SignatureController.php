@@ -11,10 +11,26 @@ class SignatureController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $signatures = Signature::with('position')->orderBy('id')->paginate(10);
-        return view('staff.signatures.index', compact('signatures'));
+        $query = Signature::with('position');
+
+        $this->applyFilters($query, $request);
+
+        $positions = Position::all()->pluck('name', 'id');
+        $signatures = $query->orderBy('id')->paginate(10);
+        return view('staff.signatures.index', compact('signatures', 'positions'));
+    }
+
+    private function applyFilters($query, Request $request)
+    {
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('label', 'like', "%{$search}%");
+            });
+        }
     }
 
     /**

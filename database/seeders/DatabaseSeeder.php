@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
             LeaderSeeder::class,
             UserSeeder::class,
             CategorySeeder::class,
-            RevenueCollectionSeeder::class,
+            // RevenueCollectionSeeder::class,
             RevenueTypeSeeder::class,
-            RevenueSeeder::class,
+            // RevenueSeeder::class,
 
             PositionSeeder::class,
             ExpenseSeeder::class,

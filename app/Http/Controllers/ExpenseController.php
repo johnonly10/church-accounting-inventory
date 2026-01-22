@@ -12,9 +12,39 @@ class ExpenseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $expenses = Expense::with('category')->latest()->paginate(10);
+        $query = Expense::with('category');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('category_code')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('code', $request->category_code);
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('date', '<=', $request->date_to);
+        }
+
+
+        $expenses = $query->latest()->paginate(10)->withQueryString();
+
         return view('staff.expenses.index', compact('expenses'));
     }
 

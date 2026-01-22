@@ -11,7 +11,7 @@ class RevenueCashCount extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'revenue_id',
+        'date',
         'bill_1000',
         'bill_500',
         'bill_200',
@@ -29,6 +29,7 @@ class RevenueCashCount extends Model
     ];
 
     protected $casts = [
+        'date' => 'datetime',
         'revenue_id' => 'integer',
 
         'bill_1000' => 'integer',
@@ -48,9 +49,4 @@ class RevenueCashCount extends Model
         'centimo_5'  => 'integer',
         'centimo_1'  => 'integer',
     ];
-
-    public function revenues()
-    {
-        return $this->belongsTo(Revenue::class);
-    }
 }

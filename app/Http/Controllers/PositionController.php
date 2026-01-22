@@ -10,9 +10,18 @@ class PositionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $positions = Position::orderBy('name')->paginate(10);
+        $query = Position::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        $positions = $query->orderBy('name')->paginate(10);
         return view('staff.positions.index', compact('positions'));
     }
 
@@ -73,9 +82,16 @@ class PositionController extends Controller
         //
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $positions = Position::onlyTrashed()->paginate(10);
+        $query = Position::onlyTrashed();
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+        $positions = $query->paginate(10);
 
         return view('staff.positions.archive', compact('positions'));
     }

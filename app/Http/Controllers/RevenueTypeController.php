@@ -8,9 +8,18 @@ use Illuminate\Http\Request;
 
 class RevenueTypeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $revenue_types = RevenueType::orderBy('id')->paginate(10);
+        $query = RevenueType::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        $revenue_types = $query->orderBy('id')->paginate(10);
         return view('staff.revenue-types.index', compact('revenue_types'));
     }
 
@@ -44,9 +53,25 @@ class RevenueTypeController extends Controller
         return redirect()->route('staff.revenue-types.index')->with('success', 'Revenue Type Successfully Updated');
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $revenue_types = RevenueType::onlyTrashed()->paginate(10);
+        $query = RevenueType::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+        $revenue_types = $query->paginate(10);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
         return view('staff.revenue-types.archive', compact('revenue_types'));
     }
 
