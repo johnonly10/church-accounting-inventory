@@ -20,4 +20,16 @@ class Category extends Model
     {
         return $this->hasMany(Expense::class);
     }
+
+    public static function getTypeOptions()
+    {
+        return [
+            'asset' => 'Asset',
+            'liability' => 'Liability',
+            'equity' => 'Equity',
+            'funds' => 'Funds',
+            'expenses' => 'Expenses',
+            'receipts' => 'Receipts',
+        ];
+    }
 }

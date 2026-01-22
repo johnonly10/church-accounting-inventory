@@ -7,13 +7,13 @@
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('vendors/themefy_icon/themify-icons.css') }}">
 <link rel="stylesheet" href="{{ asset('vendors/niceselect/css/nice-select.css') }}">
-<link rel="stylesheet" href="{{ asset('vendors/font_awesome/css/all.min.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('vendors/font_awesome/css/all.min.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('vendors/datepicker/date-picker.css') }}">
 <link rel="stylesheet" href="{{ asset('vendors/scroll/scrollable.css') }}">
 <link rel="stylesheet" href="{{ asset('css/metisMenu.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/colors/default.css') }}" id="colorSkinCSS">
-<link rel="stylesheet" href="{{ asset('vendors/package/dist/sweetalert2.min.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('vendors/package/dist/sweetalert2.min.css') }}"> --}}
 
 
 @vite(['resources/css/app.css'])

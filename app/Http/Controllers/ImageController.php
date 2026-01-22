@@ -12,9 +12,23 @@ class ImageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $images = Image::orderBy('id')->paginate(10);
+        $query = Image::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('path', 'like', "%{$search}%");
+            });
+        }
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+
+        $images = $query->orderBy('id')->paginate(10)->withQueryString();
         return view('staff.images.index', compact('images'));
     }
 

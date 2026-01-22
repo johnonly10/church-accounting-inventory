@@ -24,11 +24,6 @@ class Revenue extends Model
         return $this->belongsTo(RevenueCollection::class);
     }
 
-    public function revenueCashCount()
-    {
-        return $this->hasMany(RevenueCashCount::class);
-    }
-
     public function revenueType()
     {
         return $this->belongsTo(RevenueType::class);

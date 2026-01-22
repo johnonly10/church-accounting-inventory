@@ -18,52 +18,7 @@ class ExpenseReportController extends Controller
 
         $expenses = $this->expenseQuery($request)->get();
 
-        return view('staff.expense-reports.index', compact('categories', 'expenses'));
-    }
-
-    public function pdf(Request $request)
-    {
-        $categories = Category::orderBy('type')->orderBy('code')->get();
-
-        $expenses = $this->expenseQuery($request)->get();
-
-        $grandTotal = (int) $expenses->sum('amount');
-
-        $selectedCategory = null;
-        if ($request->filled('category_id')) {
-            $selectedCategory = $categories->firstWhere('id', (int) $request->category_id);
-        }
-
-        $dateFromLabel = $request->filled('date_from')
-            ? Carbon::parse($request->date_from)->format('F j, Y')
-            : 'N/A';
-
-        $dateToLabel = $request->filled('date_to')
-            ? Carbon::parse($request->date_to)->format('F j, Y')
-            : 'N/A';
-
-        $generatedAt = Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y, g:i a');
-
-        // $user = auth()->user();
-
-        $data = [
-            'expenses'         => $expenses,
-            'grandTotal'       => $grandTotal,
-            'selectedCategory' => $selectedCategory,
-            'dateFromLabel'    => $dateFromLabel,
-            'dateToLabel'      => $dateToLabel,
-            'generatedAt'      => $generatedAt,
-            // 'preparedByName'   => strtoupper($user?->name ?? ''),
-            // 'preparedByPos'    => $user?->position?->name ?? '',
-        ];
-
-        $pdf = DomPdf::loadView('staff.expense-reports.pdf', $data)->setPaper('a4', 'portrait');
-
-        $filename = 'expense-reports_' . Carbon::now()->format('Y-m-d_His') . '.pdf';
-
-        return $request->boolean('download')
-            ? $pdf->download($filename)
-            : $pdf->stream($filename);
+        return view('staff.reports.expenses.index', compact('categories', 'expenses'));
     }
 
     private function expenseQuery(Request $request)

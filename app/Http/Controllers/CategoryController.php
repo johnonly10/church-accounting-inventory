@@ -10,9 +10,26 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::orderBy('code')->paginate(10);
+        $query = Category::query();
+
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $categories = $query->orderBy('code')->paginate(10)->withQueryString();
+
+        // dd($request->all());
         return view('staff.categories.index', compact('categories'));
     }
 
@@ -80,9 +97,24 @@ class CategoryController extends Controller
         //
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $categories = Category::onlyTrashed()->paginate(10);
+        $query = Category::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                ;
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $categories = $query->onlyTrashed()->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
         return view('staff.categories.archive', compact('categories'));
     }
 

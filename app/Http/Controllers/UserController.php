@@ -11,10 +11,18 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with(['ministry', 'leader'])
-            ->latest()->paginate(10);
+        $query = User::with(['ministry', 'leader']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        $users = $query->latest()->paginate(10);
         return view('staff.users.index', compact('users'));
     }
 

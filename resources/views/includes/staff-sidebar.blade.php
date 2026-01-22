@@ -42,7 +42,7 @@
 
         <x-includes.sidebar-item title="Images" icon="fas fa-solid fa-image" :hasArrow="true">
             <li><a href="{{ route('staff.images.index') }}">Images </a></li>
-            <li><a href="{{ route('staff.images.create') }}"> Add Category</a></li>
+            <li><a href="{{ route('staff.images.create') }}"> Add Image</a></li>
         </x-includes.sidebar-item>
 
 
@@ -80,6 +80,11 @@
 
             <li><a href="{{ route('staff.revenues.index') }}"> Revenue </a></li>
             <li><a href="{{ route('staff.revenues.create') }}"> Add Revenue </a></li>
+
+            <li class="sidebar-divider"></li>
+
+            <li><a href="{{ route('staff.revenue-cash-counts.index') }}"> Denominations</a></li>
+            <li><a href="{{ route('staff.revenue-cash-counts.create') }}"> Add Denomination </a></li>
         </x-includes.sidebar-item>
 
         {{-- <x-includes.sidebar-item title="Expenses" icon="fas fa-file-invoice-dollar" :hasArroow="true">
@@ -102,6 +107,8 @@
             <li><a href="{{ route('staff.expense-reports.index') }}">Expense Report </a></li>
             {{-- <li><a href="{{ route('staff.signatures.create') }}"> Add Signature</a></li> --}}
         </x-includes.sidebar-item>
+
+
 
 
     </ul>

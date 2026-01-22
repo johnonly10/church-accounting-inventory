@@ -10,9 +10,17 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::orderBy('id')->paginate(10);
+        $query = Department::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+        $departments = $query->orderBy('id')->paginate(10)->withQueryString();
         return view('staff.departments.index', compact('departments'));
     }
 
@@ -74,9 +82,19 @@ class DepartmentController extends Controller
         //
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $departments = Department::onlyTrashed()->paginate(10);
+        $query = Department::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+
+        $departments = $query->orderBy('deleted_at', 'desc')->paginate(10);
         return view('staff.departments.archive', compact('departments'));
     }
 
