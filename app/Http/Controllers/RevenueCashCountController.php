@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RevenueCashCount;
 use Illuminate\Http\Request;
+use Termwind\Components\Raw;
 
 class RevenueCashCountController extends Controller
 {
@@ -126,9 +127,38 @@ class RevenueCashCountController extends Controller
         //
     }
 
-    public function archived()
+    public function archived(Request $request)
     {
-        $revenueCashCounts = RevenueCashCount::onlyTrashed()->orderBy('id')->paginate(10);
+        $query = RevenueCashCount::onlyTrashed();
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('date', '>=', $request->date_from);
+        };
+        if ($request->filled('date_to')) {
+            $query->whereDate('date', '<=',  $request->date_to);
+        };
+        $revenueCashCounts = $query->orderBy('id')->paginate(10);
         return view('staff.revenue-denomination.archive', compact('revenueCashCounts'));
+    }
+
+    public function archive(RevenueCashCount $revenueCashCounts)
+    {
+        $revenueCashCounts->delete();
+        return redirect()->route('staff.revenue-cash-counts.index')->with('success', 'Denomination Successfully Archived');
+    }
+    public function restore($id)
+    {
+        $revenueCashCounts = RevenueCashCount::onlyTrashed()->findOrFail($id);
+        $revenueCashCounts->restore($id);
+
+        return redirect()->route('staff.revenue-cash-counts.archived')->with('success', 'Denomination Successfully Archived');
+    }
+
+    public function forceDelete($id)
+    {
+        $revenueCashCounts = RevenueCashCount::onlyTrashed()->findOrFail($id);
+        $revenueCashCounts->forceDelete($id);
+
+        return redirect()->route('staff.revenue-cash-counts.archived')->with('success', 'Denomination Successfully Deleted');
     }
 }

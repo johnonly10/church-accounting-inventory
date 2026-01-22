@@ -20,6 +20,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 use App\Http\Controllers\SignatureController;
+use App\Models\Signature;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -114,6 +115,10 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::resource('images', ImageController::class);
 
     Route::resource('signatures', SignatureController::class);
+    Route::get('signatures-archives', [SignatureController::class, 'archived'])->name('signatures.archived');
+    Route::patch('signatures/{signature}/archive', [SignatureController::class, 'archive'])->name('signatures.archive');
+    Route::patch('signatures/{id}/restore', [SignatureController::class, 'restore'])->name('signatures.restore');
+    Route::delete('signatures/{id}/force-delete', [SignatureController::class, 'forceDelete'])->name('signatures.forceDelete');
 
     // Reports for Expenses
     Route::get('/expense-reports', [ExpenseReportController::class, 'index'])->name('expense-reports.index');
@@ -123,7 +128,10 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 
     // Rrevenue Cash Count
     Route::resource('revenue-cash-counts', RevenueCashCountController::class);
-    Route::get('revenueCashCount', [RevenueCashCountController::class, 'archived'])->name('revenue-demonination.archived');
+    Route::get('revenueCashCount', [RevenueCashCountController::class, 'archived'])->name('revenue-cash-counts.archived');
+    Route::patch('revenueCashCounts/{revenueCashCounts}/archived', [RevenueCashCountController::class, 'archive'])->name('revenue-cash-counts.archive');
+    Route::patch('revenueCashCounts/{id}/restore', [RevenueCashCountController::class, 'restore'])->name('revenue-cash-counts.restore');
+    Route::delete('revenueCashCounts/{id}/force-delete', [RevenueCashCountController::class, 'forceDelete'])->name('revenue-cash-counts.forceDelete');
 });
 
 require __DIR__ . '/auth.php';

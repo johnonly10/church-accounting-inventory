@@ -34,7 +34,7 @@
     <div class="container-fluid p-0">
         <x-page-title title="Revenue Denomination" active="Revenue Denomination" />
 
-        <x-white-card title="Revenue Denomination" :create-route="route('staff.revenue-cash-counts.create')" :showFilters="true" :filterProps="[
+        <x-white-card title="Denomination" :create-route="route('staff.revenue-cash-counts.create')" :archive-route="route('staff.revenue-cash-counts.archived')" :showFilters="true" :filterProps="[
             'dateFromLabel' => 'From Date',
             'dateFromName' => 'date_from',
             'dateFromValue' => request('date_from'),
@@ -211,6 +211,7 @@
                                     <td class="text-end fw-bold">₱{{ number_format($total, 2) }}</td>
                                     <td class="text-center">
                                         <x-icons.action-edit :route="route('staff.revenue-cash-counts.edit', $row->id)" />
+                                        <x-icons.action-form :route="route('staff.revenue-cash-counts.archive', $row->id)" />
                                     </td>
                                 </tr>
                             @empty
