@@ -14,9 +14,25 @@
     <div class="col-lg-12">
         <div {{ $attributes->merge(['class' => 'white_card card_height_100 mb_30']) }}>
             <div class="white_card_header">
-                <!-- Action Buttons Row - Now on top for better mobile experience -->
-                <div class="row mb-3">
-                    <div class="col-12">
+                <!-- Single row for filters and buttons -->
+                <div class="row align-items-center">
+                    <!-- Left side: Filters -->
+                    <div class="col-md-6">
+                        @if ($showFilters)
+                            <div class="filters-container-dropdown-inline">
+                                <x-white-card-filters :searchPlaceholder="$filterProps['searchPlaceholder'] ?? ''" :searchName="$filterProps['searchName'] ?? 'search'" :searchValue="$filterProps['searchValue'] ?? request()->get('search', '')"
+                                    :dateFromLabel="$filterProps['dateFromLabel'] ?? null" :dateFromName="$filterProps['dateFromName'] ?? 'date_from'" :dateFromValue="$filterProps['dateFromValue'] ?? request()->get('date_from', '')" :dateToLabel="$filterProps['dateToLabel'] ?? null"
+                                    :dateToName="$filterProps['dateToName'] ?? 'date_to'" :dateToValue="$filterProps['dateToValue'] ?? request()->get('date_to', '')" :filter1Label="$filterProps['filter1Label'] ?? null" :filter1Name="$filterProps['filter1Name'] ?? 'filter1'"
+                                    :filter1Value="$filterProps['filter1Value'] ?? request()->get('filter1', '')" :filter1Options="$filterProps['filter1Options'] ?? []" :filter2Label="$filterProps['filter2Label'] ?? null" :filter2Name="$filterProps['filter2Name'] ?? 'filter2'"
+                                    :filter2Value="$filterProps['filter2Value'] ?? request()->get('filter2', '')" :filter2Options="$filterProps['filter2Options'] ?? []" :filter3Label="$filterProps['filter3Label'] ?? null" :filter3Name="$filterProps['filter3Name'] ?? 'filter3'"
+                                    :filter3Value="$filterProps['filter3Value'] ?? request()->get('filter3', '')" :filter3Options="$filterProps['filter3Options'] ?? []" :filter4Label="$filterProps['filter4Label'] ?? null" :filter4Name="$filterProps['filter4Name'] ?? 'filter4'"
+                                    :filter4Value="$filterProps['filter4Value'] ?? request()->get('filter4', '')" :filter4Options="$filterProps['filter4Options'] ?? []" resultsContainerId="ajax-results-container" />
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Right side: Action buttons -->
+                    <div class="col-md-6">
                         <div class="d-flex justify-content-end gap-2 button-group-enhanced">
                             @if ($createRoute)
                                 <a href="{{ $createRoute }}" class="btn_1 btn-enhanced">
@@ -40,21 +56,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Filters Row - Now below buttons -->
-                @if ($showFilters)
-                    <div class="row">
-                        <div class="col-12">
-                            <x-white-card-filters :searchPlaceholder="$filterProps['searchPlaceholder'] ?? ''" :searchName="$filterProps['searchName'] ?? 'search'" :searchValue="$filterProps['searchValue'] ?? request()->get('search', '')"
-                                :dateFromLabel="$filterProps['dateFromLabel'] ?? null" :dateFromName="$filterProps['dateFromName'] ?? 'date_from'" :dateFromValue="$filterProps['dateFromValue'] ?? request()->get('date_from', '')" :dateToLabel="$filterProps['dateToLabel'] ?? null"
-                                :dateToName="$filterProps['dateToName'] ?? 'date_to'" :dateToValue="$filterProps['dateToValue'] ?? request()->get('date_to', '')" :filter1Label="$filterProps['filter1Label'] ?? null" :filter1Name="$filterProps['filter1Name'] ?? 'filter1'"
-                                :filter1Value="$filterProps['filter1Value'] ?? request()->get('filter1', '')" :filter1Options="$filterProps['filter1Options'] ?? []" :filter2Label="$filterProps['filter2Label'] ?? null" :filter2Name="$filterProps['filter2Name'] ?? 'filter2'"
-                                :filter2Value="$filterProps['filter2Value'] ?? request()->get('filter2', '')" :filter2Options="$filterProps['filter2Options'] ?? []" :filter3Label="$filterProps['filter3Label'] ?? null" :filter3Name="$filterProps['filter3Name'] ?? 'filter3'"
-                                :filter3Value="$filterProps['filter3Value'] ?? request()->get('filter3', '')" :filter3Options="$filterProps['filter3Options'] ?? []" :filter4Label="$filterProps['filter4Label'] ?? null" :filter4Name="$filterProps['filter4Name'] ?? 'filter4'"
-                                :filter4Value="$filterProps['filter4Value'] ?? request()->get('filter4', '')" :filter4Options="$filterProps['filter4Options'] ?? []" resultsContainerId="ajax-results-container" />
-                        </div>
-                    </div>
-                @endif
             </div>
             <div class="white_card_body card-body-enhanced">
                 {{ $slot }}
@@ -139,6 +140,38 @@
     }
 
     /* Mobile */
+    @media (max-width: 768px) {
+        .row>.col-md-6 {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 0 0 100% !important;
+        }
+
+        /* Reverse order: buttons on top, filters below */
+        .row>.col-md-6:last-child {
+            order: -1;
+            margin-bottom: 1rem;
+        }
+
+        .button-group-enhanced {
+            justify-content: center !important;
+        }
+
+        .btn-enhanced {
+            justify-content: center;
+            width: auto;
+            min-width: 140px;
+        }
+
+        .btn-text {
+            font-size: 0.875rem;
+        }
+
+        .filters-container-dropdown-inline {
+            width: 100%;
+        }
+    }
+
     @media (max-width: 576px) {
         .button-group-enhanced {
             flex-direction: column;
@@ -146,12 +179,13 @@
         }
 
         .btn-enhanced {
-            justify-content: center;
             width: 100%;
+            justify-content: center;
         }
 
-        .btn-text {
+        .btn-enhanced {
             font-size: 0.875rem;
+            padding: 0.5rem 1rem;
         }
     }
 
@@ -172,7 +206,18 @@
         padding: 1.5rem;
     }
 
-    .white_card_header .mb-3:last-child {
+    .white_card_header .row:last-child {
         margin-bottom: 0 !important;
+    }
+
+    /* Inline filters container */
+    .filters-container-dropdown-inline {
+        display: inline-block;
+        width: auto;
+        min-width: 140px;
+    }
+
+    .filters-container-dropdown-inline .filters-container-dropdown {
+        margin-bottom: 0;
     }
 </style>

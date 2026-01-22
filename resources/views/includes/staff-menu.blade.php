@@ -26,13 +26,13 @@
                 <div class="header_right d-flex justify-content-between align-items-center">
                     <div class="header_notification_warp d-flex align-items-center">
                         <li>
-                            <a class="bell_notification_clicker" href="#">
+                            {{-- <a class="bell_notification_clicker" href="#">
                                 <img src="{{ asset('img/icon/bell.svg') }}" alt="">
                                 <span>2</span>
-                            </a>
+                            </a> --}}
 
                             <!-- Menu_NOtification_Wrap  -->
-                            <div class="Menu_NOtification_Wrap">
+                            {{-- <div class="Menu_NOtification_Wrap">
                                 <div class="notification_Header">
                                     <h4>Notifications</h4>
                                 </div>
@@ -74,7 +74,7 @@
                                         <a href="#" class="btn_1">See More</a>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <!--/ Menu_NOtification_Wrap  -->
                         </li>
                     </div>
