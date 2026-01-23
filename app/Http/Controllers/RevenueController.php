@@ -83,7 +83,7 @@ class RevenueController extends Controller
             'revenues.*.name' => ['nullable', 'string', 'max:255'],
             'revenues.*.revenue_type_id' => ['required', 'integer', 'exists:revenue_types,id'],
             'revenues.*.beneficiary' => ['required', 'in:pastor,general'],
-            'revenues.*.payment_method' => ['required', 'in:gcash,cash'],
+            'revenues.*.payment_method' => ['required', 'in:online,cash'],
             'revenues.*.amount' => ['required', 'numeric', 'min:0'],
 
 
@@ -124,7 +124,7 @@ class RevenueController extends Controller
             'name' => ['nullable', 'string', 'max:255'],
             'revenue_type_id' => ['required', 'integer', 'exists:revenue_types,id'],
             'beneficiary' => ['required', 'in:pastor,general'],
-            'payment_method' => ['required', 'in:gcash,cash'],
+            'payment_method' => ['required', 'in:online,cash'],
             'amount' => ['required', 'numeric', 'min:0'],
         ]);
 

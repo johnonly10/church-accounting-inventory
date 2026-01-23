@@ -288,9 +288,9 @@
                                                         {{ old('revenues.0.payment_method', 'cash') === 'cash' ? 'selected' : '' }}>
                                                         Cash
                                                     </option>
-                                                    <option value="gcash"
-                                                        {{ old('revenues.0.payment_method') === 'gcash' ? 'selected' : '' }}>
-                                                        GCash
+                                                    <option value="online"
+                                                        {{ old('revenues.0.payment_method') === 'online' ? 'selected' : '' }}>
+                                                        Online
                                                     </option>
                                                 </select>
                                                 @error('revenues.0.payment_method')
@@ -435,7 +435,7 @@
                                 </label>
                                 <select class="field-input payment-method-select" name="revenues[${revenueCount}][payment_method]" required>
                                     <option value="cash" selected>Cash</option>
-                                    <option value="gcash">GCash</option>
+                                    <option value="online">Online</option>
                                 </select>
                             </div>
 

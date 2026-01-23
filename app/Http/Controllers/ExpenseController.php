@@ -62,12 +62,14 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:255',
             'amount' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
             'date' => 'required|date',
+            'paid' => 'required|in:online,cash',
         ]);
 
         Expense::create($validated);
@@ -102,6 +104,7 @@ class ExpenseController extends Controller
             'amount' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
             'date' => 'required|date',
+            'paid' => 'required|in:online,cash',
         ]);
 
         $expense->update($validated);

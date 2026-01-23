@@ -31,6 +31,10 @@ class ExpenseReportController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
+        if ($request->filled('paid')) {
+            $query->where('paid', $request->paid);
+        }
+
         if ($request->filled('date_from') && $request->filled('date_to')) {
             $from = $request->date_from;
             $to = $request->date_to;

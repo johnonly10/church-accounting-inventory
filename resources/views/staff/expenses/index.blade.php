@@ -28,6 +28,7 @@
                                 <th>Date</th>
                                 <th>Code</th>
                                 <th>Name</th>
+                                <th> Paid by </th>
                                 <th>Amount </th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -39,6 +40,7 @@
                                     <td class="name">{{ $expense->date->toDateString() }} </td>
                                     <td>{{ $expense->category->code }} </td>
                                     <td>{{ $expense->name }} - {{ $expense->description }}</td>
+                                    <td>{{ ucfirst($expense->paid) }} </td>
                                     <td>₱{{ number_format($expense->amount, 2) }} </td>
                                     <td class="text-center">
                                         <x-icons.action-edit :route="route('staff.expenses.edit', $expense->id)" />
