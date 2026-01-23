@@ -129,7 +129,7 @@
                                                 <option value="">-- Select Position --</option>
                                                 @foreach ($positions as $position)
                                                     <option value="{{ $position->id }}"
-                                                        {{ old('position_id', $position->id) == $position->id ? 'selected' : '' }}>
+                                                        {{ old('position_id', $user->position_id) == $position->id ? 'selected' : '' }}>
                                                         {{ $position->name }}
                                                     </option>
                                                 @endforeach

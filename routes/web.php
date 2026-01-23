@@ -17,6 +17,7 @@ use App\Http\Controllers\ExpensePDFControlleer;
 use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 use App\Http\Controllers\SignatureController;
@@ -132,6 +133,8 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('revenueCashCounts/{revenueCashCounts}/archived', [RevenueCashCountController::class, 'archive'])->name('revenue-cash-counts.archive');
     Route::patch('revenueCashCounts/{id}/restore', [RevenueCashCountController::class, 'restore'])->name('revenue-cash-counts.restore');
     Route::delete('revenueCashCounts/{id}/force-delete', [RevenueCashCountController::class, 'forceDelete'])->name('revenue-cash-counts.forceDelete');
+
+    Route::resource('profile', ProfileController::class);
 });
 
 require __DIR__ . '/auth.php';

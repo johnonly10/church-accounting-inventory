@@ -8,10 +8,9 @@
 
     <style>
         @page {
-            margin: 0.35in 0.6in 0.75in 0.6in;
+            margin: 0.35in 0.6in 0.15in 0.6in;
         }
 
-        /* DOMPDF-friendly font (make sure this file exists) */
         @font-face {
             font-family: 'DejaVu Sans';
             src: url("{{ public_path('fonts/DejaVuSans.ttf') }}") format("truetype");
@@ -65,7 +64,6 @@
 
         .subtext {
             font-size: 15px;
-            /* FIX: was "15x" */
             margin-top: 2px;
         }
 
@@ -142,7 +140,6 @@
             background: #f9fafb;
         }
 
-        /* DOMPDF-safe footer */
         .footer {
             position: fixed;
             bottom: 0;
@@ -170,6 +167,12 @@
             margin-right: -60px;
             margin-top: -10px;
         }
+
+        .signature-line {
+            border-top: 1px solid #111827;
+            margin-top: 40px;
+            width: 200px;
+        }
     </style>
 </head>
 
@@ -188,7 +191,7 @@
                 </td>
 
                 <td class="logo" style="text-align:right;">
-                    {{-- <img src="{{ public_path('images/logo/BaRG-logo.png') }}" alt="Logo"> --}}
+
                 </td>
             </tr>
         </table>
@@ -215,17 +218,23 @@
             </span>
         </div>
 
-        <div class="info-row">
-            <span class="info-label">Category</span>
-            <span class="info-separator">:</span>
-            <span class="info-value">
-                @if ($selectedCategory)
+        @if ($selectedCategory)
+            <div class="info-row">
+                <span class="info-label">Category</span>
+                <span class="info-separator">:</span>
+                <span class="info-value">
                     {{ $selectedCategory->code }} - {{ $selectedCategory->name }}
-                @else
-                    All Categories
-                @endif
-            </span>
-        </div>
+                </span>
+            </div>
+        @endif
+
+        @if ($selectedPaid && $selectedPaid !== '')
+            <div class="info-row">
+                <span class="info-label">Paid Through</span>
+                <span class="info-separator">:</span>
+                <span class="info-value">{{ $paidLabel }}</span>
+            </div>
+        @endif
 
         <div class="info-row">
             <span class="info-label">Total Records</span>
@@ -239,12 +248,16 @@
             <tr>
                 <th style="width: 90px;">Date</th>
 
-                {{-- Show Category column ONLY when All Categories --}}
                 @if (!$selectedCategory)
                     <th style="width: 140px;">Category</th>
                 @endif
 
                 <th>Details</th>
+
+                @if (!$selectedPaid || $selectedPaid == '')
+                    <th style="width: 100px;">Paid Through</th>
+                @endif
+
                 <th style="width: 110px;">Amount</th>
             </tr>
         </thead>
@@ -256,6 +269,7 @@
                         {{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}
                         <div class="muted">{{ \Carbon\Carbon::parse($expense->date)->format('D') }}</div>
                     </td>
+
                     @if (!$selectedCategory)
                         <td>
                             <div><strong>{{ $expense->category?->code ?? 'N/A' }}</strong></div>
@@ -270,15 +284,35 @@
                         @endif
                     </td>
 
+                    @if (!$selectedPaid || $selectedPaid == '')
+                        <td class="text-center">
+                            @if ($expense->paid == 'online')
+                                <span>Online</span>
+                            @elseif ($expense->paid == 'cash')
+                                <span>Cash</span>
+                            @else
+                                <span class="muted">{{ ucfirst($expense->paid) }}</span>
+                            @endif
+                        </td>
+                    @endif
+
                     <td class="text-right">
                         ₱{{ number_format((float) $expense->amount, 2) }}
                     </td>
                 </tr>
             @empty
                 <tr>
-                    {{-- If selectedCategory exists: 3 columns (Date, Details, Amount)
-                         Else: 4 columns (Date, Category, Details, Amount) --}}
-                    <td colspan="{{ $selectedCategory ? 3 : 4 }}" class="text-center">
+                    @php
+                        $colspan = 2;
+                        if (!$selectedCategory) {
+                            $colspan++;
+                        }
+                        if (!$selectedPaid || $selectedPaid == '') {
+                            $colspan++;
+                        }
+                        $colspan++;
+                    @endphp
+                    <td colspan="{{ $colspan }}" class="text-center">
                         No records found.
                     </td>
                 </tr>
@@ -286,9 +320,17 @@
 
             @if ($expenses->count() > 0)
                 <tr class="total-row">
-                    {{-- If selectedCategory exists: label spans 2 (Date + Details)
-                         Else: label spans 3 (Date + Category + Details) --}}
-                    <td colspan="{{ $selectedCategory ? 2 : 3 }}">
+                    @php
+                        $colspanForLabel = 1;
+                        $colspanForLabel += 1;
+                        if (!$selectedCategory) {
+                            $colspanForLabel += 1;
+                        }
+                        if (!$selectedPaid || $selectedPaid == '') {
+                            $colspanForLabel += 1;
+                        }
+                    @endphp
+                    <td colspan="{{ $colspanForLabel }}">
                         <strong>Grand Total</strong>
                     </td>
                     <td class="text-right">
@@ -299,22 +341,44 @@
         </tbody>
     </table>
 
+    <table class="signatures-table" style="width: 100%; margin-top: 30px; border-collapse: collapse; border: none;">
+        @php
+            $allSignatures = collect([
+                (object) [
+                    'label' => 'Prepared By',
+                    'name' => auth()->user()->name,
+                    'position' => auth()->user()->position,
+                ],
+            ])->merge($signatures);
 
+            $chunks = $allSignatures->chunk(3);
+        @endphp
 
+        @foreach ($chunks as $chunk)
+            <tr>
+                @foreach ($chunk as $sig)
+                    <td style="width: 33.33%; vertical-align: top; text-align: center; border: none; padding: 0 10px;">
+                        <div class="signature-block" style="margin-bottom: 20px;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">{{ $sig->label }}:</div>
+                            <div style="height: 40px;">&nbsp;</div>
+                            <div
+                                style="border-top: 1px solid #000; display: inline-block; min-width: 180px; padding-top: 5px;">
+                                <strong>{{ $sig->name }}</strong>
+                                @if ($sig->position)
+                                    <div style="font-size: 10px; color: #6b7280;">{{ $sig->position->name }}</div>
+                                @endif
+                            </div>
+                        </div>
+                    </td>
+                @endforeach
 
-
-    <table class="signatures-table" style="width: 100%; margin-top: 10px; border-collapse: collapse; border: none;">
-        <tr>
-            <td style="width: 50%; vertical-align: top; text-align: left; border: none;">
-                <div class="signature-block" style="margin-bottom: 30px;">
-                    <div style="font-weight: bold;">Prepared By:</div>
-                    <div style="height: 20px;">&nbsp;</div>
-                    <div><strong>{{ $preparedBy->name }}</strong></div>
-                    <div>{{ $preparedBy->position->name }}</div>
-                </div>
-
-            </td>
-        </tr>
+                @for ($i = $chunk->count(); $i < 3; $i++)
+                    <td style="width: 33.33%; vertical-align: top; text-align: center; border: none; padding: 0 10px;">
+                        &nbsp;
+                    </td>
+                @endfor
+            </tr>
+        @endforeach
     </table>
 
 </body>

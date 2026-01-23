@@ -28,4 +28,22 @@ class Revenue extends Model
     {
         return $this->belongsTo(RevenueType::class);
     }
+
+
+
+    public static function getPaymentOptions()
+    {
+        return [
+            'online' => 'Online',
+            'cash' => 'Cash',
+        ];
+    }
+
+    public static function getBeneficiaryOptions()
+    {
+        return [
+            'general' => 'General',
+            'pastor' => 'Pastor',
+        ];
+    }
 }

@@ -34,6 +34,10 @@ class ExpenseController extends Controller
             });
         }
 
+        if ($request->filled('paid')) {
+            $query->where('paid', $request->paid);
+        }
+
         if ($request->filled('date_from')) {
             $query->whereDate('date', '>=', $request->date_from);
         }

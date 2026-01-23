@@ -17,7 +17,7 @@
             'filter1Label' => 'Payment Method',
             'filter1Name' => 'payment_method',
             'filter1Value' => request('payment_method'),
-            'filter1Options' => \App\Models\User::getPaymentOptions(),
+            'filter1Options' => \App\Models\Revenue::getPaymentOptions(),
         
             'filter2Label' => 'Revenue Type',
             'filter2Name' => 'revenue_type',
@@ -27,7 +27,7 @@
             'filter3Label' => 'Beneficiary',
             'filter3Name' => 'beneficiary',
             'filter3Value' => request('beneficiary'),
-            'filter3Options' => \App\Models\User::getBeneficiaryOptions(),
+            'filter3Options' => \App\Models\Revenue::getBeneficiaryOptions(),
         ]">
             <div id="ajax-results-container">
                 <div class="table-responsive m-b-30">
