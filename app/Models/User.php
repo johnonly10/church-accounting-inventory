@@ -88,21 +88,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Position::class);
     }
-
-
-    public static function getPaymentOptions()
-    {
-        return [
-            'gcash' => 'Gcash',
-            'cash' => 'Cash',
-        ];
-    }
-
-    public static function getBeneficiaryOptions()
-    {
-        return [
-            'general' => 'General',
-            'pastor' => 'Pastor',
-        ];
-    }
 }

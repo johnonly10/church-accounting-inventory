@@ -80,13 +80,20 @@
                     </div>
 
                     <div class="profile_info">
-                        <img src="{{ asset('img/client_img.png') }}" alt="#">
+                        @php
+                            $profileImage = auth()->user()->path
+                                ? asset('storage/Profile/' . auth()->user()->path)
+                                : asset('storage/Profile/default.jpg');
+                        @endphp
+
+                        <img src="{{ $profileImage }}" alt="{{ auth()->user()->name }}'s profile picture"
+                            class="profile-image">
                         <div class="profile_info_iner">
                             <div class="profile_author_name">
                                 <p>{{ auth()->user()->name }}</p>
                             </div>
                             <div class="profile_info_details">
-                                <a href="profile.html">My Profile </a>
+                                <a href="{{ route('staff.profile.index') }}">My Profile </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"> Log Out </button>

@@ -22,23 +22,23 @@ class UserSeeder extends Seeder
         $music = Ministry::where('name', 'Music Ministry')->first();
         $media = Ministry::where('name', 'Media Ministry')->first();
 
-        User::updateOrCreate(
-            ['email' => 'pastor@example.com'],
-            [
-                'name' => 'Main Pastor',
-                'password' => Hash::make('password'),
-                'roletype' => 'PASTOR',
-                'department_id' => $deptLeaders?->id,
-                'leader_id' => $leaderJoshua?->id,
-                'ministry_id' => $music?->id,
-                'email_verified_at' => now(),
-            ]
-        );
+        // User::updateOrCreate(
+        //     ['email' => 'pastor@example.com'],
+        //     [
+        //         'name' => 'Main Pastor',
+        //         'password' => Hash::make('password'),
+        //         'roletype' => 'PASTOR',
+        //         'department_id' => $deptLeaders?->id,
+        //         'leader_id' => $leaderJoshua?->id,
+        //         'ministry_id' => $music?->id,
+        //         'email_verified_at' => now(),
+        //     ]
+        // );
 
         User::updateOrCreate(
             ['email' => 'staff@example.com'],
             [
-                'name' => 'Sample Staff',
+                'name' => 'John Smith',
                 'password' => Hash::make('password'),
                 'roletype' => 'STAFF',
                 'department_id' => $deptYouth?->id,

@@ -199,7 +199,7 @@
                         @if ($expenses->count() > 0)
                             <tfoot class="table-light">
                                 <tr class="fw-bold">
-                                    <td colspan="4" class="py-3 px-4 text-gray-800">
+                                    <td colspan="5" class="py-3 px-4 text-gray-800">
                                         <i class="fas fa-calculator me-2"></i>Grand Total
                                     </td>
                                     <td class="py-3 px-4 text-end">
@@ -216,6 +216,9 @@
         </div>
     </div>
 @endsection
+
+
+
 
 @push('styles')
     <style>

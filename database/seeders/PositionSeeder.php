@@ -23,13 +23,15 @@ class PositionSeeder extends Seeder
             ['name' => 'Head Pastor'],
             ['name' => "Pastor's Wife"],
 
-            ['name' => 'Head of Finance Ministry '],
-            ['name' => 'Head of Ushering and Hospitality Ministry '],
-            ['name' => 'Head of Dance Ministry '],
-            ['name' => 'Head of Maintenance Ministry '],
-            ['name' => 'Head of Posterity Ministry '],
-            ['name' => 'Head of Music Ministry '],
-            ['name' => 'Head of Media Ministry '],
+            ['name' => 'Head of Finance Ministry'],
+            ['name' => 'Head of Ushering and Hospitality Ministry'],
+            ['name' => 'Head of Dance Ministry'],
+            ['name' => 'Head of Maintenance Ministry'],
+            ['name' => 'Head of Posterity Ministry'],
+            ['name' => 'Head of Music Ministry'],
+            ['name' => 'Head of Media Ministry'],
+            ['name' => 'Financial Secretary'],
+            ['name' => 'Head Bookkeeper'],
         ];
 
         foreach ($positions as $position)

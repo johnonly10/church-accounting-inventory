@@ -5,27 +5,35 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Expense;
 use App\Models\Category;
+use App\Models\Signature;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Barryvdh\DomPDF\Facade\Pdf as DomPdf;
 
 class ExpensePDFControlleer extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $categories = Category::orderBy('type')->orderBy('code')->get();
 
         $expenses = $this->expenseQuery($request)->get();
-
         $grandTotal = (int) $expenses->sum('amount');
 
         $selectedCategory = null;
         if ($request->filled('category_id')) {
             $selectedCategory = $categories->firstWhere('id', (int) $request->category_id);
         }
+
+        // Get the selected payment method
+        $selectedPaid = $request->filled('paid') ? $request->paid : null;
+
+        // Map payment method to readable label
+        $paidLabels = [
+            'online' => 'Online',
+            'cash' => 'Cash',
+            '' => 'All Payments'
+        ];
+        $paidLabel = $paidLabels[$selectedPaid] ?? 'All Payments';
 
         $dateFromLabel = $request->filled('date_from')
             ? Carbon::parse($request->date_from)->format('F j, Y')
@@ -37,13 +45,21 @@ class ExpensePDFControlleer extends Controller
 
         $generatedAt = Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y, g:i a');
 
+        // Get active signatures
+        $signatures = Signature::with('position')
+            ->where('is_active', true)
+            ->get();
+
         $data = [
             'expenses'         => $expenses,
             'grandTotal'       => $grandTotal,
             'selectedCategory' => $selectedCategory,
+            'selectedPaid'     => $selectedPaid,
+            'paidLabel'        => $paidLabel,
             'dateFromLabel'    => $dateFromLabel,
             'dateToLabel'      => $dateToLabel,
             'generatedAt'      => $generatedAt,
+            'signatures'       => $signatures,
         ];
 
         $pdf = DomPdf::loadView('staff.pdf.expenses.index', $data)->setPaper('a4', 'portrait');
@@ -65,6 +81,10 @@ class ExpensePDFControlleer extends Controller
             $query->where('category_id', $request->category_id);
         }
 
+        if ($request->filled('paid')) {
+            $query->where('paid', $request->paid);
+        }
+
         if ($request->filled('date_from') && $request->filled('date_to')) {
             $from = $request->date_from;
             $to = $request->date_to;
@@ -81,53 +101,5 @@ class ExpensePDFControlleer extends Controller
         }
 
         return $query;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

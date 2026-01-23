@@ -19,6 +19,11 @@
             'filter1Name' => 'category_code',
             'filter1Options' => \App\Models\Category::orderBy('code')->pluck('code', 'code')->toArray(),
             'filter1Value' => request('category_code'),
+        
+            'filter2Label' => 'Payments',
+            'filter2Name' => 'paid',
+            'filter2Value' => request('paid'),
+            'filter2Options' => \App\Models\Expense::getPaidOptions(),
         ]">
             <div id="ajax-results-container">
                 <div class="table-responsive m-b-30">
