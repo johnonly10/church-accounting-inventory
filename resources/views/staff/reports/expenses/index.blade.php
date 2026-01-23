@@ -50,6 +50,15 @@
                         </div>
 
                         <div class="col-lg-2 col-md-6">
+                            <label for="paid" class="form-label text-gray-700 fw-medium">Paid Through</label>
+                            <select class="form-select" id="paid" name="paid">
+                                <option value="" selected>All Payments </option>
+                                <option value="online" {{ request('paid') == 'online' ? 'selected' : '' }}> Online </option>
+                                <option value="cash" {{ request('paid') == 'cash' ? 'selected' : '' }}> Cash </option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-2 col-md-6">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-search me-1"></i>Apply
                             </button>
@@ -106,6 +115,7 @@
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Date</th>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Category</th>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Details</th>
+                                <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Paid through</th>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4 text-end">Amount</th>
                             </tr>
                         </thead>
@@ -150,6 +160,13 @@
                                                 {{ Str::limit($expense->description, 60) }}
                                             </div>
                                         @endif
+                                    </td>
+
+                                    <td class="py-3 px-4">
+                                        <div class="fw-medium text-gray-900">
+                                            {{ ucfirst($expense->paid) }}
+                                        </div>
+
                                     </td>
 
                                     <td class="py-3 px-4 text-end">

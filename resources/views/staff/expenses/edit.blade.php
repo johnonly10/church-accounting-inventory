@@ -98,6 +98,26 @@
                                             @enderror
                                         </div>
 
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold" for="paid">
+                                                Paid Through <span class="text-danger">*</span>
+                                            </label>
+                                            <select name="paid" id="paid"
+                                                class="form-select @error('paid') is-invalid @enderror" required>
+                                                <option value="" disabled selected>-- Paid by --</option>
+                                                <option value="online"
+                                                    {{ old('paid', $expense->paid) == 'online' ? 'selected' : '' }}>
+                                                    Online </option>
+                                                <option value="cash"
+                                                    {{ old('paid', $expense->paid) == 'cash' ? 'selected' : '' }}> Cash
+                                                </option>
+                                            </select>
+
+                                            @error('paid')
+                                                <div class="invalid-feedback">{{ $message }} </div>
+                                            @enderror
+                                        </div>
+
                                     </div>
 
                                 </div>

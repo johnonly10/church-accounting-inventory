@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('revenue_collection_id')->constrained('revenue_collections')->cascadeOnDelete();
             $table->foreignId('revenue_type_id')->constrained('revenue_types')->cascadeOnDelete();
             $table->string('name')->nullable();
-            $table->enum('payment_method', ['gcash', 'cash'])->default('cash')->index();
+            $table->enum('payment_method', ['online', 'cash'])->default('cash')->index();
             $table->enum('beneficiary', ['pastor', 'general'])->default('general');
             $table->decimal('amount', 12, 2);
             $table->softDeletes();

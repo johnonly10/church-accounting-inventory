@@ -8,9 +8,7 @@ use Termwind\Components\Raw;
 
 class RevenueCashCountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $query = RevenueCashCount::query();
@@ -29,17 +27,11 @@ class RevenueCashCountController extends Controller
         return view('staff.revenue-denomination.index', compact('revenueCashCounts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('staff.revenue-denomination.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -70,25 +62,11 @@ class RevenueCashCountController extends Controller
         return redirect()->route('staff.revenue-cash-counts.index')->with('success', 'Revenue Denomination created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(RevenueCashCount $revenueCashCount)
     {
         return view('staff.revenue-denomination.edit', compact('revenueCashCount'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, RevenueCashCount $revenueCashCount)
     {
         $validated = $request->validate([
@@ -117,14 +95,6 @@ class RevenueCashCountController extends Controller
         $revenueCashCount->update($validated);
 
         return redirect()->route('staff.revenue-cash-counts.index')->with('success', 'Revenue Denomination created successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function archived(Request $request)

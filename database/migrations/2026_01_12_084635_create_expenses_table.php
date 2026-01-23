@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->unsignedMediumInteger('amount');
             $table->date('date');
+            $table->enum('paid', ['online', 'cash'])->default('cash');
             $table->softDeletes();
             $table->timestamps();
         });
