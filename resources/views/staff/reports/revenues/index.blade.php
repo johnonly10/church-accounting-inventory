@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container-fluid px-4 py-4">
-        <x-page-title title="Expense Reports" active="Expense Reports" />
+        <x-page-title title="Revenue Reports" active="Revenue Reports" />
 
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
@@ -10,65 +10,68 @@
                     <h6 class="mb-0 fw-semibold text-gray-800">
                         <i class="fas fa-filter me-2"></i>Filter Reports
                     </h6>
-
                 </div>
             </div>
 
             <div class="card-body p-4">
-                <form method="GET" action="{{ route('staff.expense-reports.index') }}" id="filterForm">
+                <form method="GET" action="{{ route('staff.revenue-reports.index') }}" id="filterForm">
                     <div class="row g-3 align-items-end">
+                        {{-- Date From - 2 columns on large, 6 on medium --}}
                         <div class="col-lg-2 col-md-6">
                             <label for="date_from" class="form-label text-gray-700 fw-medium">From Date</label>
                             <input type="date" class="form-control" id="date_from" name="date_from"
                                 value="{{ request('date_from') }}">
                         </div>
 
+                        {{-- Date To - 2 columns on large, 6 on medium --}}
                         <div class="col-lg-2 col-md-6">
                             <label for="date_to" class="form-label text-gray-700 fw-medium">To Date</label>
                             <input type="date" class="form-control" id="date_to" name="date_to"
                                 value="{{ request('date_to') }}">
                         </div>
 
-                        <div class="col-lg-4 col-md-12">
-                            <label for="category_id" class="form-label text-gray-700 fw-medium">Category</label>
-                            <select class="form-select" id="category_id" name="category_id">
-                                <option value="">All Categories</option>
-
-                                @php $grouped = $categories->groupBy('type'); @endphp
-
-                                @foreach ($grouped as $type => $items)
-                                    <optgroup label="{{ ucfirst($type) }}">
-                                        @foreach ($items as $category)
-                                            <option value="{{ $category->id }}"
-                                                {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->code }} - {{ $category->name }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
+                        {{-- Revenue Type - 3 columns on large, 6 on medium --}}
+                        <div class="col-lg-3 col-md-6">
+                            <label for="revenue_type_id" class="form-label text-gray-700 fw-medium">Revenue Type</label>
+                            <select class="form-select" id="revenue_type_id" name="revenue_type_id">
+                                <option value="">All Types</option>
+                                @foreach ($revenueTypes as $type)
+                                    <option value="{{ $type->id }}"
+                                        {{ request('revenue_type_id') == $type->id ? 'selected' : '' }}>
+                                        {{ $type->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
 
+                        {{-- Payment Method - 2 columns on large, 6 on medium --}}
                         <div class="col-lg-2 col-md-6">
-                            <label for="paid" class="form-label text-gray-700 fw-medium">Paid Through</label>
-                            <select class="form-select" id="paid" name="paid">
-                                <option value="" selected>All Payments </option>
-                                <option value="online" {{ request('paid') == 'online' ? 'selected' : '' }}> Online </option>
-                                <option value="cash" {{ request('paid') == 'cash' ? 'selected' : '' }}> Cash </option>
+                            <label for="payment_method" class="form-label text-gray-700 fw-medium">Payment Method</label>
+                            <select class="form-select" id="payment_method" name="payment_method">
+                                <option value="">All Methods</option>
+                                <option value="online" {{ request('payment_method') == 'online' ? 'selected' : '' }}>Online
+                                </option>
+                                <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>Cash
+                                </option>
                             </select>
                         </div>
 
-                        <div class="col-lg-2 col-md-6">
+                        {{-- Apply Button - 1 column on large, 6 on medium --}}
+                        <div class="col-lg-3 col-md-6">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-search me-1"></i>Apply
                             </button>
                         </div>
 
-                        <div class="col-lg-2 col-md-6">
-                            <a href="{{ route('staff.expense-reports.index') }}" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-redo me-1"></i>Reset
-                            </a>
-                        </div>
+                        {{-- Reset Button - Only show if filters are applied - 2 columns on large, 6 on medium --}}
+                        @if (request()->hasAny(['date_from', 'date_to', 'revenue_type_id', 'payment_method']))
+                            <div class="col-lg-2 col-md-6">
+                                <a href="{{ route('staff.revenue-reports.index') }}"
+                                    class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-redo me-1"></i>Reset
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </form>
             </div>
@@ -79,43 +82,25 @@
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                     {{-- Left --}}
                     <div>
-                        <h6 class="mb-1 fw-semibold text-gray-800">Expense Details</h6>
+                        <h6 class="mb-1 fw-semibold text-gray-800">Revenue Details</h6>
                         <small class="text-muted">
-                            Showing {{ $expenses->count() }} {{ $expenses->count() === 1 ? 'record' : 'records' }}
+                            Showing {{ $revenues->count() }} {{ $revenues->count() === 1 ? 'record' : 'records' }}
                         </small>
                     </div>
-
-                    {{-- Right --}}
-                    <div class="d-flex gap-2 flex-wrap">
-                        {{-- Preview --}}
-                        <a class="btn btn-outline-primary btn-sm"
-                            href="{{ route('staff.expense-reports.pdf', request()->except('download') + ['download' => 0]) }}"
-                            target="_blank" rel="noopener">
-                            <i class="fas fa-eye me-1"></i>Preview PDF
-                        </a>
-
-                        {{-- Download --}}
-                        <a class="btn btn-outline-success btn-sm"
-                            href="{{ route('staff.expense-reports.pdf', request()->except('download') + ['download' => 1]) }}">
-                            <i class="fas fa-download me-1"></i>Download PDF
-                        </a>
-                    </div>
-
                 </div>
             </div>
 
-
-
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" id="expenseTable">
+                    <table class="table table-hover align-middle mb-0" id="revenueTable">
                         <thead class="table-light">
                             <tr>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4">#</th>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Date</th>
-                                <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Category</th>
+                                <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Type</th>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Details</th>
-                                <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Paid through</th>
+                                <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Payment Method</th>
+                                <th class="border-0 fw-semibold text-gray-700 py-3 px-4">Beneficiary</th>
                                 <th class="border-0 fw-semibold text-gray-700 py-3 px-4 text-end">Amount</th>
                             </tr>
                         </thead>
@@ -123,8 +108,8 @@
                         <tbody>
                             @php $grandTotal = 0; @endphp
 
-                            @forelse($expenses as $index => $expense)
-                                @php $grandTotal += $expense->amount; @endphp
+                            @forelse($revenues as $index => $revenue)
+                                @php $grandTotal += $revenue->amount; @endphp
 
                                 <tr class="border-bottom">
                                     <td class="py-3 px-4">
@@ -134,72 +119,72 @@
                                     <td class="py-3 px-4">
                                         <div class="d-flex flex-column">
                                             <span class="fw-medium text-gray-900">
-                                                {{ \Carbon\Carbon::parse($expense->date)->format('M d, Y') }}
+                                                {{ \Carbon\Carbon::parse($revenue->collection_date)->format('M d, Y') }}
                                             </span>
                                             <span class="text-muted small">
-                                                {{ \Carbon\Carbon::parse($expense->date)->format('l') }}
+                                                {{ \Carbon\Carbon::parse($revenue->collection_date)->format('h:i A') }}
                                             </span>
                                         </div>
                                     </td>
 
                                     <td class="py-3 px-4">
-                                        <span class="badge badge-category">
-                                            {{ $expense->category?->code ?? 'N/A' }}
+                                        <span class="text-gray-800 fw-medium">
+                                            {{ $revenue->revenueType->name ?? 'N/A' }}
                                         </span>
-                                        <div class="text-muted small mt-1">
-                                            {{ $expense->category?->name ?? 'Uncategorized' }}
-                                        </div>
                                     </td>
 
                                     <td class="py-3 px-4">
                                         <div class="fw-medium text-gray-900">
-                                            {{ $expense->name ?? '—' }}
+                                            {{ $revenue->name ?? '—' }}
                                         </div>
-                                        @if (!empty($expense->description))
-                                            <div class="text-muted small mt-1">
-                                                {{ Str::limit($expense->description, 60) }}
-                                            </div>
-                                        @endif
+
                                     </td>
 
                                     <td class="py-3 px-4">
-                                        <div class="fw-medium text-gray-900">
-                                            {{ ucfirst($expense->paid) }}
-                                        </div>
+                                        <span class="text-gray-800 fw-medium">
+                                            {{ ucfirst($revenue->payment_method) }}
+                                        </span>
+                                    </td>
 
+                                    <td class="py-3 px-4">
+                                        <span class="text-gray-800 fw-medium">
+                                            {{ ucfirst($revenue->beneficiary) }}
+                                        </span>
                                     </td>
 
                                     <td class="py-3 px-4 text-end">
                                         <span class="fw-bold text-success fs-6">
-                                            ₱{{ number_format($expense->amount, 2) }}
+                                            ₱{{ number_format($revenue->amount, 2) }}
                                         </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5">
+                                    <td colspan="7" class="text-center py-5">
                                         <div class="d-flex flex-column align-items-center">
                                             <div class="empty-state-icon mb-3">
-                                                <i class="fas fa-inbox"></i>
+                                                <i class="fas fa-chart-line"></i>
                                             </div>
-                                            <h6 class="text-gray-600 mb-2">No Expenses Found</h6>
+                                            <h6 class="text-gray-600 mb-2">No Revenue Found</h6>
                                             <p class="text-muted mb-3 small">
-                                                No expense records match your current filters
+                                                No revenue records match your current filters
                                             </p>
-                                            <a href="{{ route('staff.expense-reports.index') }}"
-                                                class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-redo me-1"></i>Clear Filters
-                                            </a>
+                                            @if (request()->hasAny(['date_from', 'date_to', 'revenue_type_id', 'payment_method']))
+                                                <a href="{{ route('staff.revenue-reports.index') }}"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-redo me-1"></i>Clear Filters
+                                                </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
 
-                        @if ($expenses->count() > 0)
+                        @if ($revenues->count() > 0)
                             <tfoot class="table-light">
                                 <tr class="fw-bold">
-                                    <td colspan="5" class="py-3 px-4 text-gray-800">
+                                    <td colspan="6" class="py-3 px-4 text-gray-800">
                                         <i class="fas fa-calculator me-2"></i>Grand Total
                                     </td>
                                     <td class="py-3 px-4 text-end">
@@ -216,9 +201,6 @@
         </div>
     </div>
 @endsection
-
-
-
 
 @push('styles')
     <style>
@@ -303,19 +285,6 @@
             border-color: var(--gray-200);
         }
 
-        .badge-category {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.4em 0.75em;
-            border-radius: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-block;
-            max-width: 100%;
-        }
-
         .empty-state-icon {
             width: 80px;
             height: 80px;
@@ -329,6 +298,21 @@
         .empty-state-icon i {
             font-size: 2rem;
             color: var(--gray-400);
+        }
+
+        /* Responsive adjustments for filter form */
+        @media (min-width: 992px) {
+            .filter-form-grid {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .col-md-6 {
+                margin-bottom: 0.5rem;
+            }
         }
 
         @media (min-width: 1400px) {
@@ -394,8 +378,8 @@
                 -webkit-overflow-scrolling: touch;
             }
 
-            #expenseTable {
-                min-width: 780px;
+            #revenueTable {
+                min-width: 900px;
             }
         }
     </style>
