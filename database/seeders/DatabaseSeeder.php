@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Ministry;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,15 +14,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            ImagesSeeder::class,
+            MinistrySeeder::class,
+            DepartmentSeeder::class,
+            LeaderSeeder::class,
+            UserSeeder::class,
+            CategorySeeder::class,
+            // RevenueCollectionSeeder::class,
+            RevenueTypeSeeder::class,
+            // RevenueSeeder::class,
 
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => 'password',
-                'email_verified_at' => now(),
-            ]
-        );
+            PositionSeeder::class,
+            ExpenseSeeder::class,
+            SignatureSeeder::class,
+        ]);
     }
 }

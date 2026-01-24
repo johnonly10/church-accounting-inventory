@@ -1,0 +1,507 @@
+
+body {
+    background: #f4f6f9;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .1)
+}
+
+/* Metric Cards */
+.metric-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+    transition: all .3s cubic-bezier(.4, 0, .2, 1);
+    border: 1px solid rgba(0, 0, 0, .04);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--card-accent, #667eea), var(--card-accent-end, #764ba2));
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+.metric-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+}
+
+.metric-card:hover::before {
+    opacity: 1;
+}
+
+.metric-card.revenue-card {
+    --card-accent: #2196f3;
+    --card-accent-end: #1976d2;
+}
+
+.metric-card.expense-card {
+    --card-accent: #f44336;
+    --card-accent-end: #d32f2f;
+}
+
+.metric-card.savings-card {
+    --card-accent: #4caf50;
+    --card-accent-end: #388e3c;
+}
+
+.metric-card.collections-card {
+    --card-accent: #ff9800;
+    --card-accent-end: #f57c00;
+}
+
+.metric-value {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    margin: .75rem 0 .25rem;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+    word-break: break-word;
+}
+
+.metric-label {
+    color: #6c757d;
+    font-size: clamp(.75rem, 1.5vw, .813rem);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+
+.metric-trend {
+    font-size: .85rem;
+    margin-top: .5rem
+}
+
+.trend-up {
+    color: #28a745
+}
+
+.trend-down {
+    color: #dc3545
+}
+
+/* Icon Wrapper */
+.icon-wrapper {
+    width: clamp(48px, 8vw, 56px);
+    height: clamp(48px, 8vw, 56px);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    margin-bottom: 1rem;
+    transition: transform .3s;
+}
+
+.metric-card:hover .icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.icon-revenue {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1976d2;
+}
+
+.icon-expense {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    color: #d32f2f;
+}
+
+.icon-net {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #388e3c;
+}
+
+.icon-count {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    color: #f57c00;
+}
+
+/* Chart Cards */
+.chart-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+    border: 1px solid rgba(0, 0, 0, .04);
+    transition: box-shadow .3s;
+}
+
+.chart-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+}
+
+.chart-title {
+    font-size: clamp(.95rem, 2vw, 1.125rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f4f6f9;
+    flex-wrap: wrap;
+}
+
+.chart-title i {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+/* Equal height for pie chart cards */
+.chart-card.pie-chart-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-card.pie-chart-card>div:last-child {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+/* Table Improvements */
+.table-responsive {
+    border-radius: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid #e9ecef;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    margin-bottom: 0;
+    font-size: clamp(.75rem, 1.5vw, .9rem);
+    width: 100%;
+}
+
+.table thead {
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.table thead th {
+    border-bottom: 2px solid #dee2e6;
+    color: #495057;
+    font-weight: 700;
+    font-size: clamp(.7rem, 1.3vw, .813rem);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: clamp(.75rem, 1.5vw, 1rem) clamp(.5rem, 1vw, .75rem);
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    transition: background-color .2s;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.table tbody tr:hover {
+    background-color: #f0f4ff;
+}
+
+.table tbody td {
+    padding: clamp(.65rem, 1.3vw, .875rem) clamp(.5rem, 1vw, .75rem);
+    vertical-align: middle;
+    border-top: 1px solid #f0f0f0;
+}
+
+.table .text-muted {
+    padding: 2rem;
+    font-style: italic;
+}
+
+.table .badge {
+    font-size: clamp(.7rem, 1.2vw, .813rem);
+    padding: .35rem .65rem;
+    white-space: nowrap;
+}
+
+/* Container Spacing */
+.container {
+    padding-top: 1rem;
+    padding-left: clamp(.75rem, 2vw, 1rem);
+    padding-right: clamp(.75rem, 2vw, 1rem);
+}
+
+/* Chart Container */
+#revenueTrendChart,
+#revenueTypeChart,
+#expenseCategoryChart,
+#revenueVsExpenseChart {
+    min-height: 250px;
+    width: 100%;
+}
+
+/* Accessibility Improvements */
+.metric-card:focus-within {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Number Formatting Enhancement */
+.metric-value.text-primary {
+    color: #1976d2 !important;
+}
+
+.metric-value.text-danger {
+    color: #d32f2f !important;
+}
+
+.metric-value.text-success {
+    color: #388e3c !important;
+}
+
+.metric-value.text-warning {
+    color: #f57c00 !important;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Small Laptops and Tablets Landscape (1024px - 1366px) */
+@media (min-width: 1024px) and (max-width: 1366px) {
+    .metric-card {
+        padding: 1.5rem;
+    }
+
+    .chart-card {
+        padding: 1.75rem;
+    }
+
+    .metric-value {
+        font-size: 1.875rem;
+    }
+
+    .table {
+        font-size: .85rem;
+    }
+}
+
+/* Standard Laptops (1367px - 1600px) */
+@media (min-width: 1367px) and (max-width: 1600px) {
+    .metric-card {
+        padding: 1.75rem;
+    }
+
+    .metric-value {
+        font-size: 2rem;
+    }
+}
+
+/* Large Screens and Monitors (1601px - 1920px) */
+@media (min-width: 1601px) and (max-width: 1920px) {
+    .container {
+        max-width: 1600px;
+    }
+
+    .metric-card {
+        padding: 2rem;
+    }
+
+    .metric-value {
+        font-size: 2.25rem;
+    }
+
+    .chart-card {
+        padding: 2.25rem;
+    }
+}
+
+/* Ultra-Wide and 4K Screens (1921px+) */
+@media (min-width: 1921px) {
+    .container {
+        max-width: 1800px;
+    }
+
+    .metric-card {
+        padding: 2.25rem;
+    }
+
+    .metric-value {
+        font-size: 2.5rem;
+    }
+
+    .chart-card {
+        padding: 2.5rem;
+    }
+
+    .chart-title {
+        font-size: 1.25rem;
+    }
+
+    .table {
+        font-size: 1rem;
+    }
+
+    #revenueTrendChart,
+    #revenueTypeChart,
+    #expenseCategoryChart,
+    #revenueVsExpenseChart {
+        min-height: 350px;
+    }
+}
+
+/* Tablets Portrait and Small Screens (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .metric-card {
+        padding: 1.5rem;
+    }
+
+    .metric-value {
+        font-size: 1.75rem;
+    }
+
+    .icon-wrapper {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .chart-card {
+        padding: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1rem;
+    }
+
+    .table {
+        font-size: .85rem;
+    }
+}
+
+/* Mobile Devices (up to 767px) */
+@media (max-width: 767px) {
+    .container-fluid {
+        padding: 0;
+    }
+
+    .container {
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
+    .metric-card {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .metric-value {
+        font-size: 1.5rem;
+    }
+
+    .metric-label {
+        font-size: .75rem;
+    }
+
+    .icon-wrapper {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+        margin-bottom: .75rem;
+    }
+
+    .chart-card {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .chart-title {
+        font-size: .95rem;
+        margin-bottom: 1rem;
+        padding-bottom: .75rem;
+    }
+
+    .table {
+        font-size: .75rem;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: .65rem .4rem;
+    }
+
+    .table .badge {
+        font-size: .7rem;
+        padding: .25rem .5rem;
+    }
+
+    #revenueTrendChart,
+    #revenueTypeChart,
+    #expenseCategoryChart,
+    #revenueVsExpenseChart {
+        min-height: 200px;
+    }
+
+    /* Stack metric cards on mobile */
+    .row>[class*="col-"] {
+        margin-bottom: 0;
+    }
+}
+
+/* Extra Small Devices (up to 575px) */
+@media (max-width: 575px) {
+    .metric-value {
+        font-size: 1.35rem;
+    }
+
+    .metric-label {
+        font-size: .7rem;
+    }
+
+    .chart-card {
+        padding: 1rem;
+    }
+
+    .chart-title {
+        font-size: .9rem;
+    }
+
+    .table thead th {
+        font-size: .7rem;
+        padding: .6rem .35rem;
+    }
+
+    .table tbody td {
+        padding: .6rem .35rem;
+    }
+}
+
+/* Handle very small heights (landscape mobile) */
+@media (max-height: 600px) and (orientation: landscape) {
+    .metric-card {
+        padding: 1rem;
+        margin-bottom: .75rem;
+    }
+
+    .chart-card {
+        padding: 1rem;
+        margin-bottom: .75rem;
+    }
+
+    .icon-wrapper {
+        margin-bottom: .5rem;
+    }
+}
