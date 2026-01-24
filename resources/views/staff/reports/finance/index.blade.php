@@ -138,6 +138,21 @@
                             {{ $financeRecords->count() === 1 ? 'record' : 'records' }}
                         </small>
                     </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        {{-- Preview PDF --}}
+                        <a class="btn btn-outline-primary btn-sm"
+                            href="{{ route('staff.finance-report.pdf', request()->except('download') + ['download' => 0]) }}"
+                            target="_blank" rel="noopener">
+                            <i class="fas fa-eye me-1"></i>Preview PDF
+                        </a>
+
+                        {{-- Download PDF --}}
+                        <a class="btn btn-outline-success btn-sm"
+                            href="{{ route('staff.finance-report.pdf', request()->except('download') + ['download' => 1]) }}">
+                            <i class="fas fa-download me-1"></i>Download PDF
+                        </a>
+                    </div>
                 </div>
             </div>
 

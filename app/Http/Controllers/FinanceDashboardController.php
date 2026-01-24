@@ -14,31 +14,37 @@ class FinanceDashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $now = Carbon::now();
+        $period = $request->get('period', 'yearly');
 
-        $currentStart = $now->copy()->startOfMonth();
-        $currentEnd = $now->copy()->endOfMonth();
+        if ($period === 'weekly') {
+            $currentStart = $now->copy()->startOfWeek();
+            $currentEnd = $now->copy()->endOfWeek();
+        } elseif ($period === 'monthly') {
+            $currentStart = $now->copy()->startOfMonth();
+            $currentEnd = $now->copy()->endOfMonth();
+        } else {
+            $currentStart = $now->copy()->startOfYear();
+            $currentEnd = $now->copy()->endOfYear();
+        }
 
-        $yearStart = $now->copy()->startOfYear();
-        $yearEnd = $now->copy()->endOfYear();
-
-        $currentRevenue = Revenue::whereHas('revenueCollection', function ($q) use ($yearStart, $yearEnd) {
-            $q->whereBetween('collection_date', [$yearStart, $yearEnd]);
+        $currentRevenue = Revenue::whereHas('revenueCollection', function ($q) use ($currentStart, $currentEnd) {
+            $q->whereBetween('collection_date', [$currentStart, $currentEnd]);
         })
             ->sum('amount');
 
-        $currentExpenses = Expense::whereBetween('date', [$yearStart->toDateString(), $yearEnd->toDateString()])
+        $currentExpenses = Expense::whereBetween('date', [$currentStart->toDateString(), $currentEnd->toDateString()])
             ->sum('amount');
 
-        $currentCollections = RevenueCollection::whereBetween('collection_date', [$yearStart, $yearEnd])
+        $currentCollections = RevenueCollection::whereBetween('collection_date', [$currentStart, $currentEnd])
             ->count();
 
         $savings = $currentRevenue - $currentExpenses;
 
-        // Recent Expenses
         $expenses = Expense::with('category')
+            ->whereBetween('date', [$currentStart->toDateString(), $currentEnd->toDateString()])
             ->orderByDesc('date')
             ->limit(7)
             ->get();
@@ -54,14 +60,17 @@ class FinanceDashboardController extends Controller
             ];
         }
 
-        // Recent Revenues
         $revenues = Revenue::with(['revenueType', 'revenueCollection'])
+            ->whereHas('revenueCollection', function ($q) use ($currentStart, $currentEnd) {
+                $q->whereBetween('collection_date', [$currentStart, $currentEnd]);
+            })
             ->orderBy(
                 RevenueCollection::select('collection_date')
                     ->whereColumn('revenue_collections.id', 'revenues.revenue_collection_id')
             )
             ->limit(7)
             ->get();
+
         $recentRevenues = [];
         foreach ($revenues as $revenue) {
             $recentRevenues[] = [
@@ -70,15 +79,13 @@ class FinanceDashboardController extends Controller
                 'method' => $revenue->payment_method === 'gcash' ? 'gcash' : 'cash',
                 'beneficiary' => $revenue->beneficiary === 'general' ? 'general' : 'pastor',
                 'amount' => (float) $revenue->amount,
-
             ];
         }
 
-        // Expense by Categories
         $rows = Expense::join('categories', 'expenses.category_id', '=', 'categories.id')
             ->whereNull('expenses.deleted_at')
             ->whereNull('categories.deleted_at')
-            ->whereBetween('expenses.date', [$yearStart->toDateString(), $yearEnd->toDateString()])
+            ->whereBetween('expenses.date', [$currentStart->toDateString(), $currentEnd->toDateString()])
             ->groupBy('categories.name')
             ->select('categories.name as category')
             ->selectRaw('SUM(expenses.amount) as amount')
@@ -86,7 +93,6 @@ class FinanceDashboardController extends Controller
             ->get();
 
         $expensesByCategory = [];
-
         foreach ($rows as $row) {
             $expensesByCategory[] = [
                 'category' => $row->category,
@@ -94,13 +100,12 @@ class FinanceDashboardController extends Controller
             ];
         }
 
-        // Revenue by Type
         $revenueByType = Revenue::join('revenue_types', 'revenues.revenue_type_id', '=', 'revenue_types.id')
             ->join('revenue_collections', 'revenues.revenue_collection_id', '=', 'revenue_collections.id')
             ->whereNull('revenues.deleted_at')
             ->whereNull('revenue_types.deleted_at')
             ->whereNull('revenue_collections.deleted_at')
-            ->whereBetween('revenue_collections.collection_date', [$yearStart, $yearEnd])
+            ->whereBetween('revenue_collections.collection_date', [$currentStart, $currentEnd])
             ->groupBy('revenue_types.name')
             ->orderByDesc(DB::raw('SUM(revenues.amount)'))
             ->get([
@@ -109,23 +114,46 @@ class FinanceDashboardController extends Controller
             ])
             ->map(fn($r) => ['type' => $r->type, 'amount' => (float) $r->amount]);
 
-
-        $revenueByMonth = Revenue::join('revenue_collections as rc', 'revenues.revenue_collection_id', '=', 'rc.id')
-            ->whereNull('revenues.deleted_at')
-            ->whereNull('rc.deleted_at')
-            ->whereBetween('rc.collection_date', [$yearStart, $yearEnd])
-            ->selectRaw('MONTH(rc.collection_date) as m, 
+        if ($period === 'monthly') {
+            $revenueByMonth = Revenue::join('revenue_collections as rc', 'revenues.revenue_collection_id', '=', 'rc.id')
+                ->whereNull('revenues.deleted_at')
+                ->whereNull('rc.deleted_at')
+                ->whereBetween('rc.collection_date', [$currentStart, $currentEnd])
+                ->selectRaw('DAY(rc.collection_date) as d, 
+                DATE_FORMAT(rc.collection_date, "%d") as day,
+                SUM(revenues.amount) as revenue')
+                ->groupBy('d', 'day')
+                ->orderBy('d')
+                ->get()
+                ->map(fn($r) => ['month' => $r->day, 'revenue' => (float) $r->revenue])
+                ->values();
+        } elseif ($period === 'weekly') {
+            $revenueByMonth = Revenue::join('revenue_collections as rc', 'revenues.revenue_collection_id', '=', 'rc.id')
+                ->whereNull('revenues.deleted_at')
+                ->whereNull('rc.deleted_at')
+                ->whereBetween('rc.collection_date', [$currentStart, $currentEnd])
+                ->selectRaw('DATE_FORMAT(rc.collection_date, "%a") as day,
+                DAYOFWEEK(rc.collection_date) as day_num,
+                SUM(revenues.amount) as revenue')
+                ->groupBy('day', 'day_num')
+                ->orderBy('day_num')
+                ->get()
+                ->map(fn($r) => ['month' => $r->day, 'revenue' => (float) $r->revenue])
+                ->values();
+        } else {
+            $revenueByMonth = Revenue::join('revenue_collections as rc', 'revenues.revenue_collection_id', '=', 'rc.id')
+                ->whereNull('revenues.deleted_at')
+                ->whereNull('rc.deleted_at')
+                ->whereBetween('rc.collection_date', [$currentStart, $currentEnd])
+                ->selectRaw('MONTH(rc.collection_date) as m, 
                 DATE_FORMAT(rc.collection_date, "%b") as month,
                 SUM(revenues.amount) as revenue')
-            ->groupBy('m', 'month')
-            ->orderBy('m')
-            ->get()
-            ->map(fn($r) => ['month' => $r->month, 'revenue' => (float) $r->revenue])
-            ->values();
-
-
-
-
+                ->groupBy('m', 'month')
+                ->orderBy('m')
+                ->get()
+                ->map(fn($r) => ['month' => $r->month, 'revenue' => (float) $r->revenue])
+                ->values();
+        }
 
         return view('staff.dashboard.finance.index', [
             'currentRevenue' => $currentRevenue,
