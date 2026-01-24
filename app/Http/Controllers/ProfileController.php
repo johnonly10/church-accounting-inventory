@@ -14,7 +14,6 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        // Load the current user's profile with relationships
         $user = Auth::user()->load(['department', 'leader', 'ministry', 'position']);
 
         return view('staff.profile.index', compact('user'));
@@ -22,7 +21,6 @@ class ProfileController extends Controller
 
     public function edit($id)
     {
-        // Ensure users can only edit their own profile
         if (Auth::user()->id != $id && Auth::user()->roletype != 'PASTOR') {
             abort(403, 'Unauthorized action.');
         }
@@ -37,7 +35,6 @@ class ProfileController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Ensure users can only update their own profile
         if (Auth::user()->id != $id && Auth::user()->roletype != 'PASTOR') {
             abort(403, 'Unauthorized action.');
         }
@@ -52,9 +49,7 @@ class ProfileController extends Controller
 
         $user = User::findOrFail($id);
 
-        // Handle image upload
         if ($request->hasFile('profile_image')) {
-            // Delete old image if it exists and it's not the default image
             if ($user->path && $user->path != 'default.jpg') {
                 $oldImagePath = public_path('storage/Profile/' . $user->path);
                 if (file_exists($oldImagePath)) {
@@ -62,7 +57,6 @@ class ProfileController extends Controller
                 }
             }
 
-            // Upload new image
             $image = $request->file('profile_image');
             $imageName = time() . '_' . $user->id . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('storage/Profile'), $imageName);

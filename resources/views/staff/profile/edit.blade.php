@@ -5,9 +5,7 @@
         <x-page-title title="Edit Profile" active="Edit Profile" :home-route="route('staff.profile.index')" home="Profile" />
 
         <div class="col-lg-12">
-            <!-- Cover Card with Profile Image -->
             <div class="white_card card_height_100 mb_30 border-0 shadow-sm overflow-hidden">
-                <!-- Cover Header with Gradient -->
                 <div class="profile-cover position-relative"
                     style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <div class="position-absolute top-0 end-0 p-4">
@@ -18,7 +16,6 @@
                     </div>
                 </div>
 
-                <!-- Profile Section -->
                 <div class="white_card_body bg-white">
                     <div class="card-body px-4 pb-4">
                         <form action="{{ route('staff.profile.update', Auth::user()->id) }}" method="POST"
@@ -27,10 +24,8 @@
                             @method('PUT')
 
                             <div class="row">
-                                <!-- Left Column - Profile Image & Quick Info -->
                                 <div class="col-lg-4 col-xl-3">
                                     <div class="text-center" style="margin-top: -80px;">
-                                        <!-- Profile Image Upload -->
                                         <div class="position-relative d-inline-block mb-3">
                                             <div class="profile-image-container">
                                                 <img id="profileImagePreview"
@@ -39,7 +34,6 @@
                                                     class="rounded-circle shadow-lg border border-5 border-white bg-white"
                                                     style="width: 160px; height: 160px; object-fit: cover;">
 
-                                                <!-- Image Upload Button -->
                                                 <label for="profile_image"
                                                     class="position-absolute bottom-0 end-0 bg-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm border border-3 border-white cursor-pointer"
                                                     style="width: 44px; height: 44px;">
@@ -55,7 +49,6 @@
                                             @enderror
                                         </div>
 
-                                        <!-- User Name & Role -->
                                         <h4 class="mb-2 fw-bold text-dark">{{ Auth::user()->name }}</h4>
                                         <span
                                             class="badge rounded-pill px-3 py-2 mb-3
@@ -64,7 +57,6 @@
                                             {{ Auth::user()->roletype }}
                                         </span>
 
-                                        <!-- Contact Info Card -->
                                         <div class="card border-0 shadow-sm mt-4">
                                             <div class="card-body p-3">
                                                 <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
@@ -94,12 +86,9 @@
                                     </div>
                                 </div>
 
-                                <!-- Right Column - Edit Form -->
                                 <div class="col-lg-8 col-xl-9">
                                     <div class="mt-4 mt-lg-0">
-                                        <!-- Form Grid -->
                                         <div class="row g-4">
-                                            <!-- Ministry & Organization Section -->
                                             <div class="col-12">
                                                 <div class="card border-0 shadow-sm">
                                                     <div class="card-header bg-gradient-light border-0 py-3">
@@ -110,7 +99,6 @@
                                                     </div>
                                                     <div class="card-body p-4">
                                                         <div class="row g-4">
-                                                            <!-- Department Field -->
                                                             <div class="col-md-6">
                                                                 <div class="form-group mb-0">
                                                                     <label
@@ -144,7 +132,6 @@
                                                                 </div>
                                                             </div>
 
-                                                            <!-- Ministry Field -->
                                                             <div class="col-md-6">
                                                                 <div class="form-group mb-0">
                                                                     <label
@@ -178,7 +165,6 @@
                                                                 </div>
                                                             </div>
 
-                                                            <!-- Position Field -->
                                                             <div class="col-md-6">
                                                                 <div class="form-group mb-0">
                                                                     <label
@@ -216,7 +202,6 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Leadership & Cell Group Section -->
                                             <div class="col-12">
                                                 <div class="card border-0 shadow-sm">
                                                     <div class="card-header bg-gradient-light border-0 py-3">
@@ -227,7 +212,6 @@
                                                     </div>
                                                     <div class="card-body p-4">
                                                         <div class="row g-4">
-                                                            <!-- Leader Field -->
                                                             <div class="col-md-6">
                                                                 <div class="form-group mb-0">
                                                                     <label
@@ -262,7 +246,6 @@
                                                                 </div>
                                                             </div>
 
-                                                            <!-- Non-editable Cell Name -->
                                                             <div class="col-md-6">
                                                                 <div class="info-item">
                                                                     <div class="d-flex align-items-start">
@@ -287,7 +270,6 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Form Actions -->
                                             <x-buttons.form-action primaryTitle="Edit Profile"
                                                 primaryId="updateProfileBtn" :cancel-route="route('staff.profile.index')" />
                                         </div>
@@ -302,7 +284,6 @@
     </div>
 
     <style>
-        /* Reuse styles from index view */
         .white_card {
             border-radius: 16px;
             overflow: hidden;
@@ -378,7 +359,6 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        /* Color variants matching index view */
         .bg-primary-subtle {
             background-color: #e9ecf9 !important;
         }
@@ -427,15 +407,6 @@
             border-color: #e2e8f0 !important;
         }
 
-        /* Form label styling */
-        .form-group label {
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 991px) {
             .profile-cover {
                 height: 150px !important;
@@ -461,7 +432,6 @@
                 }
             }
 
-            // Make camera icon clickable
             document.getElementById('profileImagePreview').addEventListener('click', function() {
                 document.getElementById('profile_image').click();
             });

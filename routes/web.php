@@ -15,15 +15,17 @@ use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\FinancePDFController;
+use App\Http\Controllers\RevenuePDFController;
 use App\Http\Controllers\ExpensePDFControlleer;
 use App\Http\Controllers\RevenueTypeController;
 use App\Http\Controllers\ExpenseReportController;
+use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\RevenueReportController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
-use App\Http\Controllers\FinanceReportController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -128,15 +130,19 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 
     // Reports for Expenses
     Route::get('/expense-reports', [ExpenseReportController::class, 'index'])->name('expense-reports.index');
-
     // Reports for Revenues
     Route::get('revenue-reports', [RevenueReportController::class, 'index'])->name('revenue-reports.index');
-
     // Reports for Both
     Route::get('finance-reports', [FinanceReportController::class, 'index'])->name('finance-reports.index');
 
+
     // PDF FOR Expenses
     Route::get('/staff/expense-reports/pdf', [ExpensePDFControlleer::class, 'index'])->name('expense-reports.pdf');
+    // PDF FOR REVENUES
+    Route::get('revenues-reports/pdf', [RevenuePDFController::class, 'index'])->name('revenues-reports.pdf');
+    // PDF FOR FINANCE
+    Route::get('finance-report/pdf', [FinancePDFController::class, 'index'])->name('finance-report.pdf');
+
 
     // Rrevenue Cash Count
     Route::resource('revenue-cash-counts', RevenueCashCountController::class);
