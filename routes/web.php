@@ -1,27 +1,29 @@
 <?php
 
+use App\Models\Signature;
 use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FinanceDashboard;
 use App\Http\Controllers\LeaderController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RevenueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\RevenueTypeController;
-use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpensePDFControlleer;
+use App\Http\Controllers\RevenueTypeController;
 use App\Http\Controllers\ExpenseReportController;
+use App\Http\Controllers\RevenueReportController;
+use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\FinanceDashboardController;
-use App\Http\Controllers\ImageController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
-use App\Http\Controllers\SignatureController;
-use App\Models\Signature;
+use App\Http\Controllers\FinanceReportController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -111,10 +113,13 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('expense/{id}/restore', [ExpenseController::class, 'restore'])->name('expenses.restore');
     Route::delete('expense/{id}/force-delete', [ExpenseController::class, 'forceDelete'])->name('expenses.forceDelete');
 
+    // MAIN DASHBOARD
     Route::resource('finance-dashboard', FinanceDashboardController::class)->names('finance-dashboard');
 
+    // IMAGES
     Route::resource('images', ImageController::class);
 
+    // SIGNATURES
     Route::resource('signatures', SignatureController::class);
     Route::get('signatures-archives', [SignatureController::class, 'archived'])->name('signatures.archived');
     Route::patch('signatures/{signature}/archive', [SignatureController::class, 'archive'])->name('signatures.archive');
@@ -123,6 +128,12 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 
     // Reports for Expenses
     Route::get('/expense-reports', [ExpenseReportController::class, 'index'])->name('expense-reports.index');
+
+    // Reports for Revenues
+    Route::get('revenue-reports', [RevenueReportController::class, 'index'])->name('revenue-reports.index');
+
+    // Reports for Both
+    Route::get('finance-reports', [FinanceReportController::class, 'index'])->name('finance-reports.index');
 
     // PDF FOR Expenses
     Route::get('/staff/expense-reports/pdf', [ExpensePDFControlleer::class, 'index'])->name('expense-reports.pdf');
@@ -134,6 +145,7 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::patch('revenueCashCounts/{id}/restore', [RevenueCashCountController::class, 'restore'])->name('revenue-cash-counts.restore');
     Route::delete('revenueCashCounts/{id}/force-delete', [RevenueCashCountController::class, 'forceDelete'])->name('revenue-cash-counts.forceDelete');
 
+    // ADMIN PROFILE
     Route::resource('profile', ProfileController::class);
 });
 

@@ -105,7 +105,10 @@
 
         <x-includes.sidebar-item title="Reports" icon="fas fa-file" :hasArrow="true">
             <li><a href="{{ route('staff.expense-reports.index') }}">Expense Report </a></li>
-            {{-- <li><a href="{{ route('staff.signatures.create') }}"> Add Signature</a></li> --}}
+            <li><a href="{{ route('staff.revenue-reports.index') }}"> Revenue Report</a></li>
+            <li><a href="{{ route('staff.finance-reports.index') }}"> Finance Report</a></li>
+
+
         </x-includes.sidebar-item>
 
 
