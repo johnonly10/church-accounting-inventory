@@ -10,9 +10,20 @@ class LeaderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Leader::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nickname', 'like', "%{$search}%")
+                    ->orWhere('cell_name', 'like', "%{$search}%");
+            });
+        }
+        $leaders = $query->orderBy('id')->paginate(10)->withQueryString();
+        return view('staff.leaders.index', compact('leaders'));
     }
 
     /**
@@ -20,7 +31,7 @@ class LeaderController extends Controller
      */
     public function create()
     {
-        //
+        return view('staff.leaders.create');
     }
 
     /**
@@ -28,7 +39,16 @@ class LeaderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nickname' => 'required|string|max:255',
+            'cell_name' => 'required|string|max:255',
+
+        ]);
+
+        Leader::create($validated);
+        return redirect()->route('staff.leaders.index')->with('success', 'Leaders Succesfully Added');
     }
 
     /**
@@ -44,7 +64,7 @@ class LeaderController extends Controller
      */
     public function edit(Leader $leader)
     {
-        //
+        return view('staff.leaders.edit', compact('leader'));
     }
 
     /**
@@ -52,14 +72,51 @@ class LeaderController extends Controller
      */
     public function update(Request $request, Leader $leader)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nickname' => 'required|string|max:255',
+            'cell_name' => 'required|string|max:255',
+        ]);
+
+        $leader->update($validated);
+        return redirect()->route('staff.leaders.index')->with('success', "Leader's Information Successfully Updated");
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Leader $leader)
+    public function archive(Leader $leader)
     {
-        //
+        $leader->delete();
+        return redirect()->route('staff.leaders.index')->with('success', 'Leader archived Successfully');
+    }
+
+    public function archived(Request $request)
+    {
+        $query = Leader::onlyTrashed();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nickname', 'like', "%{$search}%")
+                    ->orWhere('cell_name', 'like', "%{$search}%");
+            });
+        }
+
+
+        $leaders = $query->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
+        return view('staff.leaders.archive', compact('leaders'));
+    }
+
+    public function restore($id)
+    {
+        $leader = Leader::onlyTrashed()->findOrFail($id);
+        $leader->restore();
+        return redirect()->route('staff.leaders.archived')->with('success', 'Leader restore Successfully');
+    }
+
+    public function forceDelete($id)
+    {
+        $leader = Leader::onlyTrashed()->findOrFail($id);
+        $leader->forceDelete();
+        return redirect()->route('staff.leaders.archived')->with('success', 'Leader permanently Deleted');
     }
 }

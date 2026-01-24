@@ -13,17 +13,25 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete();
-            $table->foreignId('ministry_id')->nullable()->constrained('ministries')->onDelete();
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete();
-            $table->foreignId('leader_id')->nullable()->constrained('leaders')->onDelete();
+            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
+            $table->foreignId('leader_id')->nullable()->constrained('leaders')->nullOnDelete();
+            $table->foreignId('ministry_id')->nullable()->constrained('ministries')->nullOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             $table->string('name');
             $table->string('email')->unique();
+            $table->enum('roletype', ['PASTOR', 'STAFF', 'MEMBER'])->default('STAFF');
+            $table->string('path')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
+
+
+
+
+
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
