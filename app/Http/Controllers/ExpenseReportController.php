@@ -43,7 +43,7 @@ class ExpenseReportController extends Controller
                 [$from, $to] = [$to, $from];
             }
 
-            $query->whereBetween('date', [$from, $to]);
+            $query->whereDate('date', [$from, $to]);
         } elseif ($request->filled('date_from')) {
             $query->whereDate('date', '>=', $request->date_from);
         } elseif ($request->filled('date_to')) {

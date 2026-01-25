@@ -2,6 +2,30 @@
 
 @section('content')
     <style>
+        .global-selectors {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .global-selectors-title {
+            color: #334155;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .global-fields {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
         .revenues-container {
             display: flex;
             flex-direction: column;
@@ -32,7 +56,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: #e2e8f0;
+            background: #6f42c1;
         }
 
         .revenue-header {
@@ -45,17 +69,16 @@
         }
 
         .revenue-number {
-            background: #f8fafc;
+            background: #6f42c1;
             border-radius: 50%;
             width: 48px;
             height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #64748b;
+            color: white;
             font-weight: 600;
             font-size: 18px;
-            border: 2px solid #e2e8f0;
         }
 
         .revenue-title {
@@ -128,8 +151,8 @@
 
         .field-input:focus {
             outline: none;
-            border-color: #94a3b8;
-            box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15);
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.15);
         }
 
         .error-message {
@@ -173,6 +196,10 @@
         }
 
         @media (max-width: 768px) {
+            .global-fields {
+                grid-template-columns: 1fr;
+            }
+
             .revenue-fields {
                 grid-template-columns: 1fr;
             }
@@ -217,6 +244,46 @@
                             <form id="revenueForm" action="{{ route('staff.revenues.store') }}" method="POST">
                                 @csrf
 
+                                <div class="global-selectors">
+                                    <div class="global-selectors-title">
+                                        <i class="fas fa-cog"></i>
+                                        Global Settings (Apply to All Entries)
+                                    </div>
+                                    <div class="global-fields">
+                                        <div class="field-group">
+                                            <label class="field-label">
+                                                Revenue Type <span class="required-asterisk">*</span>
+                                            </label>
+                                            <select class="field-input" id="global-revenue-type" required>
+                                                <option value="" disabled selected>Select type</option>
+                                                @foreach ($revenueTypes as $type)
+                                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="field-group">
+                                            <label class="field-label">
+                                                Beneficiary <span class="required-asterisk">*</span>
+                                            </label>
+                                            <select class="field-input" id="global-beneficiary" required>
+                                                <option value="general" selected>General</option>
+                                                <option value="pastor">Pastor</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="field-group">
+                                            <label class="field-label">
+                                                Payment Method <span class="required-asterisk">*</span>
+                                            </label>
+                                            <select class="field-input" id="global-payment-method" required>
+                                                <option value="cash" selected>Cash</option>
+                                                <option value="online">Online</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div id="revenues-container" class="revenues-container">
                                     <div class="revenue-card" id="revenue-0" data-index="0">
                                         <div class="revenue-header">
@@ -240,66 +307,6 @@
 
                                             <div class="field-group">
                                                 <label class="field-label">
-                                                    Revenue Type <span class="required-asterisk">*</span>
-                                                </label>
-                                                <select class="field-input" name="revenues[0][revenue_type_id]" required>
-                                                    <option value="" disabled
-                                                        {{ old('revenues.0.revenue_type_id') ? '' : 'selected' }}>
-                                                        Select type
-                                                    </option>
-                                                    @foreach ($revenueTypes as $type)
-                                                        <option value="{{ $type->id }}"
-                                                            {{ (string) old('revenues.0.revenue_type_id') === (string) $type->id ? 'selected' : '' }}>
-                                                            {{ $type->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('revenues.0.revenue_type_id')
-                                                    <span class="error-message">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="field-group">
-                                                <label class="field-label">
-                                                    Beneficiary <span class="required-asterisk">*</span>
-                                                </label>
-                                                <select class="field-input" name="revenues[0][beneficiary]" required>
-                                                    <option value="general"
-                                                        {{ old('revenues.0.beneficiary', 'general') === 'general' ? 'selected' : '' }}>
-                                                        General
-                                                    </option>
-                                                    <option value="pastor"
-                                                        {{ old('revenues.0.beneficiary') === 'pastor' ? 'selected' : '' }}>
-                                                        Pastor
-                                                    </option>
-                                                </select>
-                                                @error('revenues.0.beneficiary')
-                                                    <span class="error-message">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="field-group">
-                                                <label class="field-label">
-                                                    Payment Method <span class="required-asterisk">*</span>
-                                                </label>
-                                                <select class="field-input payment-method-select"
-                                                    name="revenues[0][payment_method]" required>
-                                                    <option value="cash"
-                                                        {{ old('revenues.0.payment_method', 'cash') === 'cash' ? 'selected' : '' }}>
-                                                        Cash
-                                                    </option>
-                                                    <option value="online"
-                                                        {{ old('revenues.0.payment_method') === 'online' ? 'selected' : '' }}>
-                                                        Online
-                                                    </option>
-                                                </select>
-                                                @error('revenues.0.payment_method')
-                                                    <span class="error-message">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="field-group">
-                                                <label class="field-label">
                                                     Amount <span class="required-asterisk">*</span>
                                                 </label>
                                                 <input class="field-input revenue-amount" type="number" step="0.01"
@@ -309,6 +316,13 @@
                                                     <span class="error-message">{{ $message }}</span>
                                                 @enderror
                                             </div>
+
+                                            <input type="hidden" name="revenues[0][revenue_type_id]"
+                                                class="revenue-type-hidden">
+                                            <input type="hidden" name="revenues[0][beneficiary]" class="beneficiary-hidden"
+                                                value="general">
+                                            <input type="hidden" name="revenues[0][payment_method]"
+                                                class="payment-method-hidden" value="cash">
                                         </div>
                                     </div>
                                 </div>
@@ -341,6 +355,20 @@
 
             const revenueTypes = @json($revenueTypeItems);
 
+            function updateAllHiddenFields() {
+                const revenueType = $('#global-revenue-type').val();
+                const beneficiary = $('#global-beneficiary').val();
+                const paymentMethod = $('#global-payment-method').val();
+
+                $('.revenue-type-hidden').val(revenueType);
+                $('.beneficiary-hidden').val(beneficiary);
+                $('.payment-method-hidden').val(paymentMethod);
+            }
+
+            $('#global-revenue-type, #global-beneficiary, #global-payment-method').on('change', function() {
+                updateAllHiddenFields();
+            });
+
             function escapeHtml(str) {
                 return String(str)
                     .replace(/&/g, '&amp;')
@@ -348,15 +376,6 @@
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, '&quot;')
                     .replace(/'/g, '&#039;');
-            }
-
-            function buildRevenueTypeOptions(selectedId = null) {
-                let html = '<option value="" disabled ' + (selectedId ? '' : 'selected') + '>Select type</option>';
-                for (const t of revenueTypes) {
-                    const selected = selectedId && String(selectedId) === String(t.id) ? 'selected' : '';
-                    html += `<option value="${t.id}" ${selected}>${escapeHtml(t.name)}</option>`;
-                }
-                return html;
             }
 
             function addRevenueCard() {
@@ -372,7 +391,6 @@
                 cards.last().find('.remove-revenue').trigger('click');
             }
 
-            // Ctrl + Shift + (+) to add, Ctrl + Shift + (-) to remove last
             $(document).on('keydown', function(e) {
                 if (!e.ctrlKey || !e.shiftKey) return;
 
@@ -390,7 +408,9 @@
             });
 
             $('#add-revenue').click(function() {
-                const typeOptions = buildRevenueTypeOptions(null);
+                const revenueType = $('#global-revenue-type').val();
+                const beneficiary = $('#global-beneficiary').val();
+                const paymentMethod = $('#global-payment-method').val();
 
                 const newEntry = `
                     <div class="revenue-card" id="revenue-${revenueCount}" data-index="${revenueCount}">
@@ -412,40 +432,15 @@
 
                             <div class="field-group">
                                 <label class="field-label">
-                                    Revenue Type <span class="required-asterisk">*</span>
-                                </label>
-                                <select class="field-input" name="revenues[${revenueCount}][revenue_type_id]" required>
-                                    ${typeOptions}
-                                </select>
-                            </div>
-
-                            <div class="field-group">
-                                <label class="field-label">
-                                    Beneficiary <span class="required-asterisk">*</span>
-                                </label>
-                                <select class="field-input" name="revenues[${revenueCount}][beneficiary]" required>
-                                    <option value="general" selected>General</option>
-                                    <option value="pastor">Pastor</option>
-                                </select>
-                            </div>
-
-                            <div class="field-group">
-                                <label class="field-label">
-                                    Payment Method <span class="required-asterisk">*</span>
-                                </label>
-                                <select class="field-input payment-method-select" name="revenues[${revenueCount}][payment_method]" required>
-                                    <option value="cash" selected>Cash</option>
-                                    <option value="online">Online</option>
-                                </select>
-                            </div>
-
-                            <div class="field-group">
-                                <label class="field-label">
                                     Amount <span class="required-asterisk">*</span>
                                 </label>
                                 <input class="field-input revenue-amount" type="number" step="0.01" min="0" placeholder="0.00"
                                     name="revenues[${revenueCount}][amount]" required>
                             </div>
+
+                            <input type="hidden" name="revenues[${revenueCount}][revenue_type_id]" class="revenue-type-hidden" value="${revenueType || ''}">
+                            <input type="hidden" name="revenues[${revenueCount}][beneficiary]" class="beneficiary-hidden" value="${beneficiary || 'general'}">
+                            <input type="hidden" name="revenues[${revenueCount}][payment_method]" class="payment-method-hidden" value="${paymentMethod || 'cash'}">
                         </div>
                     </div>
                 `;
@@ -489,17 +484,30 @@
                     $(this).find('.remove-revenue').data('id', index);
 
                     $(this).find('input[name*="[name]"]').attr('name', 'revenues[' + index + '][name]');
-                    $(this).find('select[name*="[revenue_type_id]"]').attr('name', 'revenues[' + index +
-                        '][revenue_type_id]');
-                    $(this).find('select[name*="[beneficiary]"]').attr('name', 'revenues[' + index +
-                        '][beneficiary]');
-                    $(this).find('select[name*="[payment_method]"]').attr('name', 'revenues[' + index +
-                        '][payment_method]');
                     $(this).find('input[name*="[amount]"]').attr('name', 'revenues[' + index + '][amount]');
+                    $(this).find('input[name*="[revenue_type_id]"]').attr('name', 'revenues[' + index +
+                        '][revenue_type_id]');
+                    $(this).find('input[name*="[beneficiary]"]').attr('name', 'revenues[' + index +
+                        '][beneficiary]');
+                    $(this).find('input[name*="[payment_method]"]').attr('name', 'revenues[' + index +
+                        '][payment_method]');
                 });
 
                 revenueCount = $('.revenue-card').length;
             }
+
+            $('#revenueForm').on('submit', function(e) {
+                const revenueType = $('#global-revenue-type').val();
+
+                if (!revenueType) {
+                    e.preventDefault();
+                    alert('Please select a Revenue Type in the Global Settings.');
+                    $('#global-revenue-type').focus();
+                    return false;
+                }
+
+                updateAllHiddenFields();
+            });
         });
     </script>
 @endpush
