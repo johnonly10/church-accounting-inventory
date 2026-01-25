@@ -43,7 +43,9 @@ Route::middleware(['auth', 'roletype:PASTOR'])
 
 // Staff-only routes
 Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->group(function () {
-    Route::view('/', 'staff.index')->name('index');
+    // Route::view('/', 'staff.index')->name('index');
+
+    Route::get('/', [FinanceDashboardController::class, 'index'])->name('index');
 
     // Users Routes
     Route::resource('users', UserController::class)->names('users');
