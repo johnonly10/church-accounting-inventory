@@ -33,12 +33,12 @@ new class extends Component {
         $user = auth()->user();
 
         if ($user->roletype === 'STAFF') {
-            $this->redirectIntended(default: route('staff.index', absolute: false), navigate: true);
+            $this->redirectIntended(default: route('staff.index', absolute: false));
             return;
         }
 
         if ($user->roletype === 'PASTOR') {
-            $this->redirectIntended(default: route('pastor.index', absolute: false), navigate: true);
+            $this->redirectIntended(default: route('pastor.index', absolute: false));
             return;
         }
     }
