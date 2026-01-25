@@ -88,7 +88,7 @@ class RevenuePDFController extends Controller
             $to = $request->date_to;
 
             $query->whereHas('revenueCollection', function ($q) use ($from, $to) {
-                $q->whereBetween('collection_date', [$from, $to]);
+                $q->whereDate('collection_date', [$from, $to]);
             });
         } elseif ($request->filled('date_from')) {
             $query->whereHas('revenueCollection', function ($q) use ($request) {
