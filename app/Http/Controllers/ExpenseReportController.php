@@ -35,18 +35,20 @@ class ExpenseReportController extends Controller
             $query->where('paid', $request->paid);
         }
 
-        if ($request->filled('date_from') && $request->filled('date_to')) {
-            $from = $request->date_from;
-            $to = $request->date_to;
+        // if ($request->filled('date_from') && $request->filled('date_to')) {
+        //     $from = $request->date_from;
+        //     $to = $request->date_to;
 
-            if ($from > $to) {
-                [$from, $to] = [$to, $from];
-            }
+        //     if ($from > $to) {
+        //         [$from, $to] = [$to, $from];
+        //     }
 
-            $query->whereDate('date', [$from, $to]);
-        } elseif ($request->filled('date_from')) {
+        //     $query->whereBetween('date', [$from, $to]);
+        // } 
+        if ($request->filled('date_from')) {
             $query->whereDate('date', '>=', $request->date_from);
-        } elseif ($request->filled('date_to')) {
+        }
+        if ($request->filled('date_to')) {
             $query->whereDate('date', '<=', $request->date_to);
         }
 
