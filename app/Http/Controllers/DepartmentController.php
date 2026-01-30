@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Department\StoreDepartmentRequest;
+use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Services\DepartmentService;
+use Database\Seeders\DepartmentSeeder;
 
 class DepartmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected DepartmentService $departmentService;
+
+    public function __construct(DepartmentService $departmentService)
+    {
+        $this->departmentService = $departmentService;
+    }
+
     public function index(Request $request)
     {
-        $query = Department::query();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-        $departments = $query->orderBy('id')->paginate(10)->withQueryString();
+        $departments = $this->departmentService->getPaginatedDepartment($request);
         return view('staff.departments.index', compact('departments'));
     }
 
@@ -35,13 +35,9 @@ class DepartmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreDepartmentRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name'
-        ]);
-
-        Department::create($validated);
+        Department::create($request->validated());
         return redirect()->route('staff.departments.index')->with('success', 'Department Successfully Created');
     }
 
@@ -64,13 +60,9 @@ class DepartmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Department $department)
+    public function update(UpdateDepartmentRequest $request, Department $department)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:departments,name,' . $department->id,
-        ]);
-
-        $department->update($validated);
+        $department->update($request->validated());
         return redirect()->route('staff.departments.index')->with('success', 'Department Successfully Updated');
     }
 
@@ -84,17 +76,7 @@ class DepartmentController extends Controller
 
     public function archived(Request $request)
     {
-        $query = Department::onlyTrashed();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
-
-        $departments = $query->orderBy('deleted_at', 'desc')->paginate(10);
+        $departments = $this->departmentService->getArchiveDepartment($request);
         return view('staff.departments.archive', compact('departments'));
     }
 
