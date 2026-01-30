@@ -28,18 +28,21 @@ class RevenueReportController extends Controller
             ->with(['revenueType', 'revenueCollection'])
             ->orderBy('created_at', 'desc');
 
-        if ($request->filled('date_from') && $request->filled('date_to')) {
-            $from = $request->date_from;
-            $to = $request->date_to;
+        // if ($request->filled('date_from') && $request->filled('date_to')) {
+        //     $from = $request->date_from;
+        //     $to = $request->date_to;
 
-            $query->whereHas('revenueCollection', function ($q) use ($from, $to) {
-                $q->whereDate('collection_date', [$from, $to]);
-            });
-        } elseif ($request->filled('date_from')) {
+        //     $query->whereHas('revenueCollection', function ($q) use ($from, $to) {
+        //         $q->whereBetween('collection_date', [$from, $to]);
+        //     });
+        // } 
+        if ($request->filled('date_from')) {
             $query->whereHas('revenueCollection', function ($q) use ($request) {
                 $q->whereDate('collection_date', '>=', $request->date_from);
             });
-        } elseif ($request->filled('date_to')) {
+        }
+
+        if ($request->filled('date_to')) {
             $query->whereHas('revenueCollection', function ($q) use ($request) {
                 $q->whereDate('collection_date', '<=', $request->date_to);
             });
