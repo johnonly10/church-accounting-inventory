@@ -26,8 +26,8 @@
                                 <tr>
                                     <td class="name">{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->ministry->name }}</td>
-                                    <td>{{ $user->leader->name }}</td>
+                                    <td>{{ $user->ministry?->name }}</td>
+                                    <td>{{ $user->leader?->name }}</td>
                                     <td class="text-center">
                                         <x-icons.action-edit :route="route('staff.users.edit', $user)" />
                                     </td>

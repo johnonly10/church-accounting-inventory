@@ -2,6 +2,7 @@
 
 use App\Models\Signature;
 use App\Models\ExpenseCategory;
+use App\Livewire\Auth\ForgotPassword;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ImageController;
@@ -14,11 +15,13 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SignatureController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FinancePDFController;
 use App\Http\Controllers\RevenuePDFController;
 use App\Http\Controllers\ExpensePDFControlleer;
 use App\Http\Controllers\RevenueTypeController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\RevenueReportController;
@@ -26,20 +29,43 @@ use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
-Route::middleware(['auth'])->group(function () {
-    // common auth routes here
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'show'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+
+    Route::get('/register', [RegisterController::class, 'show'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
+
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
 });
 
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
+
+
+
+
+// Member Routes
+
+Route::middleware(['auth', 'roletype:MEMBER'])->prefix('member')->name('mmb.')->group(function () {});
+
+
+
+
 // Pastor-only routes
-Route::middleware(['auth', 'roletype:PASTOR'])
-    ->prefix('pastor')
-    ->name('pastor.')
-    ->group(function () {
-        Route::view('/', 'pastor.index')->name('index');
-    });
+Route::middleware(['auth', 'roletype:PASTOR'])->prefix('pastor')->name('pastor.')->group(function () {
+    Route::view('/', 'pastor.index')->name('index');
+});
 
 // Staff-only routes
 Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->group(function () {
