@@ -31,8 +31,13 @@ use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use FontLib\Table\Type\name;
 
 Route::get('/', fn() => redirect()->route('login'));
+
+Route::get('/maintenance', function () {
+    return view('maintenance');
+})->name('maintenance.index');
 
 
 Route::middleware('guest')->group(function () {
@@ -57,7 +62,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 
 // Member Routes
 
-Route::middleware(['auth', 'roletype:MEMBER'])->prefix('member')->name('mmb.')->group(function () {});
+Route::middleware(['auth', 'roletype:MEMBER'])->prefix('member')->name('member.')->group(function () {
+    Route::view('/', 'member.index')->name('index');
+});
 
 
 

@@ -4,24 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Position;
 use Illuminate\Http\Request;
+use App\Services\PositionService;
+use Database\Seeders\PositionSeeder;
+use App\Http\Requests\Position\StorePositionRequest;
+use App\Http\Requests\Position\UpdatePositionRequest;
 
 class PositionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected PositionService $positionService;
+
+    public function __construct(PositionService $positionService)
+    {
+        $this->positionService = $positionService;
+    }
     public function index(Request $request)
     {
-        $query = Position::query();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
-        $positions = $query->orderBy('name')->paginate(10);
+        $positions = $this->positionService->getPaginatePosition($request);
         return view('staff.positions.index', compact('positions'));
     }
 
@@ -36,13 +34,9 @@ class PositionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePositionRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:positions,name',
-        ]);
-
-        Position::create($validated);
+        Position::create($request->validated());
         return redirect()->route('staff.positions.index')->with('success', 'Position Successfully Created');
     }
 
@@ -65,12 +59,9 @@ class PositionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Position $position)
+    public function update(UpdatePositionRequest $request, Position $position)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:positions,name,' . $position->id,
-        ]);
-        $position->update($validated);
+        $position->update($request->validated());
         return redirect()->route('staff.positions.index')->with('success', 'Position Successfully Updated');
     }
 
@@ -84,15 +75,8 @@ class PositionController extends Controller
 
     public function archived(Request $request)
     {
-        $query = Position::onlyTrashed();
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-        $positions = $query->paginate(10);
 
+        $positions = $this->positionService->getArchivePosition($request);
         return view('staff.positions.archive', compact('positions'));
     }
 

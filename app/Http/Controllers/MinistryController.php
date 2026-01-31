@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Ministry\StoreMinistryRequest;
 use App\Models\Department;
 use App\Models\Ministry;
+use App\Services\MinistryService;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 
 class MinistryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    protected MinistryService $ministryService;
+
+    public function __construct(MinistryService $ministryService)
+    {
+        $this->ministryService = $ministryService;
+    }
+
     public function index(Request $request)
     {
-        $query = Ministry::query();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
-        $ministries = $query->orderBy('id')->paginate(10)->withQueryString();
+        $ministries = $this->ministryService->getPaginateMinistry($request);
         return view('staff.ministry.index', compact('ministries'));
     }
 
@@ -37,13 +36,9 @@ class MinistryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreMinistryRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:ministries,name'
-        ]);
-
-        Ministry::create($validated);
+        Ministry::create($request->validated());
         return redirect()->route('staff.ministries.index')->with('success', 'Ministry Successfully Created');
     }
 
@@ -66,13 +61,9 @@ class MinistryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ministry $ministry)
+    public function update(StoreMinistryRequest $request, Ministry $ministry)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:ministries,name,' . $ministry->id
-        ]);
-
-        $ministry->update($validated);
+        $ministry->update($request->validated());
         return redirect()->route('staff.ministries.index')->with('success', 'Ministry Successfully Updated');
     }
 
@@ -86,16 +77,8 @@ class MinistryController extends Controller
 
     public function archived(Request $request)
     {
-        $query = Ministry::onlyTrashed();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
-        $ministries = $query->orderBy('deleted_at', 'desc')->paginate(10);
+        $ministries = $this->ministryService->getArchiveMinistry($request);
         return view('staff.ministry.archive', compact('ministries'));
     }
 

@@ -2,83 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Leader\StoreLeaderRequest;
 use App\Models\Leader;
 use Illuminate\Http\Request;
+use App\Services\LeaderService;
 
 class LeaderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected LeaderService $leaderService;
+
+    public function __construct(LeaderService $leaderService)
+    {
+        $this->leaderService = $leaderService;
+    }
+
     public function index(Request $request)
     {
-        $query = Leader::query();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('nickname', 'like', "%{$search}%")
-                    ->orWhere('cell_name', 'like', "%{$search}%");
-            });
-        }
-        $leaders = $query->orderBy('id')->paginate(10)->withQueryString();
+        $leaders = $this->leaderService->getPaginateLeader($request);
         return view('staff.leaders.index', compact('leaders'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('staff.leaders.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreLeaderRequest $request)
     {
         // dd($request->all());
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'nickname' => 'required|string|max:255',
-            'cell_name' => 'required|string|max:255',
-
-        ]);
-
-        Leader::create($validated);
+        Leader::create($request->validated());
         return redirect()->route('staff.leaders.index')->with('success', 'Leaders Succesfully Added');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Leader $leader)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Leader $leader)
     {
         return view('staff.leaders.edit', compact('leader'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Leader $leader)
+    public function update(StoreLeaderRequest $request, Leader $leader)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'nickname' => 'required|string|max:255',
-            'cell_name' => 'required|string|max:255',
-        ]);
-
-        $leader->update($validated);
+        $leader->update($request->validated());
         return redirect()->route('staff.leaders.index')->with('success', "Leader's Information Successfully Updated");
     }
 
@@ -90,19 +53,7 @@ class LeaderController extends Controller
 
     public function archived(Request $request)
     {
-        $query = Leader::onlyTrashed();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('nickname', 'like', "%{$search}%")
-                    ->orWhere('cell_name', 'like', "%{$search}%");
-            });
-        }
-
-
-        $leaders = $query->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
+        $leaders = $this->leaderService->getArchiveLeader($request);
         return view('staff.leaders.archive', compact('leaders'));
     }
 

@@ -56,6 +56,10 @@ class LoginController extends Controller
             return redirect()->intended(route('pastor.index'));
         }
 
+        if ($user->roletype === 'MEMBER') {
+            return redirect()->route('maintenance.index');
+        }
+
         return redirect()->intended('/');
     }
 
