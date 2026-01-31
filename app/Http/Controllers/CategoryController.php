@@ -4,38 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\CategoryService;
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected CategoryService $categoryService;
+
+    // preload the categoryserivce code
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     public function index(Request $request)
     {
-        $query = Category::query();
-
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        $categories = $query->orderBy('code')->paginate(10)->withQueryString();
-
-        // dd($request->all());
+        $categories = $this->categoryService->getPaginatedCategories($request);
         return view('staff.categories.index', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $categories = Category::orderBy('name')->get();
@@ -45,16 +33,11 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
         // dd($request->all());
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:categories,code',
-            'type' => 'required|string|in:asset,liability,equity,receipts,expenses,funds',
-        ]);
 
-        Category::create($validated);
+        Category::create($request->validated());
         return redirect()->route('staff.categories.index')->with('success', 'Category Successfully Created');
     }
 
@@ -77,15 +60,9 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:categories,code,' . $category->id,
-            'type' => 'required|string|in:asset,liability,equity,receipts,expenses,funds',
-        ]);
-
-        $category->update($validated);
+        $category->update($request->validated());
         return redirect()->route('staff.categories.index')->with('success', 'Category Successfully Updated');
     }
 
@@ -99,22 +76,8 @@ class CategoryController extends Controller
 
     public function archived(Request $request)
     {
-        $query = Category::onlyTrashed();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                ;
-            });
-        }
-
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        $categories = $query->onlyTrashed()->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
+        $categories = $this->categoryService->getArchivedCategories($request);
         return view('staff.categories.archive', compact('categories'));
     }
 
