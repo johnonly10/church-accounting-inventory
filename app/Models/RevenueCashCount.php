@@ -26,6 +26,7 @@ class RevenueCashCount extends Model
         'centimo_10',
         'centimo_5',
         'centimo_1',
+        'revenue_type_id',
     ];
 
     protected $casts = [
@@ -49,4 +50,9 @@ class RevenueCashCount extends Model
         'centimo_5'  => 'integer',
         'centimo_1'  => 'integer',
     ];
+
+    public function revenueType()
+    {
+        return $this->belongsTo(RevenueType::class);
+    }
 }

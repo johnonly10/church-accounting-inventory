@@ -2,112 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RevenueCashCount;
 use Illuminate\Http\Request;
 use Termwind\Components\Raw;
+use App\Models\RevenueCashCount;
+use App\Services\RevenueCashCountCollectionService;
+use App\Http\Requests\Revenue\RevenueCashCount\StoreRevenueCashCountRequest;
+use App\Models\RevenueType;
 
 class RevenueCashCountController extends Controller
 {
 
+    protected RevenueCashCountCollectionService $revenueCashCountCollectionService;
+
+    public function __construct(RevenueCashCountCollectionService $revenueCashCountCollectionService)
+    {
+        $this->revenueCashCountCollectionService = $revenueCashCountCollectionService;
+    }
+
     public function index(Request $request)
     {
-        $query = RevenueCashCount::query();
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('date', '>=', $request->date_from);
-        };
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('date', '<=',  $request->date_to);
-        };
-
-
-        $revenueCashCounts = $query->orderBy('date')->paginate(10)->withQueryString();
-
+        $revenueCashCounts = $this->revenueCashCountCollectionService->getPaginateRevenueCashCount($request);
         return view('staff.revenue-denomination.index', compact('revenueCashCounts'));
     }
 
     public function create()
     {
-        return view('staff.revenue-denomination.create');
+        $revenueTypes = RevenueType::orderBy('name')->get();
+        return view('staff.revenue-denomination.create', compact('revenueTypes'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRevenueCashCountRequest $request)
     {
-        $validated = $request->validate([
-            'date' => ['required', 'date'],
-
-            // Bills
-            'bill_1000' => ['nullable', 'integer', 'min:0'],
-            'bill_500'  => ['nullable', 'integer', 'min:0'],
-            'bill_200'  => ['nullable', 'integer', 'min:0'],
-            'bill_100'  => ['nullable', 'integer', 'min:0'],
-            'bill_50'   => ['nullable', 'integer', 'min:0'],
-            'bill_20'   => ['nullable', 'integer', 'min:0'],
-
-            // Coins
-            'coin_20' => ['nullable', 'integer', 'min:0'],
-            'coin_10' => ['nullable', 'integer', 'min:0'],
-            'coin_5'  => ['nullable', 'integer', 'min:0'],
-            'coin_1'  => ['nullable', 'integer', 'min:0'],
-
-            // Centavos
-            'centimo_25' => ['nullable', 'integer', 'min:0'],
-            'centimo_10' => ['nullable', 'integer', 'min:0'],
-            'centimo_5'  => ['nullable', 'integer', 'min:0'],
-            'centimo_1'  => ['nullable', 'integer', 'min:0'],
-        ]);
-        RevenueCashCount::create($validated);
-
+        // dd($request->all());
+        RevenueCashCount::create($request->validated());
         return redirect()->route('staff.revenue-cash-counts.index')->with('success', 'Revenue Denomination created successfully.');
     }
 
     public function edit(RevenueCashCount $revenueCashCount)
     {
-        return view('staff.revenue-denomination.edit', compact('revenueCashCount'));
+        $revenueTypes = RevenueType::orderBy('name')->get();
+        return view('staff.revenue-denomination.edit', compact('revenueCashCount', 'revenueTypes'));
     }
 
-    public function update(Request $request, RevenueCashCount $revenueCashCount)
+    public function update(StoreRevenueCashCountRequest $request, RevenueCashCount $revenueCashCount)
     {
-        $validated = $request->validate([
-            'date' => ['required', 'date'],
-
-            // Bills
-            'bill_1000' => ['nullable', 'integer', 'min:0'],
-            'bill_500'  => ['nullable', 'integer', 'min:0'],
-            'bill_200'  => ['nullable', 'integer', 'min:0'],
-            'bill_100'  => ['nullable', 'integer', 'min:0'],
-            'bill_50'   => ['nullable', 'integer', 'min:0'],
-            'bill_20'   => ['nullable', 'integer', 'min:0'],
-
-            // Coins
-            'coin_20' => ['nullable', 'integer', 'min:0'],
-            'coin_10' => ['nullable', 'integer', 'min:0'],
-            'coin_5'  => ['nullable', 'integer', 'min:0'],
-            'coin_1'  => ['nullable', 'integer', 'min:0'],
-
-            // Centavos
-            'centimo_25' => ['nullable', 'integer', 'min:0'],
-            'centimo_10' => ['nullable', 'integer', 'min:0'],
-            'centimo_5'  => ['nullable', 'integer', 'min:0'],
-            'centimo_1'  => ['nullable', 'integer', 'min:0'],
-        ]);
-        $revenueCashCount->update($validated);
+        $revenueCashCount->update($request->validated());
 
         return redirect()->route('staff.revenue-cash-counts.index')->with('success', 'Revenue Denomination created successfully.');
     }
 
     public function archived(Request $request)
     {
-        $query = RevenueCashCount::onlyTrashed();
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('date', '>=', $request->date_from);
-        };
-        if ($request->filled('date_to')) {
-            $query->whereDate('date', '<=',  $request->date_to);
-        };
-        $revenueCashCounts = $query->orderBy('id')->paginate(10);
+        $revenueCashCounts = $this->revenueCashCountCollectionService->getArchiveRevenueCashCount($request);
         return view('staff.revenue-denomination.archive', compact('revenueCashCounts'));
     }
 
