@@ -5,21 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Revenue;
 use App\Models\RevenueType;
 use Illuminate\Http\Request;
+use App\Http\Requests\Revenue\RevenueType\StoreRevenueTypeRequest;
+use App\Services\RevenueTypeService;
 
 class RevenueTypeController extends Controller
 {
+    protected RevenueTypeService $revenueTypeService;
+
+    public function __construct(RevenueTypeService $revenueTypeService)
+    {
+        $this->revenueTypeService = $revenueTypeService;
+    }
+
     public function index(Request $request)
     {
-        $query = RevenueType::query();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
-        $revenue_types = $query->orderBy('id')->paginate(10);
+        $revenue_types = $this->revenueTypeService->getPaginateRevenueType($request);
         return view('staff.revenue-types.index', compact('revenue_types'));
     }
 
@@ -28,13 +28,9 @@ class RevenueTypeController extends Controller
         return view('staff.revenue-types.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreRevenueTypeRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:revenue_types,name',
-        ]);
-
-        RevenueType::create($validated);
+        RevenueType::create($request->validated());
         return redirect()->route('staff.revenue-types.index')->with('success', 'Revenue Type Successfully Created');
     }
 
@@ -43,35 +39,15 @@ class RevenueTypeController extends Controller
         return view('staff.revenue-types.edit', compact('revenueType'));
     }
 
-    public function update(Request $request, RevenueType $revenueType)
+    public function update(StoreRevenueTypeRequest $request, RevenueType $revenueType)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:revenue_types,name,' . $revenueType->id
-        ]);
-
-        $revenueType->update($validated);
+        $revenueType->update($request->validated());
         return redirect()->route('staff.revenue-types.index')->with('success', 'Revenue Type Successfully Updated');
     }
 
     public function archived(Request $request)
     {
-        $query = RevenueType::onlyTrashed();
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-        $revenue_types = $query->paginate(10);
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        }
-
+        $revenue_types = $this->revenueTypeService->getArchiveRevenueType($request);
         return view('staff.revenue-types.archive', compact('revenue_types'));
     }
 

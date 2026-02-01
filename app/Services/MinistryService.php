@@ -29,6 +29,6 @@ class MinistryService
     {
         $query = Ministry::onlyTrashed();
         $query = $this->applyFilters($query, $request);
-        return $query->orderBy('deleted_at', 'desc')->paginate(10);
+        return $query->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
     }
 }

@@ -109,7 +109,7 @@
                                                 <option value="">-- Select Leader --</option>
                                                 @foreach ($leaders as $leader)
                                                     <option value="{{ $leader->id }}"
-                                                        {{ old('leader_id', $leader->id) == $leader->id ? 'selected' : '' }}>
+                                                        {{ old('leader_id', $user->leader_id) == $leader->id ? 'selected' : '' }}>
                                                         {{ $leader->name }} - {{ $leader->nickname }} -
                                                         {{ $leader->cell_name }}
                                                     </option>
