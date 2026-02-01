@@ -98,7 +98,7 @@ class RevenueController extends Controller
                 Revenue::create([
                     'revenue_collection_id' => $collection->id,
                     'revenue_type_id' => $revenueData['revenue_type_id'],
-                    'name' => $revenueData['name'] ?? null,
+                    'name' => isset($revenueData['name']) ? ucwords($revenueData['name']) : null,
                     'beneficiary' => $revenueData['beneficiary'],
                     'payment_method' => $revenueData['payment_method'],
                     'amount' => $revenueData['amount'],

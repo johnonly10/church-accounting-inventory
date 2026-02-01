@@ -19,7 +19,6 @@
                                 @csrf
 
                                 <div class="mb-4">
-                                    <!-- Date Section -->
                                     <div class="row g-3 mb-4">
                                         <div class="col-md-4">
                                             <label class="form-label fw-semibold" for="date">
@@ -33,19 +32,34 @@
                                             @enderror
                                         </div>
 
-                                        <!-- Total Display -->
-                                        <div class="col-md-8">
-                                            <div class="alert alert-info mb-0 h-100 d-flex align-items-center">
-                                                <div class="w-100">
-                                                    <h5 class="mb-1">Total Amount</h5>
-                                                    <h3 class="mb-0 text-primary fw-bold">₱<span
-                                                            id="totalAmount">0.00</span></h3>
-                                                </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold">
+                                                <i class="fas fa-tag me-2"></i>Revenue Type <span
+                                                    class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-control @error('revenue_type_id') is-invalid @enderror"
+                                                name="revenue_type_id" required>
+                                                <option value="" disabled selected>Select type</option>
+                                                @foreach ($revenueTypes as $type)
+                                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('revenue_type_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold">
+                                                <i class="fas fa-calculator me-2"></i>Total Amount
+                                            </label>
+                                            <div class="alert alert-info mb-0 d-flex align-items-center">
+                                                <h4 class="mb-0 text-primary fw-bold">₱<span id="totalAmount">0.00</span>
+                                                </h4>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Bills Section -->
                                     <div class="denomination-section mb-4">
                                         <h5 class="mb-3 text-primary border-bottom pb-2">
                                             <i class="fas fa-money-bill-wave me-2"></i>Bills
@@ -164,7 +178,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Coins Section -->
                                     <div class="denomination-section mb-4">
                                         <h5 class="mb-3 text-primary border-bottom pb-2">
                                             <i class="fas fa-coins me-2"></i>Coins
@@ -247,7 +260,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Centavos Section -->
                                     <div class="denomination-section mb-4">
                                         <h5 class="mb-3 text-primary border-bottom pb-2">
                                             <i class="fas fa-circle-notch me-2"></i>Centavos
@@ -360,10 +372,16 @@
                     });
                 }
 
-                function normalizeEmptyToZero(field) {
-                    if (field.value === '' || field.value === null) {
-                        field.value = 0;
+                function normalizeValue(field) {
+                    let value = parseInt(field.value) || 0;
+
+                    if (value < 0) {
+                        value = 0;
                     }
+
+                    field.value = value;
+
+                    return value;
                 }
 
                 function calculateTotals() {
@@ -373,9 +391,7 @@
                     let centavosTotal = 0;
 
                     denominationFields.forEach(field => {
-                        normalizeEmptyToZero(field);
-
-                        const count = parseInt(field.value) || 0;
+                        const count = normalizeValue(field);
                         const value = parseFloat(field.dataset.value);
                         const itemTotal = count * value;
 
@@ -402,11 +418,23 @@
                 }
 
                 denominationFields.forEach(field => {
-                    field.addEventListener('input', calculateTotals);
+                    field.addEventListener('input', function() {
+                        calculateTotals();
+                    });
 
                     field.addEventListener('blur', function() {
-                        normalizeEmptyToZero(field);
+                        normalizeValue(field);
                         calculateTotals();
+                    });
+
+                    field.addEventListener('keydown', function(e) {
+                        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
+                            e.preventDefault();
+                        }
+                    });
+
+                    field.addEventListener('focus', function() {
+                        this.select();
                     });
                 });
 

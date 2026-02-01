@@ -54,7 +54,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">No Expenses found.</td>
+                                    <td colspan="6" class="text-center">No Expenses found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

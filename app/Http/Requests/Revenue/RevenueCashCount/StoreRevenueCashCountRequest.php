@@ -23,7 +23,7 @@ class StoreRevenueCashCountRequest extends FormRequest
     {
         return [
             'date' => ['required', 'date'],
-
+            'revenue_type_id' => ['required', 'integer', 'exists:revenue_types,id'],
             'bill_1000' => ['nullable', 'integer', 'min:0'],
             'bill_500'  => ['nullable', 'integer', 'min:0'],
             'bill_200'  => ['nullable', 'integer', 'min:0'],

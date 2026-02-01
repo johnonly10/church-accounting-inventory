@@ -187,9 +187,9 @@
                                                     {{ old('payment_method', $revenue->payment_method) === 'cash' ? 'selected' : '' }}>
                                                     Cash
                                                 </option>
-                                                <option value="gcash"
-                                                    {{ old('payment_method', $revenue->payment_method) === 'gcash' ? 'selected' : '' }}>
-                                                    GCash
+                                                <option value="online"
+                                                    {{ old('payment_method', $revenue->payment_method) === 'online' ? 'selected' : '' }}>
+                                                    Online
                                                 </option>
                                             </select>
                                             @error('payment_method')

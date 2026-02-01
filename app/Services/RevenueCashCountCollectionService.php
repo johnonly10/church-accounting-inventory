@@ -9,7 +9,7 @@ class RevenueCashCountCollectionService
 {
     public function getPaginateRevenueCashCount(Request $request)
     {
-        $query =  RevenueCashCount::query();
+        $query =  RevenueCashCount::query()->with('revenueType');
         $query = $this->applyFilter($query, $request);
         return $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
     }
@@ -29,7 +29,7 @@ class RevenueCashCountCollectionService
 
     public function getArchiveRevenueCashCount(Request $request)
     {
-        $query = RevenueCashCount::onlyTrashed();
+        $query = RevenueCashCount::onlyTrashed()->with('revenueType');
         $query = $this->applyFilter($query, $request);
         return $query->orderBy('deleted_at', 'desc')->paginate(10)->withQueryString();
     }
