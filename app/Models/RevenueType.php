@@ -18,4 +18,9 @@ class RevenueType extends Model
     {
         return $this->hasMany(Revenue::class);
     }
+
+    public function revenueCashCounts()
+    {
+        return $this->hasMany(RevenueCashCount::class);
+    }
 }

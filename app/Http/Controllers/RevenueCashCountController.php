@@ -7,6 +7,7 @@ use Termwind\Components\Raw;
 use App\Models\RevenueCashCount;
 use App\Services\RevenueCashCountCollectionService;
 use App\Http\Requests\Revenue\RevenueCashCount\StoreRevenueCashCountRequest;
+use App\Models\RevenueType;
 
 class RevenueCashCountController extends Controller
 {
@@ -26,18 +27,21 @@ class RevenueCashCountController extends Controller
 
     public function create()
     {
-        return view('staff.revenue-denomination.create');
+        $revenueTypes = RevenueType::orderBy('name')->get();
+        return view('staff.revenue-denomination.create', compact('revenueTypes'));
     }
 
     public function store(StoreRevenueCashCountRequest $request)
     {
+        // dd($request->all());
         RevenueCashCount::create($request->validated());
         return redirect()->route('staff.revenue-cash-counts.index')->with('success', 'Revenue Denomination created successfully.');
     }
 
     public function edit(RevenueCashCount $revenueCashCount)
     {
-        return view('staff.revenue-denomination.edit', compact('revenueCashCount'));
+        $revenueTypes = RevenueType::orderBy('name')->get();
+        return view('staff.revenue-denomination.edit', compact('revenueCashCount', 'revenueTypes'));
     }
 
     public function update(StoreRevenueCashCountRequest $request, RevenueCashCount $revenueCashCount)

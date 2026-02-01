@@ -32,9 +32,9 @@
     @endphp
 
     <div class="container-fluid p-0">
-        <x-page-title title="Revenue Denomination" active="Revenue Denomination" />
+        <x-page-title title="Revenue Denomination Archive" active="Revenue Denomination Archive" />
 
-        <x-white-card title="Back to Index Page" :home-route="route('staff.revenue-cash-counts.index')" :showFilters="true" :filterProps="[
+        <x-white-card title="Archived Denominations" :home-route="route('staff.revenue-cash-counts.index')" :showFilters="true" :filterProps="[
             'dateFromLabel' => 'From Date',
             'dateFromName' => 'date_from',
             'dateFromValue' => request('date_from'),
@@ -49,7 +49,7 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-
+                                <th>Revenue Type</th>
                                 @if ($show_bill_1000)
                                     <th>₱1000</th>
                                 @endif
@@ -96,7 +96,7 @@
                                 @endif
 
                                 <th class="text-end">Total</th>
-                                <th>Action </th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
@@ -162,7 +162,7 @@
 
                                 <tr>
                                     <td>{{ $row->date ? \Carbon\Carbon::parse($row->date)->toDateString() : '-' }}</td>
-
+                                    <td>{{ $row->revenueType->name ?? 'N/A' }}</td>
                                     @if ($show_bill_1000)
                                         <td>{{ showIfPositive($row->bill_1000) }}</td>
                                     @endif
@@ -221,7 +221,7 @@
                             @empty
                                 @php
                                     $colCount =
-                                        1 +
+                                        2 +
                                         ($show_bill_1000 ? 1 : 0) +
                                         ($show_bill_500 ? 1 : 0) +
                                         ($show_bill_200 ? 1 : 0) +
@@ -239,8 +239,8 @@
                                         2;
                                 @endphp
                                 <tr>
-                                    <td colspan="{{ $colCount }}" class="text-center">No Denominations found.</td>
-
+                                    <td colspan="{{ $colCount }}" class="text-center">No Archived Denominations found.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -248,7 +248,7 @@
                         @if ($revenueCashCounts->count())
                             @php
                                 $beforeTotalCols =
-                                    1 +
+                                    2 +
                                     ($show_bill_1000 ? 1 : 0) +
                                     ($show_bill_500 ? 1 : 0) +
                                     ($show_bill_200 ? 1 : 0) +
@@ -267,7 +267,7 @@
 
                             <tfoot>
                                 <tr class="fw-bold">
-                                    <th class="text-end">Column Totals</th>
+                                    <th colspan="2" class="text-end">Column Totals</th>
 
                                     @if ($show_bill_1000)
                                         <th>{{ showIfPositive($sum_bill_1000) }}</th>
