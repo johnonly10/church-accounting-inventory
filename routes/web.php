@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Signature;
+use FontLib\Table\Type\name;
 use App\Models\ExpenseCategory;
 use App\Livewire\Auth\ForgotPassword;
 use Illuminate\Support\Facades\Route;
@@ -26,12 +27,12 @@ use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\RevenueReportController;
 use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use FontLib\Table\Type\name;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -53,6 +54,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
 
     Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+
+    Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
