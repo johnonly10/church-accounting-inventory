@@ -33,8 +33,16 @@ use App\Http\Controllers\RevenueCashCountController;
 use App\Http\Controllers\RevenueCollectionController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Guest\AboutController;
+use App\Http\Controllers\Guest\ContactController;
+use App\Http\Controllers\Guest\HomeController;
 
-Route::get('/', fn() => redirect()->route('login'));
+// Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+// Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+
+Route::resource('/contact', ContactController::class)->names('contact');
 
 Route::get('/maintenance', function () {
     return view('maintenance');
