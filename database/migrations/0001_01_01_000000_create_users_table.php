@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('roletype', ['PASTOR', 'STAFF', 'MEMBER'])->default('STAFF');
+            $table->enum('roletype', ['PASTOR', 'STAFF', 'MEMBER', 'LEADER'])->default('STAFF');
             $table->string('path')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             PositionSeeder::class,
             ExpenseSeeder::class,
             SignatureSeeder::class,
+            EventSeeder::class,
         ]);
     }
 }

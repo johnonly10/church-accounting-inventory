@@ -47,6 +47,8 @@
                             $profileRoute = route('pastor.index');
                         } elseif (auth()->user()->roletype === 'MEMBER') {
                             $profileRoute = route('member.profiles.index');
+                        } elseif (auth()->user()->roletype === 'LEADER') {
+                            $profileRoute = route('leader.events.index');
                         }
                     @endphp
                     @if (auth()->user()->roletype === 'STAFF')
@@ -127,10 +129,12 @@
                     $profileRoute = route('pastor.index');
                 } elseif (auth()->user()->roletype === 'MEMBER') {
                     $profileRoute = route('member.profiles.index');
+                } elseif (auth()->user()->roletype === 'LEADER') {
+                    $profileRoute = route('leader.events.index');
                 }
             @endphp
 
-            @if (auth()->user()->roletype === 'STAFF')
+            @if (auth()->user()->roletype === 'STAFF' || auth()->user()->roletype === 'LEADER')
                 <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
                     <i class="fas fa-user-circle"></i>
                     <span>Dashboard</span>

@@ -30,46 +30,6 @@
             background: linear-gradient(90deg, rgba(6, 10, 18, .78) 0%, rgba(6, 10, 18, .35) 55%, rgba(6, 10, 18, .10) 100%);
         }
 
-        .tour-hero__top {
-            position: relative;
-            z-index: 3;
-            padding: 22px 22px 0 22px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .tour-search {
-            width: min(720px, 92%);
-            background: rgba(255, 255, 255, .92);
-            border-radius: 999px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
-            backdrop-filter: blur(8px);
-        }
-
-        .tour-search input {
-            border: 0;
-            outline: none;
-            width: 100%;
-            font-size: 14px;
-            background: transparent;
-        }
-
-        .tour-search button {
-            border: 0;
-            background: transparent;
-            cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 10px;
-        }
-
-        .tour-search button:hover {
-            background: rgba(0, 0, 0, .06);
-        }
-
         .tour-bottom {
             position: absolute;
             left: 0;
@@ -133,6 +93,8 @@
             font-weight: 800;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0, 0, 0, .22);
+            text-decoration: none;
+            display: inline-block;
         }
 
         .btn-explore:hover {
@@ -150,17 +112,29 @@
             display: grid;
             place-items: center;
             backdrop-filter: blur(8px);
+            flex-shrink: 0;
         }
 
         .btn-icon:hover {
             background: rgba(255, 255, 255, .25);
         }
 
+        .btn-icon:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .tour-cards-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 0 0 auto;
+        }
+
         .tour-cards {
             display: flex;
             gap: 16px;
             align-items: flex-end;
-            justify-content: flex-end;
             flex: 0 0 auto;
         }
 
@@ -260,16 +234,12 @@
                 max-width: 100%;
             }
 
-            .tour-cards {
+            .tour-cards-wrapper {
                 width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                padding-bottom: 2px;
             }
 
-            .tour-cards::-webkit-scrollbar {
-                display: none;
+            .tour-cards {
+                flex: 1 1 auto;
             }
         }
 
@@ -284,82 +254,72 @@
             }
         }
     </style>
-    <section>
-        <div class="tour-hero" id="tourHero">
-            <img id="heroMainImage" class="tour-hero__img" src="{{ asset('Images/Banner/hills.jpg') }}" alt="Main destination">
-            <div class="tour-hero__overlay"></div>
 
-            <div class="tour-bottom">
-                <div class="tour-hero__body">
-                    <div>
-                        <div class="tour-meta" id="heroLocation">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z" stroke="rgba(255,255,255,.9)"
-                                    stroke-width="2" />
-                                <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="rgba(255,255,255,.9)"
-                                    stroke-width="2" />
-                            </svg>
-                            <span>Bohol, Philippines</span>
-                        </div>
+    @if ($events->isNotEmpty())
+        @php $first = $events->first(); @endphp
+        <section>
+            <div class="tour-hero" id="tourHero">
+                <img id="heroMainImage" class="tour-hero__img" src="{{ asset($first->image_path) }}" alt="{{ $first->name }}">
+                <div class="tour-hero__overlay"></div>
 
-                        <h1 class="tour-title" id="heroTitle">Chocolate Hills</h1>
-
-                        <p class="tour-desc" id="heroDesc">
-                            The Chocolate Hills are conical karst hills. These hills consist of Late Pliocene to Early
-                            Pleistocene, thin to medium bedded, sandy to rubbly marine limestone.
-                        </p>
-
-                        <div class="tour-actions">
-                            <button class="btn-explore" type="button">Explore</button>
-                            <button class="btn-icon" type="button" aria-label="Bookmark">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path d="M7 3h10a1 1 0 0 1 1 1v17l-6-3-6 3V4a1 1 0 0 1 1-1Z"
-                                        stroke="rgba(255,255,255,.95)" stroke-width="2" />
+                <div class="tour-bottom">
+                    <div class="tour-hero__body">
+                        <div>
+                            <div class="tour-meta" id="heroLocation">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 22s7-5.2 7-12a7 7 0 1 0-14 0c0 6.8 7 12 7 12Z"
+                                        stroke="rgba(255,255,255,.9)" stroke-width="2" />
+                                    <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="rgba(255,255,255,.9)"
+                                        stroke-width="2" />
                                 </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                                <span>{{ $first->location }}</span>
+                            </div>
 
-                <div class="tour-cards" id="tourCards">
-                    <div class="tour-card" role="button" tabindex="0"
-                        data-image="{{ asset('Images/Banner/el-nido.jpg') }}" data-location="Palawan, Philippines"
-                        data-title="El Nido Island"
-                        data-desc="El Nido is famous for limestone cliffs, turquoise lagoons, white-sand beaches, and island-hopping adventures.">
-                        <img class="tour-card__img" src="{{ asset('Images/Banner/el-nido.jpg') }}" alt="El Nido Island">
-                        <div class="tour-card__overlay"></div>
-                        <div class="tour-card__content">
-                            <div class="tour-card__place">Palawan, Philippines</div>
-                            <div class="tour-card__name">El Nido Island</div>
+                            <h1 class="tour-title" id="heroTitle">{{ $first->name }}</h1>
+
+                            <p class="tour-desc" id="heroDesc">{{ $first->short_description }}</p>
+
+                            <div class="tour-actions">
+                                <a href="#" class="btn-explore" id="heroExploreBtn">Explore</a>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="tour-card" role="button" tabindex="0" data-image="{{ asset('Images/Banner/mayon.jpg') }}"
-                        data-location="Albay, Philippines" data-title="Mayon Volcano"
-                        data-desc="Mayon is known for its near-perfect cone, scenic viewpoints, and dramatic landscapes around Albay.">
-                        <img class="tour-card__img" src="{{ asset('Images/Banner/mayon.jpg') }}" alt="Mayon Volcano">
-                        <div class="tour-card__overlay"></div>
-                        <div class="tour-card__content">
-                            <div class="tour-card__place">Albay, Philippines</div>
-                            <div class="tour-card__name">Mayon Volcano</div>
-                        </div>
-                    </div>
+                    <div class="tour-cards-wrapper">
+                        <button id="cardPrev" type="button" class="btn-icon" aria-label="Previous">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path d="M15 18l-6-6 6-6" stroke="rgba(255,255,255,.95)" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
 
-                    <div class="tour-card is-active" role="button" tabindex="0"
-                        data-image="{{ asset('Images/Banner/hills.jpg') }}" data-location="Bohol, Philippines"
-                        data-title="Chocolate Hills"
-                        data-desc="The Chocolate Hills are conical karst hills formed by marine limestone. In the dry season, the grass turns brown like chocolate.">
-                        <img class="tour-card__img" src="{{ asset('Images/Banner/hills.jpg') }}" alt="Chocolate Hills">
-                        <div class="tour-card__overlay"></div>
-                        <div class="tour-card__content">
-                            <div class="tour-card__place">Bohol, Philippines</div>
-                            <div class="tour-card__name">Chocolate Hills</div>
+                        <div class="tour-cards" id="tourCards">
+                            @foreach ($events as $event)
+                                <div class="tour-card {{ $loop->first ? 'is-active' : '' }}" role="button" tabindex="0"
+                                    data-image="{{ asset($event->image_path) }}" data-location="{{ $event->location }}"
+                                    data-title="{{ $event->name }}" data-desc="{{ $event->short_description }}">
+                                    <img class="tour-card__img" src="{{ asset($event->image_path) }}"
+                                        alt="{{ $event->name }}">
+                                    <div class="tour-card__overlay"></div>
+                                    <div class="tour-card__content">
+                                        <div class="tour-card__place">{{ $event->location }}</div>
+                                        <div class="tour-card__name">{{ $event->name }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
+
+                        <button id="cardNext" type="button" class="btn-icon" aria-label="Next">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <path d="M9 18l6-6-6-6" stroke="rgba(255,255,255,.95)" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 @endsection
 
 @push('scripts')
@@ -369,13 +329,28 @@
             const heroLocation = document.getElementById('heroLocation').querySelector('span');
             const heroTitle = document.getElementById('heroTitle');
             const heroDesc = document.getElementById('heroDesc');
+            const heroExploreBtn = document.getElementById('heroExploreBtn');
             const cardsWrap = document.getElementById('tourCards');
+            const prevBtn = document.getElementById('cardPrev');
+            const nextBtn = document.getElementById('cardNext');
+
+            const allCards = Array.from(cardsWrap.querySelectorAll('.tour-card'));
+            const perPage = 3;
+            let offset = 0;
+
+            function renderWindow() {
+                allCards.forEach((card, i) => {
+                    card.style.display = (i >= offset && i < offset + perPage) ? '' : 'none';
+                });
+
+                prevBtn.disabled = offset === 0;
+                nextBtn.disabled = offset + perPage >= allCards.length;
+            }
 
             function setActive(card) {
                 mainImg.style.opacity = '0';
                 setTimeout(() => {
-                    const nextSrc = card.dataset.image;
-                    mainImg.src = nextSrc;
+                    mainImg.src = card.dataset.image;
                     const restore = () => {
                         mainImg.style.opacity = '1';
                     };
@@ -386,15 +361,29 @@
                 heroLocation.textContent = card.dataset.location || '';
                 heroTitle.textContent = card.dataset.title || '';
                 heroDesc.textContent = card.dataset.desc || '';
+                heroExploreBtn.href = card.dataset.slug || '#';
 
-                cardsWrap.querySelectorAll('.tour-card').forEach(c => c.classList.remove('is-active'));
+                allCards.forEach(c => c.classList.remove('is-active'));
                 card.classList.add('is-active');
             }
 
+            prevBtn.addEventListener('click', () => {
+                if (offset > 0) {
+                    offset--;
+                    renderWindow();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (offset + perPage < allCards.length) {
+                    offset++;
+                    renderWindow();
+                }
+            });
+
             cardsWrap.addEventListener('click', (e) => {
                 const card = e.target.closest('.tour-card');
-                if (!card) return;
-                setActive(card);
+                if (card) setActive(card);
             });
 
             cardsWrap.addEventListener('keydown', (e) => {
@@ -404,6 +393,9 @@
                 e.preventDefault();
                 setActive(card);
             });
+
+            renderWindow();
+            setActive(allCards[0]);
         })();
     </script>
 @endpush
