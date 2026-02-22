@@ -36,6 +36,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Guest\AboutController;
 use App\Http\Controllers\Guest\ContactController;
 use App\Http\Controllers\Guest\HomeController;
+use App\Http\Controllers\Member\MProfileController;
+use App\Http\Controllers\Member\ProfileController as MemberProfileController;
 
 // Route::get('/', fn() => redirect()->route('login'));
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -75,7 +77,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 // Member Routes
 
 Route::middleware(['auth', 'roletype:MEMBER'])->prefix('member')->name('member.')->group(function () {
-    Route::view('/', 'member.index')->name('index');
+    Route::resource('profiles', MProfileController::class);
 });
 
 

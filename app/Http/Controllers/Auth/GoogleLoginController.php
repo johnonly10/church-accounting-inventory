@@ -35,16 +35,17 @@ class GoogleLoginController extends Controller
 
             Auth::login($user, true);
 
-            if ($user->roletype === 'STAFF') {
-                return redirect()->intended(route('staff.index'));
-            }
+            // if ($user->roletype === 'STAFF') {
+            //     return redirect()->intended(route('staff.index'));
+            // }
 
-            if ($user->roletype === 'MEMBER') {
-                return redirect()->route('maintenance.index');
-            }
+            // if ($user->roletype === 'MEMBER') {
+            //     return redirect()->route('maintenance.index');
+            // }
 
 
-            return redirect()->intended(route('/'));
+
+            return redirect()->route('home');
         } catch (\Exception $e) {
             return redirect()->route('login')->withErrors([
                 'google' => 'Unable to login with Google. Please try again.'

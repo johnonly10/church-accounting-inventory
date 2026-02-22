@@ -2,7 +2,6 @@
     <div class="mobile-menu-header">
         <div class="mobile-menu-logo">
             <img src="{{ asset('Images/Default/Logo.png') }}" alt="{{ config('app.name') }} Logo">
-            {{-- <span class="mobile-menu-brand">{{ config('app.name') }}</span> --}}
         </div>
         <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
             <i class="fas fa-times"></i>
@@ -14,13 +13,6 @@
             <a href="#" class="mobile-quick-action" id="mobileSearchAction">
                 <i class="fas fa-search"></i>
                 <span>Search</span>
-            </a>
-            <a href="#" class="mobile-quick-action">
-                <i class="fas fa-bell"></i>
-                <span>Notifications</span>
-                @if (auth()->check() && auth()->user()->unreadNotifications()->count() > 0)
-                    <span class="badge"></span>
-                @endif
             </a>
         </div>
 
@@ -47,18 +39,27 @@
             <div class="mobile-nav-section">
                 <div class="mobile-nav-title">Account</div>
                 <div class="mobile-nav-links">
-                    <a href="{{ route('dashboard') }}" class="mobile-nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="{{ route('profile') }}" class="mobile-nav-link">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Profile</span>
-                    </a>
-                    <a href="{{ route('settings') }}" class="mobile-nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
+                    @php
+                        $profileRoute = '#';
+                        if (auth()->user()->roletype === 'STAFF') {
+                            $profileRoute = route('staff.index');
+                        } elseif (auth()->user()->roletype === 'PASTOR') {
+                            $profileRoute = route('pastor.index');
+                        } elseif (auth()->user()->roletype === 'MEMBER') {
+                            $profileRoute = route('member.profiles.index');
+                        }
+                    @endphp
+                    @if (auth()->user()->roletype === 'STAFF')
+                        <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    @else
+                        <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profile</span>
+                        </a>
+                    @endif
                 </div>
             </div>
         @endauth
@@ -79,7 +80,6 @@
                 <i class="fas fa-sign-in-alt"></i>
                 <span>Sign In</span>
             </a>
-
         @endauth
     </div>
 </div>
@@ -91,7 +91,6 @@
                 <img class="logo-img" src="{{ asset('Images/Default/Logo.png') }}"
                     alt="{{ config('app.name') }} Logo">
             </a>
-            {{-- <span class="brand-name">{{ config('app.name') }}</span> --}}
         </div>
     </div>
 
@@ -115,22 +114,33 @@
     </div>
 
     <div class="nav-right">
-        <a href="#" class="icon-button" data-tooltip="Notifications" aria-label="View notifications">
-            <i class="fas fa-bell"></i>
-            @if (auth()->check() && auth()->user()->unreadNotifications()->count() > 0)
-                <span class="badge"></span>
-            @endif
-        </a>
-
         <a href="#" class="icon-button" data-tooltip="Search" aria-label="Search">
             <i class="fas fa-search"></i>
         </a>
 
         @auth
-            <a href="{{ route('/') }}" class="cta-button" aria-label="Go to dashboard">
-                <i class="fas fa-user"></i>
-                {{-- <span>Dashboard</span> --}}
-            </a>
+            @php
+                $profileRoute = '#';
+                if (auth()->user()->roletype === 'STAFF') {
+                    $profileRoute = route('staff.index');
+                } elseif (auth()->user()->roletype === 'PASTOR') {
+                    $profileRoute = route('pastor.index');
+                } elseif (auth()->user()->roletype === 'MEMBER') {
+                    $profileRoute = route('member.profiles.index');
+                }
+            @endphp
+
+            @if (auth()->user()->roletype === 'STAFF')
+                <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Dashboard</span>
+                </a>
+            @else
+                <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile</span>
+                </a>
+            @endif
         @else
             <a href="{{ route('login') }}" class="cta-button" aria-label="Sign in to your account">
                 <i class="fas fa-user"></i>
@@ -263,8 +273,7 @@
             const swipeDistance = touchEndX - touchStartX;
 
             if (mobileMenu.classList.contains('active') && swipeDistance > swipeThreshold &&
-                touchStartX > window
-                .innerWidth * 0.7) {
+                touchStartX > window.innerWidth * 0.7) {
                 closeMobileMenu();
             }
         }, false);

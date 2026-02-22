@@ -48,19 +48,15 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
-        if ($user->roletype === 'STAFF') {
-            return redirect()->intended(route('staff.index'));
-        }
+        // if ($user->roletype === 'STAFF') {
+        //     return redirect()->intended(route('staff.index'));
+        // }
 
-        if ($user->roletype === 'PASTOR') {
-            return redirect()->intended(route('pastor.index'));
-        }
+        // if ($user->roletype === 'PASTOR') {
+        //     return redirect()->intended(route('pastor.index'));
+        // }
 
-        if ($user->roletype === 'MEMBER') {
-            return redirect()->route('maintenance.index');
-        }
-
-        return redirect()->intended('/');
+        return redirect()->route('home');
     }
 
     public function logout(Request $request)
