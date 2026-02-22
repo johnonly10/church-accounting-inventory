@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Guest;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreContactRequest;
+use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ContactController extends Controller
 {
@@ -12,7 +16,8 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return view('guest.contact');
+        $user = Auth::user();
+        return view('guest.contact', compact('user'));
     }
 
     /**
@@ -26,9 +31,13 @@ class ContactController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreContactRequest $request)
     {
-        //
+        if (!Auth::check()) {
+            return redirect()->route('contact.index')->with('error', 'Please login to continue');
+        }
+        Contact::create($request->validated());
+        return redirect()->route('contact.index')->with('success', 'Message Successfully Sent');
     }
 
     /**
