@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Guest;
 
+use App\Http\Controllers\Controller;
+use App\Models\Event;
 use App\Models\Image;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
@@ -16,7 +17,10 @@ class HomeController extends Controller
         $logo = Image::where('type', 'logo')
             ->where('is_active', true)
             ->first();
-        return view('guest.home', compact('logo'));
+
+        $events = Event::orderBy('start_at')->get();
+
+        return view('guest.home', compact('logo', 'events'));
     }
 
     /**

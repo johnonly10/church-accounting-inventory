@@ -15,7 +15,7 @@ class MProfileController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view('member.profile.index', compact('user'));
+        return view('guest.profile.index', compact('user'));
     }
 
     /**

@@ -1,43 +1,44 @@
 <?php
 
-use App\Models\Signature;
-use FontLib\Table\Type\name;
-use App\Models\ExpenseCategory;
-use App\Livewire\Auth\ForgotPassword;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ImageController;
-use App\Http\Controllers\FinanceDashboard;
-use App\Http\Controllers\LeaderController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RevenueController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\MinistryController;
-use App\Http\Controllers\PositionController;
-use App\Http\Controllers\SignatureController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\FinancePDFController;
-use App\Http\Controllers\RevenuePDFController;
-use App\Http\Controllers\ExpensePDFControlleer;
-use App\Http\Controllers\RevenueTypeController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ExpenseReportController;
-use App\Http\Controllers\FinanceReportController;
-use App\Http\Controllers\RevenueReportController;
-use App\Http\Controllers\ExpenseCategoryController;
-use App\Http\Controllers\Auth\GoogleLoginController;
-use App\Http\Controllers\FinanceDashboardController;
-use App\Http\Controllers\RevenueCashCountController;
-use App\Http\Controllers\RevenueCollectionController;
-use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExpensePDFControlleer;
+use App\Http\Controllers\ExpenseReportController;
+use App\Http\Controllers\FinanceDashboardController;
+use App\Http\Controllers\FinancePDFController;
+use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\Guest\AboutController;
 use App\Http\Controllers\Guest\ContactController;
 use App\Http\Controllers\Guest\HomeController;
 use App\Http\Controllers\Member\MProfileController;
-use App\Http\Controllers\Member\ProfileController as MemberProfileController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\Leader\LEventController;
+use App\Http\Controllers\MinistryController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RevenueCashCountController;
+use App\Http\Controllers\RevenueCollectionController;
+use App\Http\Controllers\RevenueController;
+use App\Http\Controllers\RevenuePDFController;
+use App\Http\Controllers\RevenueReportController;
+use App\Http\Controllers\RevenueTypeController;
+use App\Http\Controllers\SignatureController;
+use App\Http\Controllers\UserController;
+use App\Livewire\Auth\ForgotPassword;
+use App\Models\ExpenseCategory;
+use App\Models\Signature;
+use FontLib\Table\Type\name;
+use Illuminate\Support\Facades\Route;
+
+
 
 // Route::get('/', fn() => redirect()->route('login'));
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -72,6 +73,9 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
 
+Route::middleware(['auth'])->group(function () {
+    Route::resource('images', ImageController::class);
+});
 
 
 // Member Routes
@@ -81,6 +85,13 @@ Route::middleware(['auth', 'roletype:MEMBER'])->prefix('member')->name('member.'
 });
 
 
+// Leader Routes
+
+Route::middleware(['auth', 'roletype:LEADER'])->prefix('leader')->name('leader.')->group(function () {
+
+
+    Route::resource('events', LEventController::class);
+});
 
 
 // Pastor-only routes
@@ -90,8 +101,6 @@ Route::middleware(['auth', 'roletype:PASTOR'])->prefix('pastor')->name('pastor.'
 
 // Staff-only routes
 Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->group(function () {
-    // Route::view('/', 'staff.index')->name('index');
-
     Route::get('/', [FinanceDashboardController::class, 'index'])->name('index');
 
     // Users Routes
