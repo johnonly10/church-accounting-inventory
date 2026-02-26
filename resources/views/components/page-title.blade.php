@@ -1,4 +1,5 @@
 @props([
+    'dashboard' => route('staff.index'),
     'title' => '',
     'active' => null,
     'home' => null,
@@ -15,7 +16,7 @@
     <div class="page_title_right ms-auto">
         <ol class="breadcrumb page_bradcam mb-0">
             <li class="breadcrumb-item">
-                <a href="{{ route('staff.index') }}">Dashboard</a>
+                <a href="{{ $dashboard }}">Dashboard</a>
             </li>
 
             @if (!empty($home) && !empty($homeRoute))

@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="container-fluid p-0">
-        <x-page-title title="Edit Image" active="Edit Images" :home-route="route('staff.images.index')" home="Images" />
+        <x-page-title title="Edit Image" active="Edit Images" :home-route="route('leader.images.index')" home="Images" />
 
-        <x-white-card title="Edit Image" :back-route="route('staff.images.index')">
-            <form action="{{ route('staff.images.update', $image->id) }}" method="POST" enctype="multipart/form-data">
+        <x-white-card title="Edit Image" :back-route="route('leader.images.index')">
+            <form action="{{ route('leader.images.update', $image->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -107,7 +107,7 @@
 
                                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
                                         id="removeImageBtn" title="Remove image">
-                                        <i class="bi bi-x-lg"></i>
+                                        <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                     </div>
 
                     <div class="col-12 mt-3">
-                        <x-buttons.form-action primaryTitle="Update Image" primaryId="updateImagesBtn" :cancel-route="route('staff.images.index')" />
+                        <x-buttons.form-action primaryTitle="Update Image" primaryId="updateImagesBtn" :cancel-route="route('leader.images.index')" />
                     </div>
 
                     <x-sweet-alert entity="Images" />

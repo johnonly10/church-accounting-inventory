@@ -4,7 +4,7 @@
     <div class="container-fluid p-0">
         <x-page-title title="Images" active="Images" />
 
-        <x-white-card title="Images" :create-route="route('staff.images.create')" :showFilters="true" :filterProps="[
+        <x-white-card title="Images" :create-route="route('leader.images.create')" :showFilters="true" :filterProps="[
             'searchPlaceholder' => 'Search by image name...',
         
             'filter1Label' => 'Filter by Type',
@@ -57,8 +57,8 @@
                                     </td>
 
                                     <td class="text-center">
-                                        <x-icons.action-edit :route="route('staff.images.edit', $image->id)" />
-                                        <x-icons.action-form :route="route('staff.images.destroy', $image->id)" method="DELETE" name="force-delete"
+                                        <x-icons.action-edit :route="route('leader.images.edit', $image->id)" />
+                                        <x-icons.action-form :route="route('leader.images.destroy', $image->id)" method="DELETE" name="force-delete"
                                             title="Delete" aClass="btn btn-sm btn-outline-danger border-0"
                                             icon="fas fa-trash" />
                                     </td>

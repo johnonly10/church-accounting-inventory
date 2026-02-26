@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             ExpenseSeeder::class,
             SignatureSeeder::class,
             EventSeeder::class,
+            PepsolCategorySeeder::class,
         ]);
     }
 }

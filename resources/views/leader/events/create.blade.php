@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container-fluid p-0">
-        <x-page-title title="Create New Event" active="Create New Event" home="Events" :home-route="route('leader.events.index')" />
+        <x-page-title title="Create New Event" active="Create New Event" home="Events" :dashboard="route('leader.events.index')" :home-route="route('leader.events.index')" />
         <x-sweet-alert entity="Event" />
 
         <div class="row">

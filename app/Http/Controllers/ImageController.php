@@ -22,7 +22,7 @@ class ImageController extends Controller
     public function index(Request $request)
     {
         $images = $this->imageService->getPaginatedImages($request);
-        return view('staff.images.index', compact('images'));
+        return view('leader.images.index', compact('images'));
     }
 
     /**
@@ -30,7 +30,7 @@ class ImageController extends Controller
      */
     public function create()
     {
-        return view('staff.images.create');
+        return view('leader.images.create');
     }
 
     /**
@@ -43,7 +43,7 @@ class ImageController extends Controller
             $request->boolean('is_active'),
             $request->file('ath')
         );
-        return redirect()->route('staff.images.index')->with('success', 'Image saved successfully.');
+        return redirect()->route('leader.images.index')->with('success', 'Image saved successfully.');
     }
 
     /**
@@ -56,7 +56,7 @@ class ImageController extends Controller
      */
     public function edit(Image $image)
     {
-        return view('staff.images.edit', compact('image'));
+        return view('leader.images.edit', compact('image'));
     }
 
     /**
@@ -72,7 +72,7 @@ class ImageController extends Controller
         );
 
         return redirect()
-            ->route('staff.images.index')
+            ->route('leader.images.index')
             ->with('success', 'Image updated successfully.');
     }
 
@@ -87,6 +87,6 @@ class ImageController extends Controller
 
         $image->delete();
 
-        return redirect()->route('staff.images.index')->with('success', 'Image deleted successfully.');
+        return redirect()->route('leader.images.index')->with('success', 'Image deleted successfully.');
     }
 }

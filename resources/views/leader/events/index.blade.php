@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-fluid p-0">
 
-        <x-page-title title="Events" active="Events" />
+        <x-page-title title="Events" active="Events" :dashboard="route('leader.events.index')" />
         <x-white-card title="Events" :create-route="route('leader.events.create')">
             <div id="ajax-results-container">
                 <div class="table-responsive m-b-30">
