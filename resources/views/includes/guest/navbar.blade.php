@@ -48,7 +48,7 @@
                         } elseif (auth()->user()->roletype === 'MEMBER') {
                             $profileRoute = route('member.profiles.index');
                         } elseif (auth()->user()->roletype === 'LEADER') {
-                            $profileRoute = route('leader.events.index');
+                            $profileRoute = route('leader.dashboard.index');
                         }
                     @endphp
                     @if (auth()->user()->roletype === 'STAFF')
@@ -130,7 +130,7 @@
                 } elseif (auth()->user()->roletype === 'MEMBER') {
                     $profileRoute = route('member.profiles.index');
                 } elseif (auth()->user()->roletype === 'LEADER') {
-                    $profileRoute = route('leader.events.index');
+                    $profileRoute = route('leader.dashboard.index');
                 }
             @endphp
 

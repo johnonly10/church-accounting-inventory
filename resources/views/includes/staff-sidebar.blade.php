@@ -29,10 +29,7 @@
                 <li><a href="{{ route('staff.finance-dashboard.index') }}"> Finance Dashboard</a></li>
             </x-includes.sidebar-item>
 
-            <x-includes.sidebar-item title="Images" icon="fas fa-solid fa-image" :hasArrow="true">
-                <li><a href="{{ route('staff.images.index') }}">Images </a></li>
-                <li><a href="{{ route('staff.images.create') }}"> Add Image</a></li>
-            </x-includes.sidebar-item>
+
 
             <x-includes.sidebar-item title="Categories" icon="fas fa-solid fa-list" :hasArrow="true">
                 <li><a href="{{ route('staff.categories.index') }}">Categories </a></li>
@@ -100,12 +97,36 @@
 
 
         @if ($user->roletype === 'LEADER')
+            <x-includes.sidebar-item title="Dashboard" icon="fas fa-chart-line" :hasArrow="true">
+                <li><a href="{{ route('leader.dashboard.index') }}">Leader Dashboard</a></li>
+            </x-includes.sidebar-item>
+
             <x-includes.sidebar-item title="Events" icon="fas fa-solid fa-calendar" :hasArrow="true">
                 <li><a href="{{ route('leader.events.index') }}">Events </a></li>
-                {{-- <li><a href="{{ route('staff.images.create') }}"> Add Image</a></li> --}}
+                <li><a href="{{ route('leader.events.create') }}"> Add Events</a></li>
+            </x-includes.sidebar-item>
+
+            <x-includes.sidebar-item title="Categories" icon="fas fa-tags" :hasArrow="true">
+                <li><a href="{{ route('leader.pepsol-categories.index') }}">Categories </a></li>
+                <li><a href="{{ route('leader.pepsol-categories.create') }}"> Add Category</a></li>
+            </x-includes.sidebar-item>
+
+            <x-includes.sidebar-item title="Types" icon="fas fa-layer-group" :hasArrow="true">
+                <li><a href="{{ route('leader.pepsol-types.index') }}">Types </a></li>
+                {{-- <li><a href="{{ route('leader.pepsol-types.create') }}"> Add Type</a></li> --}}
+            </x-includes.sidebar-item>
+
+            <x-includes.sidebar-item title="Images" icon="fas fa-solid fa-image" :hasArrow="true">
+                <li><a href="{{ route('leader.images.index') }}">Images </a></li>
+                <li><a href="{{ route('leader.images.create') }}"> Add Image</a></li>
+            </x-includes.sidebar-item>
+
+
+            <x-includes.sidebar-item title="Slider" icon="fas fa-solid fa-sliders" :hasArrow="true">
+                <li><a href="{{ route('leader.sliders.index') }}">Sliders </a></li>
+                <li><a href="{{ route('leader.sliders.create') }}"> Add Slider</a></li>
             </x-includes.sidebar-item>
         @endif
-
 
 
     </ul>

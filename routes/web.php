@@ -19,8 +19,14 @@ use App\Http\Controllers\Guest\ContactController;
 use App\Http\Controllers\Guest\HomeController;
 use App\Http\Controllers\Member\MProfileController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\Leader\LDashboardController;
 use App\Http\Controllers\LeaderController;
 use App\Http\Controllers\Leader\LEventController;
+use App\Http\Controllers\Leader\LPepsolCategoriesController;
+use App\Http\Controllers\Leader\LPepsolController;
+use App\Http\Controllers\Leader\LPepsolTypes;
+use App\Http\Controllers\Leader\LPepsolTypesController;
+use App\Http\Controllers\Leader\LSilderController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProfileController;
@@ -73,9 +79,6 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
 
-Route::middleware(['auth'])->group(function () {
-    Route::resource('images', ImageController::class);
-});
 
 
 // Member Routes
@@ -89,8 +92,28 @@ Route::middleware(['auth', 'roletype:MEMBER'])->prefix('member')->name('member.'
 
 Route::middleware(['auth', 'roletype:LEADER'])->prefix('leader')->name('leader.')->group(function () {
 
+    Route::get('/', [LDashboardController::class, 'index'])->name('dashboard.index');
+    Route::resource('images', ImageController::class);
 
     Route::resource('events', LEventController::class);
+
+
+    Route::resource('pepsol-categories', LPepsolCategoriesController::class);
+    Route::get('pepsol-categories-archive', [LPepsolCategoriesController::class, 'archived'])->name('pepsol-categories.archived');
+    Route::patch('pepsol-categories/{pepsolCategory}/archive', [LPepsolCategoriesController::class, 'archive'])->name('pepsol-categories.archive');
+    Route::patch('pepsol-categories/{id}/restore', [LPepsolCategoriesController::class, 'restore'])->name('pepsol-categories.restore');
+    Route::delete('pepsol-categories/{id}/force-delete', [LPepsolCategoriesController::class, 'forceDelete'])->name('pepsol-categories.forceDelete');
+
+    Route::resource('pepsol-types', LPepsolTypesController::class);
+    Route::get('pepsol-types-archive', [LPepsolTypesController::class, 'archived'])->name('pepsol-types.archived');
+    Route::patch('pepsol-types/{pepsolType}/archive', [LPepsolTypesController::class, 'archive'])->name('pepsol-types.archive');
+    Route::patch('pepsol-types/{id}/restore', [LPepsolTypesController::class, 'restore'])->name('pepsol-types.restore');
+    Route::delete('pepsol=types/{id}/force-delete', [LPepsolTypesController::class, 'forceDelete'])->name('pepsol-types.forceDelete');
+
+
+    Route::resource('pepsol', LPepsolController::class);
+
+    Route::resource('sliders', LSilderController::class);
 });
 
 
@@ -177,7 +200,7 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::resource('finance-dashboard', FinanceDashboardController::class)->names('finance-dashboard');
 
     // IMAGES
-    Route::resource('images', ImageController::class);
+
 
     // SIGNATURES
     Route::resource('signatures', SignatureController::class);

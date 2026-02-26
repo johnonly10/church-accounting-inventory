@@ -2,50 +2,69 @@
 
 @section('content')
     <div class="container-fluid p-0">
-        <x-page-title title="Create Image" active="Create Images" :home-route="route('staff.images.index')" home="Images" />
+        <x-page-title title="Edit Slider" active="Edit Slider" :home-route="route('leader.sliders.index')" home="Sliders" />
 
-        <x-white-card title="Create Image" :back-route="route('staff.images.index')">
-            <form action="{{ route('staff.images.store') }}" method="POST" enctype="multipart/form-data">
+        <x-white-card title="Edit Slider" :back-route="route('leader.sliders.index')">
+            <form action="{{ route('leader.sliders.update', $slider->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
 
                 <div class="row">
                     <div class="col-lg-6">
+                        {{-- Title --}}
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
-                            <select name="type" class="form-control form-select @error('type') is-invalid @enderror"
-                                id="imageType">
-                                <option value="" selected disabled>-- Select Type --</option>
-                                <option value="logo" {{ old('type') === 'logo' ? 'selected' : '' }}>Logo</option>
-                                <option value="background" {{ old('type') === 'background' ? 'selected' : '' }}>Background
-                                </option>
-                                <option value="background_2" {{ old('type') === 'background_2' ? 'selected' : '' }}>
-                                    Background 2</option>
-                            </select>
-                            @error('type')
+                            <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" value="{{ old('title', $slider->title) }}"
+                                class="form-control @error('title') is-invalid @enderror"
+                                placeholder="e.g., Welcome to our website">
+                            @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
+                        {{-- Subtitle --}}
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" value="{{ old('name') }}"
-                                class="form-control @error('name') is-invalid @enderror" placeholder="e.g., Company Logo">
-                            @error('name')
+                            <label class="form-label fw-semibold">Subtitle <span class="text-danger">*</span></label>
+                            <input type="text" name="subtitle" value="{{ old('subtitle', $slider->subtitle) }}"
+                                class="form-control @error('subtitle') is-invalid @enderror"
+                                placeholder="e.g., We build amazing things">
+                            @error('subtitle')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
+                        {{-- Button --}}
                         <div class="mb-4">
-                            <label class="form-label fw-semibold d-block">Image File <span
-                                    class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Button Text <span class="text-danger">*</span></label>
+                            <input type="text" name="button" value="{{ old('button', $slider->button) }}"
+                                class="form-control @error('button') is-invalid @enderror" placeholder="e.g., Learn More">
+                            @error('button')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Link --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Link <span class="text-danger">*</span></label>
+                            <input type="text" name="link" value="{{ old('link', $slider->link) }}"
+                                class="form-control @error('link') is-invalid @enderror"
+                                placeholder="e.g., https://example.com/page">
+                            @error('link')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Image --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block">Slider Image</label>
 
                             <div class="position-relative">
                                 <button type="button" class="btn btn-outline-primary w-100" id="uploadBtn">
                                     <i class="bi bi-cloud-upload me-2"></i>
-                                    <span id="uploadBtnText">Choose Image File</span>
+                                    <span id="uploadBtnText">Choose New Image (optional)</span>
                                 </button>
 
-                                <input type="file" name="path"
+                                <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.svg,image/*"
                                     class="position-absolute top-0 start-0 w-100 h-100 opacity-0 @error('image') is-invalid @enderror"
                                     id="imageInput" style="cursor:pointer;">
                             </div>
@@ -58,18 +77,23 @@
                             @error('image')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
+
+                            {{-- Hidden flag for removing image --}}
+                            <input type="hidden" name="remove_image" id="remove_image" value="0">
                         </div>
 
+                        {{-- Active --}}
                         <div class="mb-4">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="is_active" value="1"
-                                    id="is_active" role="switch" {{ old('is_active') ? 'checked' : '' }}>
+                                    id="is_active" role="switch"
+                                    {{ old('is_active', $slider->is_active) ? 'checked' : '' }}>
                                 <label class="form-check-label fw-semibold" for="is_active">
                                     Set as Active
                                 </label>
                             </div>
                             <small class="text-muted ms-4">
-                                Active images will be displayed on the website
+                                Active sliders will be displayed on the website
                             </small>
                             @error('is_active')
                                 <div class="text-danger small ms-4">{{ $message }}</div>
@@ -77,49 +101,65 @@
                         </div>
                     </div>
 
+                    {{-- Preview --}}
                     <div class="col-lg-6">
                         <div class="mb-4">
                             <label class="form-label fw-semibold d-block">Preview</label>
 
+                            @php
+                                $currentImage = $slider->image ? asset(ltrim($slider->image, '/')) : null;
+                            @endphp
+
                             <div class="border rounded-3 bg-light position-relative overflow-hidden"
                                 style="min-height: 300px; max-height: 400px;" id="previewContainer">
-                                <div class="d-flex flex-column align-items-center justify-content-center h-100 p-5"
+
+                                {{-- Empty state --}}
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100 p-5
+                                    {{ $currentImage ? 'd-none' : '' }}"
                                     id="emptyState" style="min-height: 300px;">
                                     <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
                                     <p class="text-muted mt-3 mb-0">No image selected</p>
                                     <small class="text-muted">Upload an image to see preview</small>
                                 </div>
 
-                                <div class="d-none w-100 h-100 position-relative" id="imagePreview">
-                                    <img src="" alt="Preview" id="previewImg" class="img-fluid w-100 h-100"
-                                        style="object-fit: contain; max-height: 400px;">
+                                {{-- Preview state --}}
+                                <div class="{{ $currentImage ? '' : 'd-none' }} w-100 h-100 position-relative"
+                                    id="imagePreview">
+                                    <img src="{{ $currentImage ?? '' }}" alt="Preview" id="previewImg"
+                                        class="img-fluid w-100 h-100" style="object-fit: contain; max-height: 400px;">
 
                                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
                                         id="removeImageBtn" title="Remove image">
-                                        <i class="bi bi-x-lg"></i>
+                                        <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="mt-3 d-none" id="imageDetails">
+                            <div class="mt-3 {{ $currentImage ? '' : 'd-none' }}" id="imageDetails">
                                 <small class="text-muted d-block">
-                                    <strong>Filename:</strong> <span id="fileName"></span>
+                                    <strong>Filename:</strong> <span
+                                        id="fileName">{{ $slider->image ? basename($slider->image) : '' }}</span>
                                 </small>
                                 <small class="text-muted d-block">
-                                    <strong>Size:</strong> <span id="fileSize"></span>
+                                    <strong>Size:</strong> <span id="fileSize">—</span>
                                 </small>
                                 <small class="text-muted d-block">
-                                    <strong>Dimensions:</strong> <span id="fileDimensions"></span>
+                                    <strong>Dimensions:</strong> <span id="fileDimensions">—</span>
                                 </small>
                             </div>
+
+                            <small class="text-muted d-block mt-2">
+                                If you don't choose a new file, the current image will remain.
+                            </small>
                         </div>
                     </div>
 
                     <div class="col-12 mt-3">
-                        <x-buttons.form-action primaryTitle="Create Image" primaryId="createImagesBtn" :cancel-route="route('staff.images.index')" />
+                        <x-buttons.form-action primaryTitle="Update Slider" primaryId="updateSliderBtn"
+                            :cancel-route="route('leader.sliders.index')" />
                     </div>
 
-                    <x-sweet-alert entity="Images" />
+                    <x-sweet-alert entity="Sliders" />
                 </div>
             </form>
         </x-white-card>
@@ -139,6 +179,7 @@
                 const fileName = document.getElementById('fileName');
                 const fileSize = document.getElementById('fileSize');
                 const fileDimensions = document.getElementById('fileDimensions');
+                const removeImageFlag = document.getElementById('remove_image');
 
                 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
                 const allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
@@ -156,16 +197,22 @@
 
                 function resetFileUI() {
                     imageInput.value = '';
-                    uploadBtnText.textContent = 'Choose Image File';
+                    uploadBtnText.textContent = 'Choose New Image (optional)';
                     uploadBtn.classList.remove('btn-primary');
                     uploadBtn.classList.add('btn-outline-primary');
+
+                    // show empty state
                     emptyState.classList.remove('d-none');
                     imagePreview.classList.add('d-none');
                     imageDetails.classList.add('d-none');
+
                     previewImg.src = '';
                     fileName.textContent = '';
                     fileSize.textContent = '';
                     fileDimensions.textContent = '';
+
+                    // mark as removed (server should handle)
+                    removeImageFlag.value = '1';
                 }
 
                 imageInput.addEventListener('click', function() {
@@ -176,21 +223,26 @@
                     const file = e.target.files[0];
                     if (!file) return;
 
+                    // choosing new file means we are not removing it
+                    removeImageFlag.value = '0';
+
                     const ext = (file.name.split('.').pop() || '').toLowerCase();
-                    const isAllowedType = (file.type && allowedMimeTypes.includes(file.type)) || (!file.type &&
-                        allowedExt.includes(ext)) || allowedExt.includes(ext);
+                    const isAllowedType =
+                        (file.type && allowedMimeTypes.includes(file.type)) ||
+                        (!file.type && allowedExt.includes(ext)) ||
+                        allowedExt.includes(ext);
 
                     if (!isAllowedType) {
-                        resetFileUI();
                         swalError('Invalid file type. Please upload only JPG, PNG, GIF, or SVG.',
                             'Invalid File Type');
+                        imageInput.value = '';
                         return;
                     }
 
                     if (file.size > maxBytes) {
-                        resetFileUI();
                         swalError(`File size exceeded 2MB. Your file is ${formatFileSize(file.size)}.`,
                             'File Too Large');
+                        imageInput.value = '';
                         return;
                     }
 
@@ -217,6 +269,7 @@
                 });
 
                 removeImageBtn.addEventListener('click', function() {
+                    // this just flags removal + hides preview
                     resetFileUI();
                 });
 
