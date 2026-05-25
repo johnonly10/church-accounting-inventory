@@ -10,14 +10,16 @@ class PepsolCategorySeeder extends Seeder
     public function run(): void
     {
         $rows = [
-            ['code' => 'SOL 1-A', 'name' => 'Student of Leaders 1-A'],
-            ['code' => 'SOL 1-B', 'name' => 'Student of Leaders 1-B'],
+            ['code' => 'B-1', 'name' => 'Bible Study'],
+            ['code' => 'YG-1', 'name' => 'Youth Group'],
 
-            ['code' => 'SOL 2-A', 'name' => 'Student of Leaders 2-A'],
-            ['code' => 'SOL 2-B', 'name' => 'Student of Leaders 2-B'],
+            ['code' => 'C-1', 'name' => 'Children Ministry'],
+            ['code' => 'P-1', 'name' => 'Parenting'],
 
-            ['code' => 'SOL 3-A', 'name' => 'Student of Leaders 3-A'],
-            ['code' => 'SOL 3-B', 'name' => 'Student of Leaders 3-B'],
+            ['code' => 'L-1', 'name' => 'Leadership'],
+            ['code' => 'D-1', 'name' => 'Devotional'],
+            ['code' => 'DP-1', 'name' => 'Discipleship'],
+            ['code' => 'P-1', 'name' => 'Prayer'],
         ];
 
         foreach ($rows as $row) {

@@ -19,6 +19,7 @@ class Pepsol extends Model
         'description',
         'rules',
         'orientation',
+        'status',
     ];
 
     public function category()

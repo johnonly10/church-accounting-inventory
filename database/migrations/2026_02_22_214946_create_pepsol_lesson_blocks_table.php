@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('pepsol_lesson_part_id')->constrained('pepsol_lesson_parts')->cascadeOnDelete();
             $table->text('body');
             $table->text('quote');
+            $table->string('source')->nullable();
             $table->text('scripture');
             $table->string('image')->nullable();
             $table->string('video')->nullable();

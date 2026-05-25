@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('pepsol_category_id')->nullable()->constrained('pepsol_categories')->nullOnDelete();
             $table->foreignId('pepsol_type_id')->nullable()->constrained('pepsol_types')->nullOnDelete();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
-            $table->string('name');
             $table->text('description');
             $table->text('rules');
             $table->text('orientation');
+            $table->enum('status', ['draft', 'archived'])->default('draft');
             $table->softDeletes();
             $table->timestamps();
         });
