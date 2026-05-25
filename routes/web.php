@@ -49,8 +49,6 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', fn() => redirect()->route('login'));
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
-// Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-
 Route::resource('/contact', ContactController::class)->names('contact');
 
 Route::get('/maintenance', function () {
@@ -237,3 +235,4 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 });
 
 require __DIR__ . '/auth.php';
+

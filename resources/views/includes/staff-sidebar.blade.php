@@ -113,8 +113,14 @@
 
             <x-includes.sidebar-item title="Types" icon="fas fa-layer-group" :hasArrow="true">
                 <li><a href="{{ route('leader.pepsol-types.index') }}">Types </a></li>
-                {{-- <li><a href="{{ route('leader.pepsol-types.create') }}"> Add Type</a></li> --}}
+                <li><a href="{{ route('leader.pepsol-types.create') }}"> Add Type</a></li>
             </x-includes.sidebar-item>
+
+            <x-includes.sidebar-item title="Ppesol" icon="fas fa-book-open" :hasArrow="true">
+                <li><a href="{{ route('leader.pepsol.index') }}">Pepsol </a></li>
+                <li><a href="{{ route('leader.pepsol.create') }}"> Add Pepsol</a></li>
+            </x-includes.sidebar-item>
+
 
             <x-includes.sidebar-item title="Images" icon="fas fa-solid fa-image" :hasArrow="true">
                 <li><a href="{{ route('leader.images.index') }}">Images </a></li>

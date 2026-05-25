@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Leader;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pepsol;
+use App\Models\PepsolCategory;
+use App\Models\PepsolType;
 use Illuminate\Http\Request;
 
 class LPepsolController extends Controller
@@ -13,7 +15,8 @@ class LPepsolController extends Controller
      */
     public function index()
     {
-        return view('leader.pepsol.index');
+        $pepsols = Pepsol::with(['category', 'creator', 'lessons', 'type'])->paginate(10);
+        return view('leader.pepsol.index', compact('pepsols'));
     }
 
     /**
@@ -21,7 +24,9 @@ class LPepsolController extends Controller
      */
     public function create()
     {
-        //
+        $categories = PepsolCategory::orderBy('id')->get();
+        $types = PepsolType::orderBy('id')->get();
+        return view('leader.pepsol.create', compact('categories', 'types'));
     }
 
     /**
@@ -29,7 +34,7 @@ class LPepsolController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**

@@ -1,3 +1,9 @@
+@php
+    $logo = \App\Models\Image::query()->where('type', 'logo')->where('is_active', true)->first();
+    $logoPath = $logo?->path;
+    $user = auth()->user();
+@endphp
+
 <div class="container-fluid g-0">
     <div class="row">
         <div class="col-lg-12 p-0 ">
@@ -93,11 +99,22 @@
                                 <p>{{ auth()->user()->name }}</p>
                             </div>
                             <div class="profile_info_details">
-                                <a href="{{ route('staff.profile.index') }}">My Profile </a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"> Log Out </button>
-                                </form>
+
+                                @if ($user && $user->roletype === 'STAFF')
+                                    <a href="{{ route('staff.profile.index') }}">My Profile </a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit"> Log Out </button>
+                                    </form>
+                                @endif
+
+                                @if ($user && $user->roletype === 'LEADER')
+                                    <a href="#">My Profile </a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit"> Log Out </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>
