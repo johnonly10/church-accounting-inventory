@@ -15,16 +15,15 @@ class Pepsol extends Model
         'pepsol_category_id',
         'pepsol_type_id',
         'created_by',
-        'name',
         'description',
-        'rules',
+        'guidelines',
         'orientation',
         'status',
     ];
 
     public function category()
     {
-        return $this->belongsTo(PepsolCategory::class);
+        return $this->belongsTo(PepsolCategory::class, 'pepsol_category_id');
     }
 
     public function creator()
@@ -39,6 +38,14 @@ class Pepsol extends Model
 
     public function type()
     {
-        return $this->belongsTo(PepsolType::class);
+        return $this->belongsTo(PepsolType::class, 'pepsol_type_id');
+    }
+
+    public static function getStatusOptions()
+    {
+        return [
+            'draft' => 'Draft',
+            'published' => 'Published',
+        ];
     }
 }

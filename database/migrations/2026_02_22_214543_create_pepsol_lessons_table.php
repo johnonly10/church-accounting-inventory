@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pepsol_id')->constrained('pepsols')->cascadeOnDelete();
             $table->string('title');
-            $table->string('subtitle');
-            $table->text('summary');
-            $table->string('image');
+            $table->string('subtitle')->nullable();
+            $table->text('summary')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
