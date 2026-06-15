@@ -235,4 +235,3 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
 });
 
 require __DIR__ . '/auth.php';
-

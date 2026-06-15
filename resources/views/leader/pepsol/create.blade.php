@@ -223,6 +223,12 @@
             color: #4f5d75;
         }
 
+        .btn-outline-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
         .btn-outline-danger {
             border-radius: 8px;
         }
@@ -281,6 +287,57 @@
         .add-block-btn:hover {
             border-color: #4c6fff;
             color: #4c6fff;
+        }
+
+        .add-block-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .status-pill-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1px solid #d8dfeb;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4f5d75;
+            transition: all .15s ease;
+        }
+
+        .status-pill-label input {
+            display: none;
+        }
+
+        .status-pill-label:has(input:checked) {
+            border-color: #4c6fff;
+            background: #eef3fb;
+            color: #4c6fff;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #c4ccd8;
+            flex-shrink: 0;
+        }
+
+        .status-pill-label:has(input[value="published"]:checked) .status-dot {
+            background: #28a745;
+        }
+
+        .status-pill-label:has(input[value="draft"]:checked) .status-dot {
+            background: #ffc107;
         }
 
         .fixed-bottom-bar {
@@ -376,6 +433,10 @@
             vertical-align: middle;
         }
 
+        .block-card-body textarea.form-control {
+            min-height: 180px;
+        }
+
         @media (max-width: 767.98px) {
 
             .ewm-card-header,
@@ -413,18 +474,15 @@
 
         <div id="toast-region"></div>
 
-        <form id="pepsolForm" action="{{ route('leader.pepsol.store') }}" method="POST" enctype="multipart/form-data"
-            onsubmit="return handleSubmit(event)">
+        <form id="pepsolForm" action="{{ route('leader.pepsol.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-
-            <input type="hidden" name="payload" id="hidden-payload">
 
             <div class="ewm-card">
                 <div class="ewm-card-header d-flex align-items-center justify-content-between"
                     onclick="toggleSection(this)">
                     <div>
                         <div class="ewm-card-title">Module Information</div>
-                        <p class="ewm-card-subtitle">Ministry category, type, title, description, guidelines, and
+                        <p class="ewm-card-subtitle">Ministry category, type, status, description, guidelines, and
                             orientation</p>
                     </div>
                     <span class="ewm-toggle-icon" data-open="true">
@@ -434,11 +492,12 @@
 
                 <div class="ewm-card-body" id="body-info">
                     <div class="row">
-                        <div class="col-md-6 mb-6">
-                            <label class="form-label">Category <span class="text-danger">*</span></label>
-                            <select id="f-cat" name="category" class="form-select" onchange="onFieldChange()">
-                                <option value="" disabled {{ old('category') ? '' : 'selected' }}>Select a category
-                                </option>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">
+                                Category <span class="text-optional">— optional</span>
+                            </label>
+                            <select id="f-cat" name="category" class="form-select">
+                                <option value="">Select a category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}"
                                         {{ old('category') == $category->id ? 'selected' : '' }}>
@@ -446,40 +505,52 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <div class="invalid-feedback d-block" id="err-cat" style="display:none!important">
-                                Please select a category.
-                            </div>
                         </div>
 
-                        <div class="col-md-6 mb-6">
-                            <label class="form-label">Type <span class="text-danger">*</span></label>
-                            <select id="f-type" name="type" class="form-select" onchange="onFieldChange()">
-                                <option value="" disabled {{ old('type') ? '' : 'selected' }}>Select a type</option>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">
+                                Type <span class="text-optional">— optional</span>
+                            </label>
+                            <select id="f-type" name="type" class="form-select">
+                                <option value="">Select a type</option>
                                 @foreach ($types as $type)
                                     <option value="{{ $type->id }}" {{ old('type') == $type->id ? 'selected' : '' }}>
                                         {{ $type->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            <div class="invalid-feedback d-block" id="err-type" style="display:none!important">Please
-                                select a type.</div>
                         </div>
 
-
+                        <div class="col-12 mb-4">
+                            <label class="form-label">Status</label>
+                            <div class="status-pills">
+                                <label class="status-pill-label">
+                                    <input type="radio" name="status" value="published"
+                                        {{ old('status', 'published') === 'published' ? 'checked' : '' }}>
+                                    <span class="status-dot"></span>
+                                    Published
+                                </label>
+                                <label class="status-pill-label">
+                                    <input type="radio" name="status" value="draft"
+                                        {{ old('status') === 'draft' ? 'checked' : '' }}>
+                                    <span class="status-dot"></span>
+                                    Draft
+                                </label>
+                            </div>
+                        </div>
 
                         <div class="col-12 mb-4">
-                            <label class="form-label">Description <span class="text-optional">— optional</span></label>
+                            <label class="form-label">
+                                Description <span class="text-optional">— optional</span>
+                            </label>
                             <textarea id="ta-desc" name="description" class="form-control" rows="6"
-                                placeholder="Describe what this module covers, who it's for, and what members will grow in spiritually..."
-                                oninput="onFieldChange()">{{ old('description') }}</textarea>
-                            <div class="invalid-feedback d-block" id="err-desc" style="display:none!important">Please add a
-                                description.</div>
+                                placeholder="Describe what this module covers, who it's for, and what members will grow in spiritually...">{{ old('description') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Guidelines <span class="text-optional">— optional</span></label>
-                            <textarea id="ta-rules" name="rules" class="form-control" rows="5"
-                                placeholder="Community guidelines or fellowship participation expectations...">{{ old('rules') }}</textarea>
+                            <textarea id="ta-guidelines" name="guidelines" class="form-control" rows="5"
+                                placeholder="Community guidelines or fellowship participation expectations...">{{ old('guidelines') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
@@ -511,21 +582,27 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">Title <span class="text-danger">*</span></label>
-                            <input type="text" id="lesson-title-1" class="form-control"
-                                placeholder="e.g. Walking in the Spirit" oninput="setLTitle(1,this.value)">
+                            <label class="form-label">
+                                Title <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="lesson-title-1" name="lesson_title" class="form-control"
+                                placeholder="e.g. Walking in the Spirit" oninput="onLessonTitleChange(this.value)"
+                                value="{{ old('lesson_title') }}">
+                            <div class="invalid-feedback d-block" id="err-lesson-title" style="display:none!important">
+                                Please enter a session title.
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Subtitle <span class="text-optional">— optional</span></label>
-                            <input type="text" id="lesson-subtitle-1" class="form-control"
-                                placeholder="e.g. A study on Galatians 5">
+                            <input type="text" id="lesson-subtitle-1" name="lesson_subtitle" class="form-control"
+                                placeholder="e.g. A study on Galatians 5" value="{{ old('lesson_subtitle') }}">
                         </div>
 
                         <div class="col-12 mb-4">
                             <label class="form-label">Summary <span class="text-optional">— optional</span></label>
-                            <textarea id="ta-lsum-1" class="form-control" rows="4"
-                                placeholder="What spiritual truths or biblical principles will members explore?"></textarea>
+                            <textarea id="ta-lsum-1" name="lesson_summary" class="form-control" rows="4"
+                                placeholder="What spiritual truths or biblical principles will members explore?">{{ old('lesson_summary') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
@@ -554,64 +631,26 @@
             <div class="bar-meta">
                 <span class="bar-dot" id="bar-dot"></span>
                 <div>
-                    <div class="bar-name" id="bar-name">Untitled</div>
-                    <div class="bar-status" id="bar-status">Fill required fields</div>
+                    <div class="bar-name" id="bar-name">Untitled Session</div>
+                    <div class="bar-status" id="bar-status">Enter a session title to continue</div>
                 </div>
+            </div>
+            <div class="bar-actions">
+                <a href="{{ route('leader.pepsol.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" form="pepsolForm" class="btn btn-primary" id="createPepsolBtn">
+                    Create Module
+                </button>
             </div>
         </div>
     </div>
-
-    <x-buttons.form-action primaryTitle="Create Module" primaryId="createPepsolBtn" :cancel-route="route('leader.pepsol-types.index')" />
 @endsection
 
 @push('scripts')
     <script src="{{ asset('vendors/package/dist/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script>
-        function toggleSection(headerEl) {
-            const icon = headerEl.querySelector('[data-open]');
-            const isOpen = icon.dataset.open === 'true';
-            const body = headerEl.nextElementSibling;
-            if (!body) return;
-            body.style.display = isOpen ? 'none' : 'block';
-            icon.dataset.open = isOpen ? 'false' : 'true';
-            const iconEl = icon.querySelector('i');
-            if (iconEl) iconEl.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
-        }
-
-        function onNameInput(val) {
-            document.getElementById('bar-name').textContent = val.trim() || 'Untitled';
-            onFieldChange();
-        }
-
-        function onFieldChange() {
-            const n = document.getElementById('f-name').value.trim();
-            const c = document.getElementById('f-cat').value;
-            const t = document.getElementById('f-type')?.value;
-            const d = document.getElementById('ta-desc')?.value.trim();
-            const ok = !!(n && c && t && d);
-            document.getElementById('bar-status').textContent = ok ? 'Ready to save' : 'Fill required fields';
-            const dot = document.getElementById('bar-dot');
-            if (dot) dot.classList.toggle('ready', ok);
-        }
-
-        function setLTitle(n, val) {
-            const el = document.getElementById('ld-' + n);
-            if (el) el.textContent = val.trim() || ('Session ' + n);
-        }
-
-        function toast(msg, type = 'ok') {
-            const r = document.getElementById('toast-region');
-            const el = document.createElement('div');
-            el.className = 'toastx ' + type;
-            el.textContent = msg;
-            r.appendChild(el);
-            setTimeout(() => {
-                el.style.opacity = '0';
-                el.style.transition = 'opacity .3s';
-                setTimeout(() => el.remove(), 300);
-            }, 3000);
-        }
+        let partCounter = 0;
+        let blockCounter = 0;
 
         const PART_TYPES = [{
                 key: 'header',
@@ -635,217 +674,6 @@
             }
         ];
 
-        const usedPartTypes = {
-            1: new Set()
-        };
-        const partTypeByPid = {};
-        const partCount = {
-            1: 0
-        };
-        const blockCount = {};
-        let blockSeq = 0;
-
-        function updateAddPartButtonState(ln) {
-            const btn = document.getElementById(`btn-add-part-${ln}`);
-            if (!btn) return;
-            btn.disabled = (usedPartTypes[ln] || new Set()).size >= PART_TYPES.length;
-        }
-
-        function updateAllPartTypeAvailability(ln) {
-            const used = usedPartTypes[ln] || new Set();
-            document.querySelectorAll(`#parts-${ln} .part-card`).forEach(partEl => {
-                const pid = partEl.dataset.pid;
-                const current = partTypeByPid[pid] || null;
-                PART_TYPES.forEach(t => {
-                    const input = document.getElementById(`pt-${pid}-${t.key}`);
-                    const label = document.getElementById(`lbl-${pid}-${t.key}`);
-                    if (!input || !label) return;
-                    const shouldDisable = used.has(t.key) && current !== t.key;
-                    input.disabled = shouldDisable;
-                    label.classList.toggle('disabled', shouldDisable);
-                });
-            });
-            updateAddPartButtonState(ln);
-        }
-
-        function updatePartBlockCount(pid) {
-            const count = document.querySelectorAll(`#blocks-${pid} > .block-card`).length;
-            const badge = document.getElementById('pbc-' + pid);
-            if (badge) badge.textContent = `${count} block${count === 1 ? '' : 's'}`;
-        }
-
-        function badgeClassByType(type) {
-            if (type === 'header') return 'badge-soft info';
-            if (type === 'body') return 'badge-soft';
-            if (type === 'end') return 'badge-soft warning';
-            if (type === 'conclusion') return 'badge-soft secondary';
-            return 'badge-soft secondary';
-        }
-
-        function togglePartCard(pid, e) {
-            if (e && e.target.closest('button, input, label, select, textarea, a')) return;
-            const collapse = document.getElementById('pcollapse-' + pid);
-            const chev = document.getElementById('pchev-' + pid);
-            const card = document.querySelector(`.part-card[data-pid="${pid}"]`);
-            const badge = document.getElementById('pbc-' + pid);
-            if (!collapse || !chev || !card) return;
-            const isCollapsed = collapse.classList.contains('collapsed');
-            if (isCollapsed) {
-                collapse.classList.remove('collapsed');
-                chev.classList.remove('closed');
-                card.classList.remove('is-collapsed');
-            } else {
-                collapse.classList.add('collapsed');
-                chev.classList.add('closed');
-                card.classList.add('is-collapsed');
-            }
-            if (badge) {
-                const count = document.getElementById('blocks-' + pid)?.children.length || 0;
-                badge.textContent = `${count} block${count === 1 ? '' : 's'}`;
-            }
-        }
-
-        function toggleBlockCard(bid, e) {
-            if (e && e.target.closest('button, input, label, select, textarea, a')) return;
-            const collapse = document.getElementById('bcollapse-' + bid);
-            const chev = document.getElementById('bchev-' + bid);
-            const card = document.getElementById('block-' + bid);
-            if (!collapse || !chev || !card) return;
-            const isCollapsed = collapse.classList.contains('collapsed');
-            if (isCollapsed) {
-                collapse.classList.remove('collapsed');
-                chev.classList.remove('closed');
-                card.classList.remove('is-collapsed');
-            } else {
-                collapse.classList.add('collapsed');
-                chev.classList.add('closed');
-                card.classList.add('is-collapsed');
-            }
-        }
-
-        function addPart(ln) {
-            const used = usedPartTypes[ln] || (usedPartTypes[ln] = new Set());
-            if (used.size >= PART_TYPES.length) {
-                toast('All section types have already been added.', 'bad');
-                updateAddPartButtonState(ln);
-                return;
-            }
-
-            partCount[ln] = (partCount[ln] || 0) + 1;
-            const pn = partCount[ln];
-            const pid = `${ln}_${pn}`;
-            blockCount[pid] = 0;
-
-            const pillsHtml = PART_TYPES.map(t => `
-                <input type="radio" class="btn-check" name="pt-${pid}" id="pt-${pid}-${t.key}" value="${t.key}" onchange="setPartType('${pid}','${t.key}')">
-                <label class="btn btn-outline-secondary btn-sm" id="lbl-${pid}-${t.key}" for="pt-${pid}-${t.key}">${t.label}</label>
-            `).join('');
-
-            const el = document.createElement('div');
-            el.className = 'part-card';
-            el.dataset.pid = pid;
-
-            el.innerHTML = `
-                <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${pid}', event)">
-                    <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
-                        <span class="badge-soft secondary" id="ptag-${pid}">Unset</span>
-                        <span class="font-weight-bold" id="pname-${pid}">Section ${pn}</span>
-                        <span class="part-block-count" id="pbc-${pid}">0 blocks</span>
-                    </div>
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="pchev-${pid}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${pid}', event)">Remove</button>
-                    </div>
-                </div>
-                <div class="card-body-collapse" id="pcollapse-${pid}">
-                    <div class="part-card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Part Type <span class="text-danger">*</span></label>
-                            <div class="part-type-pills">${pillsHtml}</div>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-                            <div class="section-mini-title mb-0">Content Blocks</div>
-                            <div class="blocks-toolbar">
-                                <button type="button" class="add-block-btn" onclick="addBlock('${pid}','body')"><i class="ti-align-left"></i> Body</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${pid}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${pid}','scripture')"><i class="ti-book"></i> Scripture</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${pid}','media')"><i class="ti-image"></i> Media</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${pid}','url')"><i class="ti-link"></i> URL</button>
-                            </div>
-                        </div>
-                        <div id="blocks-${pid}"></div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('parts-' + ln).appendChild(el);
-            updateAllPartTypeAvailability(ln);
-            updateAddPartButtonState(ln);
-            updatePartBlockCount(pid);
-            setTimeout(() => el.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            }), 60);
-        }
-
-        function removePart(pid, e) {
-            if (e) e.stopPropagation();
-            Swal.fire({
-                title: 'Remove this part?',
-                text: 'This section and all of its content blocks will be deleted.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, remove it',
-                cancelButtonText: 'Cancel',
-                reverseButtons: true
-            }).then((result) => {
-                if (!result.isConfirmed) return;
-                const ln = parseInt(pid.split('_')[0], 10);
-                const prev = partTypeByPid[pid];
-                if (prev) {
-                    usedPartTypes[ln]?.delete(prev);
-                    delete partTypeByPid[pid];
-                }
-                const el = [...document.querySelectorAll('.part-card')].find(x => x.dataset.pid === pid);
-                if (el) el.remove();
-                updateAllPartTypeAvailability(ln);
-                Swal.fire({
-                    title: 'Removed',
-                    text: 'The section was removed successfully.',
-                    icon: 'success',
-                    timer: 1400,
-                    showConfirmButton: false
-                });
-            });
-        }
-
-        function setPartType(pid, key) {
-            const ln = parseInt(pid.split('_')[0], 10);
-            const used = usedPartTypes[ln] || (usedPartTypes[ln] = new Set());
-            const prev = partTypeByPid[pid] || null;
-            if (prev === key) return;
-            if (used.has(key) && prev !== key) {
-                toast('That section type has already been used.', 'bad');
-                if (prev) {
-                    const prevRadio = document.getElementById(`pt-${pid}-${prev}`);
-                    if (prevRadio) prevRadio.checked = true;
-                }
-                return;
-            }
-            if (prev) used.delete(prev);
-            used.add(key);
-            partTypeByPid[pid] = key;
-            const t = PART_TYPES.find(x => x.key === key);
-            const tag = document.getElementById('ptag-' + pid);
-            const name = document.getElementById('pname-' + pid);
-            if (tag && t) {
-                tag.textContent = t.label;
-                tag.className = badgeClassByType(key);
-            }
-            if (name && t) name.textContent = t.label + ' Section';
-            updateAllPartTypeAvailability(ln);
-        }
-
         const BLOCK_DEFS = {
             body: {
                 label: 'Body',
@@ -854,10 +682,6 @@
             quote: {
                 label: 'Quote',
                 icon: 'fas fa-quote-left'
-            },
-            scripture: {
-                label: 'Scripture',
-                icon: 'ti-book'
             },
             media: {
                 label: 'Media',
@@ -869,11 +693,271 @@
             }
         };
 
-        function addBlock(pid, type) {
-            blockCount[pid] = (blockCount[pid] || 0) + 1;
-            blockSeq++;
-            const bid = `${pid}_b${blockCount[pid]}`;
-            const taId = `ta-blk-${blockSeq}`;
+        function toggleSection(headerEl) {
+            const icon = headerEl.querySelector('[data-open]');
+            const isOpen = icon.dataset.open === 'true';
+            const body = headerEl.nextElementSibling;
+            if (!body) return;
+            body.style.display = isOpen ? 'none' : 'block';
+            icon.dataset.open = isOpen ? 'false' : 'true';
+            const iconEl = icon.querySelector('i');
+            if (iconEl) iconEl.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
+
+        function onLessonTitleChange(val) {
+            const trimmed = val.trim();
+            const el = document.getElementById('ld-1');
+            if (el) el.textContent = trimmed || 'Session 1';
+
+            const nameEl = document.getElementById('bar-name');
+            const statusEl = document.getElementById('bar-status');
+            const dot = document.getElementById('bar-dot');
+
+            if (nameEl) nameEl.textContent = trimmed || 'Untitled Session';
+
+            const ready = !!trimmed;
+            if (statusEl) statusEl.textContent = ready ? 'Ready to save' : 'Enter a session title to continue';
+            if (dot) dot.classList.toggle('ready', ready);
+        }
+
+        function toast(msg, type = 'ok') {
+            const r = document.getElementById('toast-region');
+            const el = document.createElement('div');
+            el.className = 'toastx ' + type;
+            el.textContent = msg;
+            r.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity .3s';
+                setTimeout(() => el.remove(), 300);
+            }, 3000);
+        }
+
+        function checkExistingPartTypes() {
+            const existingTypes = [];
+            const parts = document.getElementById('parts-1');
+            if (!parts) return existingTypes;
+
+            const partCards = parts.querySelectorAll('.part-card');
+            partCards.forEach(card => {
+                const selectedRadio = card.querySelector('input[type="radio"]:checked');
+                if (selectedRadio && selectedRadio.value) {
+                    existingTypes.push(selectedRadio.value);
+                }
+            });
+
+            return existingTypes;
+        }
+
+        function updatePartTypeButtonsState(partId = null) {
+            const existingTypes = checkExistingPartTypes();
+            const parts = document.getElementById('parts-1');
+            if (!parts) return;
+
+            const allRadios = parts.querySelectorAll('input[type="radio"][name*="[type]"]');
+            allRadios.forEach(radio => {
+                const label = radio.nextElementSibling;
+                const currentPartId = radio.closest('.part-card').id;
+
+                if (existingTypes.includes(radio.value) && !radio.checked) {
+                    radio.disabled = true;
+                    if (label) {
+                        label.style.opacity = '0.5';
+                        label.style.cursor = 'not-allowed';
+                        label.title = `This section type is already used in another section`;
+                    }
+                } else {
+                    radio.disabled = false;
+                    if (label) {
+                        label.style.opacity = '1';
+                        label.style.cursor = 'pointer';
+                        label.title = '';
+                    }
+                }
+            });
+        }
+
+        function checkExistingBlockTypes(partId) {
+            const container = document.getElementById('blocks-' + partId);
+            if (!container) return [];
+
+            const existingTypes = [];
+            const blocks = container.children;
+
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                const typeInput = block.querySelector('input[name*="[type]"]');
+                if (typeInput && typeInput.value) {
+                    existingTypes.push(typeInput.value);
+                }
+            }
+
+            return existingTypes;
+        }
+
+        function updateBlockButtonsState(partId) {
+            const existingTypes = checkExistingBlockTypes(partId);
+            const partCard = document.getElementById(partId);
+            if (!partCard) return;
+
+            const addButtons = partCard.querySelectorAll('.add-block-btn');
+            addButtons.forEach(btn => {
+                const btnType = btn.getAttribute('onclick');
+                let blockType = '';
+
+                if (btnType.includes("'body'")) blockType = 'body';
+                if (btnType.includes("'quote'")) blockType = 'quote';
+                if (btnType.includes("'media'")) blockType = 'media';
+                if (btnType.includes("'url'")) blockType = 'url';
+
+                if (existingTypes.includes(blockType)) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                    btn.title = `This section already has a ${blockType} block`;
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    btn.title = `Add ${blockType} block`;
+                }
+            });
+        }
+
+        function addPart(ln) {
+            partCounter++;
+            const partId = `part_${partCounter}`;
+
+            const pillsHtml = PART_TYPES.map(t => `
+                <input type="radio" class="btn-check" name="parts[${partId}][type]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
+                <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
+            `).join('');
+
+            const el = document.createElement('div');
+            el.className = 'part-card';
+            el.id = partId;
+
+            el.innerHTML = `
+                <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
+                    <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
+                        <span class="badge-soft secondary" id="ptag-${partId}">Unset</span>
+                        <span class="font-weight-bold" id="pname-${partId}">Section ${partCounter}</span>
+                        <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap:8px;">
+                        <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+                    </div>
+                </div>
+                <div class="card-body-collapse" id="pcollapse-${partId}">
+                    <div class="part-card-body">
+                        <div class="mb-4">
+                            <label class="form-label">Section Type <span class="text-danger">*</span></label>
+                            <div class="part-type-pills">${pillsHtml}</div>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                            <div class="section-mini-title mb-0">Content Blocks</div>
+                            <div class="blocks-toolbar">
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','media')"><i class="ti-image"></i> Media</button>
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
+                            </div>
+                        </div>
+                        <div id="blocks-${partId}"></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('parts-1').appendChild(el);
+            updatePartBlockCount(partId);
+            updatePartTypeButtonsState();
+            setTimeout(() => el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            }), 60);
+        }
+
+        function updatePartTypeLabel(partId, typeKey, typeLabel) {
+            const tag = document.getElementById('ptag-' + partId);
+            const name = document.getElementById('pname-' + partId);
+            if (tag) tag.textContent = typeLabel;
+            if (name) name.textContent = typeLabel + ' Section';
+        }
+
+        function togglePartCard(partId, e) {
+            if (e && e.target.closest('button, input, label, select, textarea, a')) return;
+            const collapse = document.getElementById('pcollapse-' + partId);
+            const chev = document.getElementById('pchev-' + partId);
+            const card = document.getElementById(partId);
+            if (!collapse || !chev || !card) return;
+            const isCollapsed = collapse.classList.contains('collapsed');
+            if (isCollapsed) {
+                collapse.classList.remove('collapsed');
+                chev.classList.remove('closed');
+                card.classList.remove('is-collapsed');
+            } else {
+                collapse.classList.add('collapsed');
+                chev.classList.add('closed');
+                card.classList.add('is-collapsed');
+            }
+        }
+
+        function toggleBlockCard(blockId, e) {
+            if (e && e.target.closest('button, input, label, select, textarea, a')) return;
+            const collapse = document.getElementById('bcollapse-' + blockId);
+            const chev = document.getElementById('bchev-' + blockId);
+            const card = document.getElementById(blockId);
+            if (!collapse || !chev || !card) return;
+            const isCollapsed = collapse.classList.contains('collapsed');
+            if (isCollapsed) {
+                collapse.classList.remove('collapsed');
+                chev.classList.remove('closed');
+                card.classList.remove('is-collapsed');
+            } else {
+                collapse.classList.add('collapsed');
+                chev.classList.add('closed');
+                card.classList.add('is-collapsed');
+            }
+        }
+
+        function removePart(partId, e) {
+            if (e) e.stopPropagation();
+            Swal.fire({
+                title: 'Remove this section?',
+                text: 'This section and all of its content blocks will be deleted.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, remove it',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                const el = document.getElementById(partId);
+                if (el) el.remove();
+                updatePartTypeButtonsState();
+                Swal.fire({
+                    title: 'Removed',
+                    text: 'The section was removed successfully.',
+                    icon: 'success',
+                    timer: 1400,
+                    showConfirmButton: false
+                });
+            });
+        }
+
+        function addBlock(partId, type) {
+            const existingTypes = checkExistingBlockTypes(partId);
+            if (existingTypes.includes(type)) {
+                toast(`A ${type} block already exists in this section. Only one ${type} block is allowed per section.`,
+                    'bad');
+                return;
+            }
+
+            blockCounter++;
+            const blockId = `block_${blockCounter}`;
+            const contentFieldName = `parts[${partId}][blocks][${blockId}][content]`;
+            const typeFieldName = `parts[${partId}][blocks][${blockId}][type]`;
 
             let bodyHtml = '';
 
@@ -881,115 +965,73 @@
                 bodyHtml = `
                     <div>
                         <label class="form-label">Content</label>
-                        <textarea id="${taId}" class="form-control" rows="5" placeholder="Write the teaching content or message notes here..."></textarea>
-                    </div>
-                `;
+                        <textarea name="${contentFieldName}" class="form-control" rows="8" placeholder="Write the teaching content or message notes here..."></textarea>
+                    </div>`;
             }
 
             if (type === 'quote') {
                 bodyHtml = `
                     <div class="mb-3">
                         <label class="form-label">Quote</label>
-                        <textarea id="${taId}" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here..."></textarea>
+                        <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here..."></textarea>
                     </div>
-                    <div>
-                        <label class="form-label">Attribution <span class="text-optional">— optional</span></label>
-                        <input type="text" class="form-control" placeholder="Author or source">
-                    </div>
-                `;
-            }
-
-            if (type === 'scripture') {
-                bodyHtml = `
-                    <div class="mb-3 table-responsive">
-                        <table class="table table-bordered mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Reference</th>
-                                    <th>Version</th>
-                                    <th>Language</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" class="form-control" placeholder="John 3:16"></td>
-                                    <td><input type="text" class="form-control" placeholder="NIV"></td>
-                                    <td><input type="text" class="form-control" placeholder="English"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                        <label class="form-label">Text</label>
-                        <textarea id="${taId}" class="form-control" rows="4" placeholder="Paste the scripture text..."></textarea>
-                    </div>
-                `;
+                    `;
             }
 
             if (type === 'media') {
                 bodyHtml = `
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Image</label>
-                            <input type="file" class="form-control" accept="image/*">
+                            <label class="form-label">Image <span class="text-optional">— optional</span></label>
+                            <input type="file" name="${contentFieldName}[image]" class="form-control" accept="image/*">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Video</label>
-                            <input type="file" class="form-control" accept="video/*">
+                            <label class="form-label">Video <span class="text-optional">— optional</span></label>
+                            <input type="file" name="${contentFieldName}[video]" class="form-control" accept="video/*">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">File</label>
-                            <input type="file" class="form-control">
+                            <label class="form-label">File <span class="text-optional">— optional</span></label>
+                            <input type="file" name="${contentFieldName}[file]" class="form-control">
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Caption <span class="text-optional">— optional</span></label>
-                            <input type="text" class="form-control" placeholder="Describe this media">
-                        </div>
-                    </div>
-                `;
+                    </div>`;
             }
 
             if (type === 'url') {
                 bodyHtml = `
-                    <div class="mb-3">
-                        <label class="form-label">URL <span class="text-danger">*</span></label>
-                        <input type="url" class="form-control" placeholder="https://example.com">
-                    </div>
                     <div>
-                        <label class="form-label">Label <span class="text-optional">— optional</span></label>
-                        <input type="text" class="form-control" placeholder="Friendly display name">
-                    </div>
-                `;
+                        <label class="form-label">URL</label>
+                        <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com">
+                    </div>`;
             }
 
-            const container = document.getElementById('blocks-' + pid);
+            const container = document.getElementById('blocks-' + partId);
             const el = document.createElement('div');
             el.className = 'block-card';
-            el.id = 'block-' + bid;
-            el.dataset.type = type;
-            el.dataset.taid = taId;
+            el.id = blockId;
 
             el.innerHTML = `
-                <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${bid}', event)" style="cursor:pointer;">
+                <input type="hidden" name="${typeFieldName}" value="${type}">
+                <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" style="cursor:pointer;">
                     <div class="d-flex align-items-center" style="gap:8px;">
                         <span><i class="${BLOCK_DEFS[type].icon}"></i></span>
                         <span>${BLOCK_DEFS[type].label}</span>
                     </div>
                     <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="bchev-${bid}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${bid}', event)">Remove</button>
+                        <span class="part-chevron" id="bchev-${blockId}"><i class="ti-angle-down"></i></span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)">Remove</button>
                     </div>
                 </div>
-                <div class="card-body-collapse" id="bcollapse-${bid}">
+                <div class="card-body-collapse" id="bcollapse-${blockId}">
                     <div class="block-card-body">${bodyHtml}</div>
                 </div>
             `;
 
             container.appendChild(el);
-            updatePartBlockCount(pid);
+            updatePartBlockCount(partId);
+            updateBlockButtonsState(partId);
         }
 
-        function removeBlock(bid, e) {
+        function removeBlock(blockId, partId, e) {
             if (e) e.stopPropagation();
             Swal.fire({
                 title: 'Remove this block?',
@@ -1001,12 +1043,10 @@
                 reverseButtons: true
             }).then((result) => {
                 if (!result.isConfirmed) return;
-                const el = document.getElementById('block-' + bid);
-                if (!el) return;
-                const parts = bid.split('_');
-                const pid = `${parts[0]}_${parts[1]}`;
-                el.remove();
-                updatePartBlockCount(pid);
+                const el = document.getElementById(blockId);
+                if (el) el.remove();
+                updatePartBlockCount(partId);
+                updateBlockButtonsState(partId);
                 Swal.fire({
                     title: 'Removed',
                     text: 'The block was removed successfully.',
@@ -1017,137 +1057,31 @@
             });
         }
 
-        function getTextareaValue(taId) {
-            const ta = document.getElementById(taId);
-            return ta ? ta.value.trim() : '';
+        function updatePartBlockCount(partId) {
+            const container = document.getElementById('blocks-' + partId);
+            const count = container ? container.children.length : 0;
+            const badge = document.getElementById('pbc-' + partId);
+            if (badge) badge.textContent = `${count} block${count === 1 ? '' : 's'}`;
         }
 
-        function serializePayload() {
-            const parts = [];
+        document.getElementById('pepsolForm').addEventListener('submit', function(e) {
+            const lessonTitle = document.getElementById('lesson-title-1')?.value?.trim();
 
-            document.querySelectorAll('#parts-1 .part-card').forEach(partEl => {
-                const pid = partEl.dataset.pid;
-                const partType = partTypeByPid[pid] || null;
-                const blocks = [];
-
-                document.querySelectorAll(`#blocks-${pid} > .block-card`).forEach(blockEl => {
-                    const type = blockEl.dataset.type || null;
-                    const taId = blockEl.dataset.taid || null;
-                    const blockData = {
-                        type
-                    };
-
-                    if (type === 'body' && taId) {
-                        blockData.text = getTextareaValue(taId);
-                    }
-
-                    if (type === 'quote') {
-                        const inputs = blockEl.querySelectorAll('input');
-                        blockData.text = taId ? getTextareaValue(taId) : '';
-                        blockData.attribution = inputs[0]?.value?.trim() || '';
-                    }
-
-                    if (type === 'scripture') {
-                        const inputs = blockEl.querySelectorAll('input');
-                        blockData.reference = inputs[0]?.value?.trim() || '';
-                        blockData.version = inputs[1]?.value?.trim() || '';
-                        blockData.language = inputs[2]?.value?.trim() || '';
-                        blockData.text = taId ? getTextareaValue(taId) : '';
-                    }
-
-                    if (type === 'media') {
-                        const inputs = blockEl.querySelectorAll('input');
-                        blockData.caption = inputs[3]?.value?.trim() || '';
-                    }
-
-                    if (type === 'url') {
-                        const inputs = blockEl.querySelectorAll('input');
-                        blockData.url = inputs[0]?.value?.trim() || '';
-                        blockData.label = inputs[1]?.value?.trim() || '';
-                    }
-
-                    blocks.push(blockData);
-                });
-
-                parts.push({
-                    pid,
-                    type: partType,
-                    blocks
-                });
-            });
-
-            return {
-                lesson: {
-                    title: document.getElementById('lesson-title-1')?.value?.trim() || '',
-                    subtitle: document.getElementById('lesson-subtitle-1')?.value?.trim() || '',
-                    summary: document.getElementById('ta-lsum-1')?.value?.trim() || '',
-                    parts
-                }
-            };
-        }
-
-        function handleSubmit(e) {
-            const name = document.getElementById('f-name').value.trim();
-            const cat = document.getElementById('f-cat').value;
-            const type = document.getElementById('f-type').value;
-            const desc = document.getElementById('ta-desc')?.value.trim();
-
-            let ok = true;
-
-            if (!cat) {
-                document.getElementById('f-cat').classList.add('is-invalid');
-                document.getElementById('err-cat').style.setProperty('display', 'block', 'important');
-                ok = false;
-            } else {
-                document.getElementById('f-cat').classList.remove('is-invalid');
-                document.getElementById('err-cat').style.setProperty('display', 'none', 'important');
-            }
-
-            if (!type) {
-                document.getElementById('f-type').classList.add('is-invalid');
-                document.getElementById('err-type').style.setProperty('display', 'block', 'important');
-                ok = false;
-            } else {
-                document.getElementById('f-type').classList.remove('is-invalid');
-                document.getElementById('err-type').style.setProperty('display', 'none', 'important');
-            }
-
-            if (!name) {
-                document.getElementById('f-name').classList.add('is-invalid');
-                document.getElementById('err-name').style.setProperty('display', 'block', 'important');
-                ok = false;
-            } else {
-                document.getElementById('f-name').classList.remove('is-invalid');
-                document.getElementById('err-name').style.setProperty('display', 'none', 'important');
-            }
-
-            if (!desc) {
-                document.getElementById('ta-desc').classList.add('is-invalid');
-                document.getElementById('err-desc').style.setProperty('display', 'block', 'important');
-                ok = false;
-            } else {
-                document.getElementById('ta-desc').classList.remove('is-invalid');
-                document.getElementById('err-desc').style.setProperty('display', 'none', 'important');
-            }
-
-            if (!ok) {
+            if (!lessonTitle) {
                 e.preventDefault();
-                toast('Please fill in all required fields.', 'bad');
-                const infoBody = document.getElementById('body-info');
-                if (infoBody && infoBody.style.display === 'none') {
-                    infoBody.previousElementSibling?.click();
+                document.getElementById('lesson-title-1').classList.add('is-invalid');
+                document.getElementById('err-lesson-title').style.display = 'block';
+                toast('Please enter a session title.', 'bad');
+
+                const lessonsBody = document.getElementById('body-lessons');
+                if (lessonsBody && lessonsBody.style.display === 'none') {
+                    lessonsBody.previousElementSibling?.click();
                 }
                 return false;
             }
 
-            document.getElementById('hidden-payload').value = JSON.stringify(serializePayload());
-            document.getElementById('bar-status').textContent = 'Saving...';
+            document.getElementById('bar-status').textContent = 'Saving…';
             return true;
-        }
-
-        window.onload = () => {
-            updateAddPartButtonState(1);
-            onFieldChange();
-        };
+        });
     </script>
 @endpush

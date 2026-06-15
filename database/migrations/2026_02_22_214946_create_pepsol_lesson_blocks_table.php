@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('pepsol_lesson_blocks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pepsol_lesson_part_id')->constrained('pepsol_lesson_parts')->cascadeOnDelete();
-            $table->text('body');
-            $table->text('quote');
+            $table->text('body')->nullable();
+            $table->text('quote')->nullable();
             $table->string('source')->nullable();
-            $table->text('scripture');
+            $table->text('scripture')->nullable();
             $table->string('image')->nullable();
             $table->string('video')->nullable();
             $table->string('file')->nullable();
