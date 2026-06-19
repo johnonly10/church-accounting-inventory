@@ -23,6 +23,6 @@ class PepsolLessonBlock extends Model
 
     public function part()
     {
-        return $this->belongsTo(PepsolLessonParts::class);
+        return $this->belongsTo(PepsolLessonParts::class, 'pepsol_lesson_part_id');
     }
 }
