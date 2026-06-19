@@ -16,11 +16,11 @@ class PepsolLessonParts extends Model
 
     public function lesson()
     {
-        return $this->belongsTo(PepsolLesson::class);
+        return $this->belongsTo(PepsolLesson::class, 'pepsol_lesson_id');
     }
 
     public function blocks()
     {
-        return $this->hasMany(PepsolLessonBlock::class);
+        return $this->hasMany(PepsolLessonBlock::class, 'pepsol_lesson_part_id');
     }
 }

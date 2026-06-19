@@ -45,7 +45,7 @@
                                     </td>
                                     <td>
                                         @if ($first)
-                                            <div class="fw-semibold">{{ $first->title }}</div>
+                                            <div class="name">{{ $first->title }}</div>
                                             @if ($first->subtitle)
                                                 <div class="small text-muted">{{ $first->subtitle }}</div>
                                             @endif
@@ -75,7 +75,9 @@
                                     <td class="text-center">
 
                                         <x-icons.action-edit :route="route('leader.pepsol.edit', $pepsol->id)" />
-                                        <x-icons.action-form :route="route('leader.pepsol.destroy', $pepsol->id)" method="DELETE" />
+                                        <x-icons.action-form :route="route('leader.pepsol.destroy', $pepsol->id)" method="DELETE" name="force-delete"
+                                            title="Delete" aClass="btn btn-sm btn-outline-danger border-0"
+                                            icon="fas fa-trash" />
                                     </td>
                                 </tr>
                             @empty

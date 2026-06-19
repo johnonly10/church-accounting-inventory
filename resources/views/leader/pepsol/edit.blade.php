@@ -437,6 +437,23 @@
             min-height: 180px;
         }
 
+        .existing-file {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .existing-file img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
         @media (max-width: 767.98px) {
 
             .ewm-card-header,
@@ -459,7 +476,7 @@
 
 @section('content')
     <div class="container-fluid page-shell px-3 px-md-4 py-4">
-        <x-page-title title="Create Discipleship Module" active="Create Discipleship Module" home="Discipleship"
+        <x-page-title title="Edit Discipleship Module" active="Edit Discipleship Module" home="Discipleship"
             :home-route="route('leader.pepsol.index')" />
 
         @if ($errors->any())
@@ -474,8 +491,10 @@
 
         <div id="toast-region"></div>
 
-        <form id="pepsolForm" action="{{ route('leader.pepsol.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="pepsolForm" action="{{ route('leader.pepsol.update', $pepsol->id) }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
+            @method('PUT')
 
             <div class="ewm-card">
                 <div class="ewm-card-header d-flex align-items-center justify-content-between"
@@ -500,7 +519,7 @@
                                 <option value="">Select a category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}"
-                                        {{ old('category') == $category->id ? 'selected' : '' }}>
+                                        {{ old('category', $pepsol->pepsol_category_id) == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -514,7 +533,8 @@
                             <select id="f-type" name="type" class="form-select">
                                 <option value="">Select a type</option>
                                 @foreach ($types as $type)
-                                    <option value="{{ $type->id }}" {{ old('type') == $type->id ? 'selected' : '' }}>
+                                    <option value="{{ $type->id }}"
+                                        {{ old('type', $pepsol->pepsol_type_id) == $type->id ? 'selected' : '' }}>
                                         {{ $type->name }}
                                     </option>
                                 @endforeach
@@ -526,13 +546,13 @@
                             <div class="status-pills">
                                 <label class="status-pill-label">
                                     <input type="radio" name="status" value="published"
-                                        {{ old('status', 'published') === 'published' ? 'checked' : '' }}>
+                                        {{ old('status', $pepsol->status) === 'published' ? 'checked' : '' }}>
                                     <span class="status-dot"></span>
                                     Published
                                 </label>
                                 <label class="status-pill-label">
                                     <input type="radio" name="status" value="draft"
-                                        {{ old('status') === 'draft' ? 'checked' : '' }}>
+                                        {{ old('status', $pepsol->status) === 'draft' ? 'checked' : '' }}>
                                     <span class="status-dot"></span>
                                     Draft
                                 </label>
@@ -544,23 +564,27 @@
                                 Description <span class="text-optional">— optional</span>
                             </label>
                             <textarea id="ta-desc" name="description" class="form-control" rows="6"
-                                placeholder="Describe what this module covers, who it's for, and what members will grow in spiritually...">{{ old('description') }}</textarea>
+                                placeholder="Describe what this module covers, who it's for, and what members will grow in spiritually...">{{ old('description', $pepsol->description) }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Guidelines <span class="text-optional">— optional</span></label>
                             <textarea id="ta-guidelines" name="guidelines" class="form-control" rows="5"
-                                placeholder="Community guidelines or fellowship participation expectations...">{{ old('guidelines') }}</textarea>
+                                placeholder="Community guidelines or fellowship participation expectations...">{{ old('guidelines', $pepsol->guidelines) }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Orientation <span class="text-optional">— optional</span></label>
                             <textarea id="ta-orient" name="orientation" class="form-control" rows="5"
-                                placeholder="A pastoral welcome note or orientation for new members joining this group...">{{ old('orientation') }}</textarea>
+                                placeholder="A pastoral welcome note or orientation for new members joining this group...">{{ old('orientation', $pepsol->orientation) }}</textarea>
                         </div>
                     </div>
                 </div>
             </div>
+
+            @php
+                $firstLesson = $pepsol->lessons->first();
+            @endphp
 
             <div class="ewm-card">
                 <div class="ewm-card-header d-flex align-items-center justify-content-between"
@@ -577,48 +601,17 @@
                 <div class="ewm-card-body" id="body-lessons">
                     <div class="d-flex align-items-center mb-4">
                         <span class="lesson-badge mr-2">1</span>
-                        <h5 class="mb-0 font-weight-bold" id="ld-1">Session 1</h5>
+                        <h5 class="mb-0 font-weight-bold" id="ld-1">{{ $firstLesson->title ?? 'Session 1' }}</h5>
                     </div>
 
                     <div class="row">
-                        <!-- Add Name and Topic dropdowns here -->
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label">
-                                Name <span class="text-optional">— optional</span>
-                            </label>
-                            <select id="pepsol-name" name="pepsol_name_id" class="form-select">
-                                <option value="">Select a Name</option>
-                                @foreach ($names as $name)
-                                    <option value="{{ $name->id }}"
-                                        {{ old('pepsol_name_id') == $name->id ? 'selected' : '' }}>
-                                        {{ $name->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label">
-                                Topic <span class="text-optional">— optional</span>
-                            </label>
-                            <select id="pepsol-topic" name="pepsol_topic_id" class="form-select">
-                                <option value="">Select a Topic</option>
-                                @foreach ($topics as $topic)
-                                    <option value="{{ $topic->id }}"
-                                        {{ old('pepsol_topic_id') == $topic->id ? 'selected' : '' }}>
-                                        {{ $topic->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
                         <div class="col-md-6 mb-4">
                             <label class="form-label">
                                 Title <span class="text-danger">*</span>
                             </label>
                             <input type="text" id="lesson-title-1" name="lesson_title" class="form-control"
                                 placeholder="e.g. Walking in the Spirit" oninput="onLessonTitleChange(this.value)"
-                                value="{{ old('lesson_title') }}">
+                                value="{{ old('lesson_title', $firstLesson->title ?? '') }}">
                             <div class="invalid-feedback d-block" id="err-lesson-title" style="display:none!important">
                                 Please enter a session title.
                             </div>
@@ -627,19 +620,33 @@
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Subtitle <span class="text-optional">— optional</span></label>
                             <input type="text" id="lesson-subtitle-1" name="lesson_subtitle" class="form-control"
-                                placeholder="e.g. A study on Galatians 5" value="{{ old('lesson_subtitle') }}">
+                                placeholder="e.g. A study on Galatians 5"
+                                value="{{ old('lesson_subtitle', $firstLesson->subtitle ?? '') }}">
                         </div>
 
-                        <!-- Rest of the existing fields... -->
                         <div class="col-12 mb-4">
                             <label class="form-label">Summary <span class="text-optional">— optional</span></label>
                             <textarea id="ta-lsum-1" name="lesson_summary" class="form-control" rows="4"
-                                placeholder="What spiritual truths or biblical principles will members explore?">{{ old('lesson_summary') }}</textarea>
+                                placeholder="What spiritual truths or biblical principles will members explore?">{{ old('lesson_summary', $firstLesson->summary ?? '') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Cover Image <span class="text-optional">— optional</span></label>
+                            @if ($firstLesson && $firstLesson->image)
+                                <div class="existing-file">
+                                    <img src="{{ asset('storage/' . $firstLesson->image) }}" alt="Current cover">
+                                    <div>
+                                        <span class="text-muted small">Current image</span>
+                                        <div class="form-check mt-1">
+                                            <input class="form-check-input" type="checkbox" name="remove_lesson_cover"
+                                                value="1" id="removeCover">
+                                            <label class="form-check-label small" for="removeCover">Remove image</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                             <input type="file" name="lesson_cover" accept="image/*" class="form-control">
+                            <small class="text-muted">Upload a new image to replace the existing one</small>
                         </div>
 
                         <div class="col-12">
@@ -656,27 +663,9 @@
                 </div>
             </div>
 
-            <x-buttons.form-action primaryTitle="Create Pepsol " primaryId="createPepsolBtn" :cancel-route="route('leader.pepsol.index')" />
+            <x-buttons.form-action primaryTitle="Update Module" primaryId="updatePepsolBtn" :cancel-route="route('leader.pepsol.index')" />
         </form>
     </div>
-
-    {{-- <div class="fixed-bottom-bar">
-        <div class="bottom-bar-inner">
-            <div class="bar-meta">
-                <span class="bar-dot" id="bar-dot"></span>
-                <div>
-                    <div class="bar-name" id="bar-name">Untitled Session</div>
-                    <div class="bar-status" id="bar-status">Enter a session title to continue</div>
-                </div>
-            </div>
-            <div class="bar-actions">
-                <a href="{{ route('leader.pepsol.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                <button type="submit" form="pepsolForm" class="btn btn-primary" id="createPepsolBtn">
-                    Create Module
-                </button>
-            </div>
-        </div>
-    </div> --}}
 @endsection
 
 @push('scripts')
@@ -726,6 +715,186 @@
                 icon: 'ti-link'
             }
         };
+
+        // Load existing parts and blocks on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            @if ($firstLesson && $firstLesson->parts->count() > 0)
+                @foreach ($firstLesson->parts as $part)
+                    loadExistingPart(@json($part));
+                @endforeach
+            @endif
+        });
+
+        function loadExistingPart(part) {
+            partCounter++;
+            const partId = `existing_part_${part.id}`;
+
+            const pillsHtml = PART_TYPES.map(t => `
+                <input type="radio" class="btn-check" name="existing_parts[${part.id}][type]" id="pt-${partId}-${t.key}" value="${t.key}" ${part.part_key === t.key ? 'checked' : ''} onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
+                <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
+            `).join('');
+
+            const el = document.createElement('div');
+            el.className = 'part-card';
+            el.id = partId;
+
+            const partTypeLabel = PART_TYPES.find(t => t.key === part.part_key)?.label || 'Unset';
+
+            el.innerHTML = `
+                <input type="hidden" name="existing_parts[${part.id}][id]" value="${part.id}">
+                <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
+                    <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
+                        <span class="badge-soft secondary" id="ptag-${partId}">${partTypeLabel}</span>
+                        <span class="font-weight-bold" id="pname-${partId}">${partTypeLabel} Section</span>
+                        <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap:8px;">
+                        <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+                    </div>
+                </div>
+                <div class="card-body-collapse" id="pcollapse-${partId}">
+                    <div class="part-card-body">
+                        <div class="mb-4">
+                            <label class="form-label">Section Type <span class="text-danger">*</span></label>
+                            <div class="part-type-pills">${pillsHtml}</div>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                            <div class="section-mini-title mb-0">Content Blocks</div>
+                            <div class="blocks-toolbar">
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','media')"><i class="ti-image"></i> Media</button>
+                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
+                            </div>
+                        </div>
+                        <div id="blocks-${partId}"></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('parts-1').appendChild(el);
+
+            // Load blocks for this part
+            if (part.blocks && part.blocks.length > 0) {
+                part.blocks.forEach(block => {
+                    loadExistingBlock(partId, part.id, block);
+                });
+            }
+
+            updatePartBlockCount(partId);
+            updatePartTypeButtonsState();
+            updateBlockButtonsState(partId);
+        }
+
+        function loadExistingBlock(partId, partDbId, block) {
+            blockCounter++;
+            const blockId = `existing_block_${block.id}`;
+            const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][content]`;
+            const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][type]`;
+
+            let bodyHtml = '';
+
+            if (block.body) {
+                bodyHtml = `
+                    <div>
+                        <label class="form-label">Content</label>
+                        <textarea name="${contentFieldName}" class="form-control" rows="8" placeholder="Write the teaching content or message notes here...">${block.body || ''}</textarea>
+                    </div>`;
+            }
+
+            if (block.quote) {
+                bodyHtml = `
+                    <div class="mb-3">
+                        <label class="form-label">Quote</label>
+                        <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here...">${block.quote || ''}</textarea>
+                    </div>`;
+            }
+
+            if (block.image || block.video || block.file) {
+                let mediaHtml = '<div class="row">';
+
+                if (block.image) {
+                    mediaHtml += `
+                        <div class="col-12 mb-3">
+                            <div class="existing-file">
+                                <img src="{{ asset('storage/') }}/${block.image}" alt="Current image">
+                                <span class="text-muted small">Current image</span>
+                            </div>
+                        </div>`;
+                }
+                if (block.video) {
+                    mediaHtml += `
+                        <div class="col-12 mb-3">
+                            <span class="text-muted small">Current video: ${block.video.split('/').pop()}</span>
+                        </div>`;
+                }
+                if (block.file) {
+                    mediaHtml += `
+                        <div class="col-12 mb-3">
+                            <span class="text-muted small">Current file: ${block.file.split('/').pop()}</span>
+                        </div>`;
+                }
+
+                mediaHtml += `
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Image <span class="text-optional">— optional</span></label>
+                        <input type="file" name="${contentFieldName}[image]" class="form-control" accept="image/*">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Video <span class="text-optional">— optional</span></label>
+                        <input type="file" name="${contentFieldName}[video]" class="form-control" accept="video/*">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">File <span class="text-optional">— optional</span></label>
+                        <input type="file" name="${contentFieldName}[file]" class="form-control">
+                    </div>
+                </div>`;
+
+                bodyHtml = mediaHtml;
+            }
+
+            if (block.url) {
+                bodyHtml = `
+                    <div>
+                        <label class="form-label">URL</label>
+                        <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com" value="${block.url || ''}">
+                    </div>`;
+            }
+
+            // Determine block type
+            let blockType = 'body';
+            if (block.quote) blockType = 'quote';
+            if (block.image || block.video || block.file) blockType = 'media';
+            if (block.url) blockType = 'url';
+
+            const container = document.getElementById('blocks-' + partId);
+            const el = document.createElement('div');
+            el.className = 'block-card';
+            el.id = blockId;
+
+            el.innerHTML = `
+                <input type="hidden" name="${typeFieldName}" value="${blockType}">
+                <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+                <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" style="cursor:pointer;">
+                    <div class="d-flex align-items-center" style="gap:8px;">
+                        <span><i class="${BLOCK_DEFS[blockType].icon}"></i></span>
+                        <span>${BLOCK_DEFS[blockType].label}</span>
+                    </div>
+                    <div class="d-flex align-items-center" style="gap:8px;">
+                        <span class="part-chevron" id="bchev-${blockId}"><i class="ti-angle-down"></i></span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)">Remove</button>
+                    </div>
+                </div>
+                <div class="card-body-collapse" id="bcollapse-${blockId}">
+                    <div class="block-card-body">${bodyHtml}</div>
+                </div>
+            `;
+
+            container.appendChild(el);
+        }
+
+        // ... (rest of the JavaScript functions remain the same as in create page)
 
         function toggleSection(headerEl) {
             const icon = headerEl.querySelector('[data-open]');
@@ -863,7 +1032,7 @@
             const partId = `part_${partCounter}`;
 
             const pillsHtml = PART_TYPES.map(t => `
-                <input type="radio" class="btn-check" name="parts[${partId}][type]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
+                <input type="radio" class="btn-check" name="new_parts[${partId}][type]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
                 <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
             `).join('');
 
@@ -990,8 +1159,21 @@
 
             blockCounter++;
             const blockId = `block_${blockCounter}`;
-            const contentFieldName = `parts[${partId}][blocks][${blockId}][content]`;
-            const typeFieldName = `parts[${partId}][blocks][${blockId}][type]`;
+
+            // Check if this is an existing part or new part
+            const partCard = document.getElementById(partId);
+            const isExistingPart = partId.startsWith('existing_part_');
+
+            let contentFieldName, typeFieldName;
+
+            if (isExistingPart) {
+                const partDbId = partId.replace('existing_part_', '');
+                contentFieldName = `existing_parts[${partDbId}][new_blocks][${blockId}][content]`;
+                typeFieldName = `existing_parts[${partDbId}][new_blocks][${blockId}][type]`;
+            } else {
+                contentFieldName = `new_parts[${partId}][blocks][${blockId}][content]`;
+                typeFieldName = `new_parts[${partId}][blocks][${blockId}][type]`;
+            }
 
             let bodyHtml = '';
 
@@ -1008,8 +1190,7 @@
                     <div class="mb-3">
                         <label class="form-label">Quote</label>
                         <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here..."></textarea>
-                    </div>
-                    `;
+                    </div>`;
             }
 
             if (type === 'media') {

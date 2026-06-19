@@ -12,6 +12,8 @@ class PepsolLesson extends Model
 
     protected $fillable = [
         'pepsol_id',
+        'pepsol_name_id',
+        'pepsol_topic_id',
         'title',
         'subtitle',
         'summary',
@@ -20,11 +22,21 @@ class PepsolLesson extends Model
 
     public function pepsol()
     {
-        return $this->belongsTo(Pepsol::class);
+        return $this->belongsTo(Pepsol::class, 'pepsol_id');
     }
 
     public function parts()
     {
         return $this->hasMany(PepsolLessonParts::class);
+    }
+
+    public function name()
+    {
+        return $this->belongsTo(PepsolName::class, 'pepsol_name_id');
+    }
+
+    public function topic()
+    {
+        return $this->belongsTo(PepsolTopic::class, 'pepsol_topic_id');
     }
 }
