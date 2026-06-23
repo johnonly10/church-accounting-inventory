@@ -17,16 +17,18 @@ use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\Guest\AboutController;
 use App\Http\Controllers\Guest\ContactController;
 use App\Http\Controllers\Guest\HomeController;
-use App\Http\Controllers\Member\MProfileController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\Leader\LDashboardController;
-use App\Http\Controllers\LeaderController;
 use App\Http\Controllers\Leader\LEventController;
 use App\Http\Controllers\Leader\LPepsolCategoriesController;
 use App\Http\Controllers\Leader\LPepsolController;
+use App\Http\Controllers\Leader\LPepsolName;
+use App\Http\Controllers\Leader\LPepsolNameController;
 use App\Http\Controllers\Leader\LPepsolTypes;
 use App\Http\Controllers\Leader\LPepsolTypesController;
 use App\Http\Controllers\Leader\LSilderController;
+use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\Member\MProfileController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProfileController;
@@ -112,6 +114,7 @@ Route::middleware(['auth', 'roletype:LEADER'])->prefix('leader')->name('leader.'
     Route::resource('pepsol', LPepsolController::class);
 
     Route::resource('sliders', LSilderController::class);
+    Route::resource('pepsol-names', LPepsolNameController::class);
 });
 
 

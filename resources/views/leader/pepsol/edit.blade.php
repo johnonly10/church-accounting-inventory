@@ -570,7 +570,7 @@
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Guidelines <span class="text-optional">— optional</span></label>
                             <textarea id="ta-guidelines" name="guidelines" class="form-control" rows="5"
-                                placeholder="Community guidelines or fellowship participation expectations...">{{ old('guidelines', $pepsol->guidelines) }}</textarea>
+                                placeholder="Community guidelines or fellowship participation expectations...">{{ old('guidelines', $pepsol->rules) }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
@@ -607,6 +607,36 @@
                     <div class="row">
                         <div class="col-md-6 mb-4">
                             <label class="form-label">
+                                Name <span class="text-optional">— optional</span>
+                            </label>
+                            <select id="pepsol-name" name="pepsol_name_id" class="form-select">
+                                <option value="">Select a Name</option>
+                                @foreach ($names as $name)
+                                    <option value="{{ $name->id }}"
+                                        {{ old('pepsol_name_id', $firstLesson->pepsol_name_id ?? '') == $name->id ? 'selected' : '' }}>
+                                        {{ $name->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">
+                                Topic <span class="text-optional">— optional</span>
+                            </label>
+                            <select id="pepsol-topic" name="pepsol_topic_id" class="form-select">
+                                <option value="">Select a Topic</option>
+                                @foreach ($topics as $topic)
+                                    <option value="{{ $topic->id }}"
+                                        {{ old('pepsol_topic_id', $firstLesson->pepsol_topic_id ?? '') == $topic->id ? 'selected' : '' }}>
+                                        {{ $topic->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">
                                 Title <span class="text-danger">*</span>
                             </label>
                             <input type="text" id="lesson-title-1" name="lesson_title" class="form-control"
@@ -634,7 +664,7 @@
                             <label class="form-label">Cover Image <span class="text-optional">— optional</span></label>
                             @if ($firstLesson && $firstLesson->image)
                                 <div class="existing-file">
-                                    <img src="{{ asset('storage/' . $firstLesson->image) }}" alt="Current cover">
+                                    <img src="{{ asset($firstLesson->image) }}" alt="Current cover">
                                     <div>
                                         <span class="text-muted small">Current image</span>
                                         <div class="form-check mt-1">
@@ -716,7 +746,6 @@
             }
         };
 
-        // Load existing parts and blocks on page load
         document.addEventListener('DOMContentLoaded', function() {
             @if ($firstLesson && $firstLesson->parts->count() > 0)
                 @foreach ($firstLesson->parts as $part)
@@ -775,7 +804,6 @@
 
             document.getElementById('parts-1').appendChild(el);
 
-            // Load blocks for this part
             if (part.blocks && part.blocks.length > 0) {
                 part.blocks.forEach(block => {
                     loadExistingBlock(partId, part.id, block);
@@ -794,8 +822,10 @@
             const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][type]`;
 
             let bodyHtml = '';
+            let blockType = 'body';
 
             if (block.body) {
+                blockType = 'body';
                 bodyHtml = `
                     <div>
                         <label class="form-label">Content</label>
@@ -804,6 +834,7 @@
             }
 
             if (block.quote) {
+                blockType = 'quote';
                 bodyHtml = `
                     <div class="mb-3">
                         <label class="form-label">Quote</label>
@@ -812,13 +843,14 @@
             }
 
             if (block.image || block.video || block.file) {
+                blockType = 'media';
                 let mediaHtml = '<div class="row">';
 
                 if (block.image) {
                     mediaHtml += `
                         <div class="col-12 mb-3">
                             <div class="existing-file">
-                                <img src="{{ asset('storage/') }}/${block.image}" alt="Current image">
+                                <img src="{{ asset('') }}${block.image}" alt="Current image">
                                 <span class="text-muted small">Current image</span>
                             </div>
                         </div>`;
@@ -855,18 +887,13 @@
             }
 
             if (block.url) {
+                blockType = 'url';
                 bodyHtml = `
                     <div>
                         <label class="form-label">URL</label>
                         <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com" value="${block.url || ''}">
                     </div>`;
             }
-
-            // Determine block type
-            let blockType = 'body';
-            if (block.quote) blockType = 'quote';
-            if (block.image || block.video || block.file) blockType = 'media';
-            if (block.url) blockType = 'url';
 
             const container = document.getElementById('blocks-' + partId);
             const el = document.createElement('div');
@@ -894,8 +921,6 @@
             container.appendChild(el);
         }
 
-        // ... (rest of the JavaScript functions remain the same as in create page)
-
         function toggleSection(headerEl) {
             const icon = headerEl.querySelector('[data-open]');
             const isOpen = icon.dataset.open === 'true';
@@ -911,16 +936,6 @@
             const trimmed = val.trim();
             const el = document.getElementById('ld-1');
             if (el) el.textContent = trimmed || 'Session 1';
-
-            const nameEl = document.getElementById('bar-name');
-            const statusEl = document.getElementById('bar-status');
-            const dot = document.getElementById('bar-dot');
-
-            if (nameEl) nameEl.textContent = trimmed || 'Untitled Session';
-
-            const ready = !!trimmed;
-            if (statusEl) statusEl.textContent = ready ? 'Ready to save' : 'Enter a session title to continue';
-            if (dot) dot.classList.toggle('ready', ready);
         }
 
         function toast(msg, type = 'ok') {
@@ -1159,8 +1174,6 @@
 
             blockCounter++;
             const blockId = `block_${blockCounter}`;
-
-            // Check if this is an existing part or new part
             const partCard = document.getElementById(partId);
             const isExistingPart = partId.startsWith('existing_part_');
 
@@ -1295,7 +1308,6 @@
                 return false;
             }
 
-            document.getElementById('bar-status').textContent = 'Saving…';
             return true;
         });
     </script>

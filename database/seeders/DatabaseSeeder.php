@@ -31,6 +31,9 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             PepsolCategorySeeder::class,
             PepsolTypeSeeder::class,
+            PepsolNameSeeder::class,
+            PepsolTopicSeeder::class,
+
         ]);
     }
 }

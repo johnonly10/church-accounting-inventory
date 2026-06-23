@@ -67,8 +67,8 @@ class LPepsolController extends Controller
     {
         $request->validate([
             'category' => 'nullable|exists:pepsol_categories,id',
-            'name' => 'nullable|exists:pepsol_names,id',
-            'topic' => 'nullable|exists:pepsol_topics,id',
+            'pepsol_name_id' => 'nullable|exists:pepsol_names,id',
+            'pepsol_topic_id' => 'nullable|exists:pepsol_topics,id',
             'type' => 'nullable|exists:pepsol_types,id',
             'status' => 'required|in:published,draft',
             'description' => 'nullable|string',
@@ -97,11 +97,23 @@ class LPepsolController extends Controller
 
             $coverPath = null;
             if ($request->hasFile('lesson_cover')) {
-                $coverPath = $request->file('lesson_cover')->store('pepsol-lessons', 'public');
+                $file = $request->file('lesson_cover');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Lesson');
+
+                // Create directory if it doesn't exist
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                $file->move($destinationPath, $filename);
+                $coverPath = 'Images/Pepsol/Lesson/' . $filename;
             }
 
             $lesson = PepsolLesson::create([
                 'pepsol_id' => $pepsol->id,
+                'pepsol_name_id' => $request->pepsol_name_id,
+                'pepsol_topic_id' => $request->pepsol_topic_id,
                 'title' => $request->lesson_title,
                 'subtitle' => $request->lesson_subtitle,
                 'summary' => $request->lesson_summary,
@@ -148,13 +160,42 @@ class LPepsolController extends Controller
 
                             if ($type === 'media') {
                                 if (isset($block['content']['image']) && $block['content']['image'] instanceof \Illuminate\Http\UploadedFile) {
-                                    $blockData['image'] = $block['content']['image']->store('pepsol-lessons/images', 'public');
+                                    $file = $block['content']['image'];
+                                    $filename = time() . '_' . $file->getClientOriginalName();
+                                    $destinationPath = public_path('Images/Pepsol/Media/Image');
+
+                                    if (!file_exists($destinationPath)) {
+                                        mkdir($destinationPath, 0777, true);
+                                    }
+
+                                    $file->move($destinationPath, $filename);
+                                    $blockData['image'] = 'Images/Pepsol/Media/Image/' . $filename;
                                 }
+
                                 if (isset($block['content']['video']) && $block['content']['video'] instanceof \Illuminate\Http\UploadedFile) {
-                                    $blockData['video'] = $block['content']['video']->store('pepsol-lessons/videos', 'public');
+                                    $file = $block['content']['video'];
+                                    $filename = time() . '_' . $file->getClientOriginalName();
+                                    $destinationPath = public_path('Images/Pepsol/Media/Video');
+
+                                    if (!file_exists($destinationPath)) {
+                                        mkdir($destinationPath, 0777, true);
+                                    }
+
+                                    $file->move($destinationPath, $filename);
+                                    $blockData['video'] = 'Images/Pepsol/Media/Video/' . $filename;
                                 }
+
                                 if (isset($block['content']['file']) && $block['content']['file'] instanceof \Illuminate\Http\UploadedFile) {
-                                    $blockData['file'] = $block['content']['file']->store('pepsol-lessons/files', 'public');
+                                    $file = $block['content']['file'];
+                                    $filename = time() . '_' . $file->getClientOriginalName();
+                                    $destinationPath = public_path('Images/Pepsol/Media/File');
+
+                                    if (!file_exists($destinationPath)) {
+                                        mkdir($destinationPath, 0777, true);
+                                    }
+
+                                    $file->move($destinationPath, $filename);
+                                    $blockData['file'] = 'Images/Pepsol/Media/File/' . $filename;
                                 }
                             }
 
@@ -185,8 +226,12 @@ class LPepsolController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
+            // Clean up uploaded files on error
             if (isset($coverPath) && $coverPath) {
-                Storage::disk('public')->delete($coverPath);
+                $fullPath = public_path($coverPath);
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                }
             }
 
             return back()->withErrors(['error' => 'Failed to create module: ' . $e->getMessage()])->withInput();
@@ -204,8 +249,10 @@ class LPepsolController extends Controller
 
         $categories = PepsolCategory::orderBy('id')->get();
         $types = PepsolType::orderBy('id')->get();
+        $names = PepsolName::orderBy('name')->get();
+        $topics = PepsolTopic::orderBy('name')->get();
 
-        return view('leader.pepsol.edit', compact('pepsol', 'categories', 'types'));
+        return view('leader.pepsol.edit', compact('pepsol', 'categories', 'types', 'names', 'topics'));
     }
 
     public function update(Request $request, $id)
@@ -213,6 +260,8 @@ class LPepsolController extends Controller
         $request->validate([
             'category' => 'nullable|exists:pepsol_categories,id',
             'type' => 'nullable|exists:pepsol_types,id',
+            'pepsol_name_id' => 'nullable|exists:pepsol_names,id',
+            'pepsol_topic_id' => 'nullable|exists:pepsol_topics,id',
             'status' => 'required|in:published,draft',
             'description' => 'nullable|string',
             'guidelines' => 'nullable|string',
@@ -222,7 +271,7 @@ class LPepsolController extends Controller
             'lesson_summary' => 'nullable|string',
             'lesson_cover' => 'nullable|image|max:2048',
             'remove_lesson_cover' => 'nullable|boolean',
-            'parts' => 'nullable|array',
+            'new_parts' => 'nullable|array',
             'existing_parts' => 'nullable|array',
         ]);
 
@@ -241,25 +290,39 @@ class LPepsolController extends Controller
             ]);
 
             $lesson = $pepsol->lessons()->first();
-
             $coverPath = $lesson ? $lesson->image : null;
 
             if ($request->has('remove_lesson_cover') && $request->remove_lesson_cover) {
                 if ($coverPath) {
-                    Storage::disk('public')->delete($coverPath);
+                    $fullPath = public_path($coverPath);
+                    if (file_exists($fullPath)) {
+                        unlink($fullPath);
+                    }
                 }
                 $coverPath = null;
             }
 
             if ($request->hasFile('lesson_cover')) {
                 if ($coverPath) {
-                    Storage::disk('public')->delete($coverPath);
+                    $fullPath = public_path($coverPath);
+                    if (file_exists($fullPath)) {
+                        unlink($fullPath);
+                    }
                 }
-                $coverPath = $request->file('lesson_cover')->store('pepsol-lessons', 'public');
+                $file = $request->file('lesson_cover');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Lesson');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $coverPath = 'Images/Pepsol/Lesson/' . $filename;
             }
 
             if ($lesson) {
                 $lesson->update([
+                    'pepsol_name_id' => $request->pepsol_name_id,
+                    'pepsol_topic_id' => $request->pepsol_topic_id,
                     'title' => $request->lesson_title,
                     'subtitle' => $request->lesson_subtitle,
                     'summary' => $request->lesson_summary,
@@ -268,6 +331,8 @@ class LPepsolController extends Controller
             } else {
                 $lesson = PepsolLesson::create([
                     'pepsol_id' => $pepsol->id,
+                    'pepsol_name_id' => $request->pepsol_name_id,
+                    'pepsol_topic_id' => $request->pepsol_topic_id,
                     'title' => $request->lesson_title,
                     'subtitle' => $request->lesson_subtitle,
                     'summary' => $request->lesson_summary,
@@ -303,7 +368,7 @@ class LPepsolController extends Controller
 
                                 if ($block) {
                                     $type = $blockData['type'] ?? 'body';
-                                    $updateData = $this->prepareBlockUpdateData($blockData, $type);
+                                    $updateData = $this->prepareBlockUpdateData($blockData, $type, $block);
 
                                     if (!empty($updateData)) {
                                         $block->update($updateData);
@@ -344,8 +409,8 @@ class LPepsolController extends Controller
                 PepsolLessonParts::where('pepsol_lesson_id', $lesson->id)->delete();
             }
 
-            if ($request->has('parts') && is_array($request->parts)) {
-                foreach ($request->parts as $partId => $partData) {
+            if ($request->has('new_parts') && is_array($request->new_parts)) {
+                foreach ($request->new_parts as $partId => $partData) {
                     if (empty($partData['type'])) {
                         continue;
                     }
@@ -396,7 +461,10 @@ class LPepsolController extends Controller
             DB::rollBack();
 
             if (isset($coverPath) && $coverPath && $request->hasFile('lesson_cover')) {
-                Storage::disk('public')->delete($coverPath);
+                $fullPath = public_path($coverPath);
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                }
             }
 
             return back()->withErrors(['error' => 'Failed to update module: ' . $e->getMessage()])->withInput();
@@ -418,13 +486,34 @@ class LPepsolController extends Controller
 
         if ($type === 'media') {
             if (isset($block['content']['image']) && $block['content']['image'] instanceof \Illuminate\Http\UploadedFile) {
-                $blockData['image'] = $block['content']['image']->store('pepsol-lessons/images', 'public');
+                $file = $block['content']['image'];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Media/Image');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $blockData['image'] = 'Images/Pepsol/Media/Image/' . $filename;
             }
             if (isset($block['content']['video']) && $block['content']['video'] instanceof \Illuminate\Http\UploadedFile) {
-                $blockData['video'] = $block['content']['video']->store('pepsol-lessons/videos', 'public');
+                $file = $block['content']['video'];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Media/Video');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $blockData['video'] = 'Images/Pepsol/Media/Video/' . $filename;
             }
             if (isset($block['content']['file']) && $block['content']['file'] instanceof \Illuminate\Http\UploadedFile) {
-                $blockData['file'] = $block['content']['file']->store('pepsol-lessons/files', 'public');
+                $file = $block['content']['file'];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Media/File');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $blockData['file'] = 'Images/Pepsol/Media/File/' . $filename;
             }
         }
 
@@ -433,7 +522,7 @@ class LPepsolController extends Controller
         }
     }
 
-    private function prepareBlockUpdateData($blockData, $type)
+    private function prepareBlockUpdateData($blockData, $type, $existingBlock = null)
     {
         $updateData = [];
 
@@ -450,13 +539,52 @@ class LPepsolController extends Controller
 
         if ($type === 'media') {
             if (isset($blockData['content']['image']) && $blockData['content']['image'] instanceof \Illuminate\Http\UploadedFile) {
-                $updateData['image'] = $blockData['content']['image']->store('pepsol-lessons/images', 'public');
+                if ($existingBlock && $existingBlock->image) {
+                    $oldPath = public_path($existingBlock->image);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+                $file = $blockData['content']['image'];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Media/Image');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $updateData['image'] = 'Images/Pepsol/Media/Image/' . $filename;
             }
             if (isset($blockData['content']['video']) && $blockData['content']['video'] instanceof \Illuminate\Http\UploadedFile) {
-                $updateData['video'] = $blockData['content']['video']->store('pepsol-lessons/videos', 'public');
+                if ($existingBlock && $existingBlock->video) {
+                    $oldPath = public_path($existingBlock->video);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+                $file = $blockData['content']['video'];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Media/Video');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $updateData['video'] = 'Images/Pepsol/Media/Video/' . $filename;
             }
             if (isset($blockData['content']['file']) && $blockData['content']['file'] instanceof \Illuminate\Http\UploadedFile) {
-                $updateData['file'] = $blockData['content']['file']->store('pepsol-lessons/files', 'public');
+                if ($existingBlock && $existingBlock->file) {
+                    $oldPath = public_path($existingBlock->file);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+                $file = $blockData['content']['file'];
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('Images/Pepsol/Media/File');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $file->move($destinationPath, $filename);
+                $updateData['file'] = 'Images/Pepsol/Media/File/' . $filename;
             }
         }
 
