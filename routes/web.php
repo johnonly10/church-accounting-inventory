@@ -17,6 +17,7 @@ use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\Guest\AboutController;
 use App\Http\Controllers\Guest\ContactController;
 use App\Http\Controllers\Guest\HomeController;
+use App\Http\Controllers\Guest\PepsolController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\Leader\LDashboardController;
 use App\Http\Controllers\Leader\LEventController;
@@ -52,6 +53,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::resource('/contact', ContactController::class)->names('contact');
+Route::get('/pepsol', [PepsolController::class, 'index'])->name('pepsol.index');
 
 Route::get('/maintenance', function () {
     return view('maintenance');

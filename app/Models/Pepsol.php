@@ -28,7 +28,7 @@ class Pepsol extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function lessons()

@@ -1,3 +1,5 @@
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
 <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-menu-header">
         <div class="mobile-menu-logo">
@@ -22,6 +24,11 @@
                 <a href="{{ route('home') }}" class="mobile-nav-link {{ Request::routeIs('home') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
                     <span>Home</span>
+                </a>
+                <a href="{{ route('pepsol.index') }}"
+                    class="mobile-nav-link {{ Request::routeIs('pepsol.index') ? 'active' : '' }}">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Pepsol</span>
                 </a>
                 <a href="{{ route('about') }}" class="mobile-nav-link {{ Request::routeIs('about') ? 'active' : '' }}">
                     <i class="fas fa-info-circle"></i>
@@ -52,7 +59,7 @@
                         }
                     @endphp
                     @if (auth()->user()->roletype === 'STAFF')
-                        <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
+                        <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to dashboard">
                             <i class="fas fa-user-circle"></i>
                             <span>Dashboard</span>
                         </a>
@@ -98,18 +105,23 @@
 
     <div class="nav-center" id="navMenu">
         <a href="{{ route('home') }}" class="nav-link {{ Request::routeIs('home') ? 'active' : '' }}"
-            {{ Request::routeIs('home') ? 'aria-current=page' : '' }}>
+            {{ Request::routeIs('home') ? 'aria-current="page"' : '' }}>
             <i class="fas fa-home"></i>
             Home
         </a>
+        <a href="{{ route('pepsol.index') }}" class="nav-link {{ Request::routeIs('pepsol.index') ? 'active' : '' }}"
+            {{ Request::routeIs('pepsol.index') ? 'aria-current="page"' : '' }}>
+            <i class="fas fa-info-circle"></i>
+            Pepsol
+        </a>
         <a href="{{ route('about') }}" class="nav-link {{ Request::routeIs('about') ? 'active' : '' }}"
-            {{ Request::routeIs('about') ? 'aria-current=page' : '' }}>
+            {{ Request::routeIs('about') ? 'aria-current="page"' : '' }}>
             <i class="fas fa-info-circle"></i>
             About
         </a>
         <a href="{{ route('contact.index') }}"
             class="nav-link {{ Request::routeIs('contact.index') ? 'active' : '' }}"
-            {{ Request::routeIs('contact.index') ? 'aria-current=page' : '' }}>
+            {{ Request::routeIs('contact.index') ? 'aria-current="page"' : '' }}>
             <i class="fas fa-envelope"></i>
             Contact
         </a>
@@ -135,7 +147,7 @@
             @endphp
 
             @if (auth()->user()->roletype === 'STAFF' || auth()->user()->roletype === 'LEADER')
-                <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to profile">
+                <a href="{{ $profileRoute }}" class="cta-button" aria-label="Go to dashboard">
                     <i class="fas fa-user-circle"></i>
                     <span>Dashboard</span>
                 </a>
@@ -148,6 +160,7 @@
         @else
             <a href="{{ route('login') }}" class="cta-button" aria-label="Sign in to your account">
                 <i class="fas fa-user"></i>
+                <span>Sign In</span>
             </a>
         @endauth
     </div>
@@ -187,7 +200,7 @@
         }
 
         if (mobileToggle) {
-            mobileToggle.addEventListener('click', (e) => {
+            mobileToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 toggleMobileMenu();
             });
@@ -202,8 +215,8 @@
         }
 
         document.querySelectorAll('.mobile-nav-link, .mobile-action-btn, .mobile-quick-action').forEach(
-            link => {
-                link.addEventListener('click', (e) => {
+            function(link) {
+                link.addEventListener('click', function() {
                     if (link.tagName === 'BUTTON' && link.closest('form')) {
                         return;
                     }
@@ -211,19 +224,8 @@
                 });
             });
 
-        document.querySelector('.skip-link')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            const mainContent = document.getElementById('main-content');
-            if (mainContent) {
-                mainContent.focus();
-                mainContent.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-
         let lastScroll = 0;
-        window.addEventListener('scroll', () => {
+        window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
             const currentScroll = window.pageYOffset;
 
@@ -240,26 +242,26 @@
             lastScroll = currentScroll;
         });
 
-        document.querySelectorAll('a[href="#"]').forEach(link => {
-            link.addEventListener('click', (e) => {
+        document.querySelectorAll('a[href="#"]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
                 e.preventDefault();
             });
         });
 
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
                 closeMobileMenu();
             }
         });
 
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', function() {
             if (window.innerWidth > 900 && mobileMenu.classList.contains('active')) {
                 closeMobileMenu();
             }
         });
 
         if (mobileMenu) {
-            mobileMenu.addEventListener('click', (e) => {
+            mobileMenu.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
         }
@@ -267,11 +269,11 @@
         let touchStartX = 0;
         let touchEndX = 0;
 
-        document.addEventListener('touchstart', (e) => {
+        document.addEventListener('touchstart', function(e) {
             touchStartX = e.changedTouches[0].screenX;
         }, false);
 
-        document.addEventListener('touchend', (e) => {
+        document.addEventListener('touchend', function(e) {
             touchEndX = e.changedTouches[0].screenX;
             const swipeThreshold = 100;
             const swipeDistance = touchEndX - touchStartX;
@@ -282,21 +284,21 @@
             }
         }, false);
 
-        document.querySelectorAll('.mobile-action-btn, .cta-button').forEach(button => {
-            button.addEventListener('click', function(e) {
+        document.querySelectorAll('.mobile-action-btn, .cta-button').forEach(function(button) {
+            button.addEventListener('click', function() {
                 if (this.classList.contains('primary') && !this.closest('form')) {
                     this.style.opacity = '0.7';
                     this.style.pointerEvents = 'none';
 
-                    setTimeout(() => {
+                    setTimeout(function() {
                         this.style.opacity = '1';
                         this.style.pointerEvents = 'auto';
-                    }, 1000);
+                    }.bind(this), 1000);
                 }
             });
         });
 
-        document.querySelectorAll('form').forEach(form => {
+        document.querySelectorAll('form').forEach(function(form) {
             form.addEventListener('submit', function() {
                 const submitButton = this.querySelector('button[type="submit"]');
                 if (submitButton) {

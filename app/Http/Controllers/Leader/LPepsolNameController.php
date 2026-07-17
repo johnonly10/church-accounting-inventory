@@ -8,9 +8,6 @@ use Illuminate\Http\Request;
 
 class LPepsolNameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $query = PepsolName::orderBy('name');
@@ -27,64 +24,83 @@ class LPepsolNameController extends Controller
         return view('leader.pepsol.names.index', compact('pepsolNames'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('leader.pepsol.names.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:pepsol_names,name',
-            'code' => 'required|string|max:255,unique:pepsol_names,code',
+            'code' => 'required|string|max:255|unique:pepsol_names,code',
+            'image' => 'required|image|mimes:jpeg,png,gif,svg|max:2048',
         ]);
 
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+            $image->move(public_path('Images/Pepsol/Name'), $imageName);
+
+            $validated['image'] = $imageName;
+        }
+
         PepsolName::create($validated);
-        return redirect()->route('leader.pepsol-names.index')->with('success', 'Name Created Successfully');
+
+        return redirect()
+            ->route('leader.pepsol-names.index')
+            ->with('success', 'Pepsol Name created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(PepsolName $pepsolName)
     {
         return view('leader.pepsol.names.edit', compact('pepsolName'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, PepsolName $pepsolName)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:pepsol_names,name,' . $pepsolName->id,
             'code' => 'required|string|max:255|unique:pepsol_names,code,' . $pepsolName->id,
+            'image' => 'nullable|image|mimes:jpeg,png,gif,svg|max:2048',
         ]);
 
+        if ($request->hasFile('image')) {
+            if ($pepsolName->image) {
+                $oldImagePath = public_path('Images/Pepsol/Name/' . $pepsolName->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('Images/Pepsol/Name'), $imageName);
+            $validated['image'] = $imageName;
+        }
+
         $pepsolName->update($validated);
-        return redirect()->route('leader.pepsol-names.index')->with('success', 'Names updated Successfully');
+
+        return redirect()->route('leader.pepsol-names.index')->with('success', 'Pepsol Name updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(PepsolName $pepsolName)
     {
+        if ($pepsolName->image) {
+            $imagePath = public_path('Images/Pepsol/Name/' . $pepsolName->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
         $pepsolName->delete();
-        return redirect()->route('leader.pepsol-names.index')->with('success', 'Name deleted Successfully');
+
+        return redirect()->route('leader.pepsol-names.index')->with('success', 'Pepsol Name deleted successfully.');
     }
 }
