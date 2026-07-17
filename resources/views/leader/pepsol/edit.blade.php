@@ -736,9 +736,21 @@
                 label: 'Quote',
                 icon: 'fas fa-quote-left'
             },
-            media: {
-                label: 'Media',
+            scripture: {
+                label: 'Scripture',
+                icon: 'fas fa-bible'
+            },
+            image: {
+                label: 'Image',
                 icon: 'ti-image'
+            },
+            video: {
+                label: 'Video',
+                icon: 'ti-video-camera'
+            },
+            file: {
+                label: 'File',
+                icon: 'ti-file'
             },
             url: {
                 label: 'URL',
@@ -759,9 +771,9 @@
             const partId = `existing_part_${part.id}`;
 
             const pillsHtml = PART_TYPES.map(t => `
-                <input type="radio" class="btn-check" name="existing_parts[${part.id}][type]" id="pt-${partId}-${t.key}" value="${t.key}" ${part.part_key === t.key ? 'checked' : ''} onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
-                <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
-            `).join('');
+        <input type="radio" class="btn-check" name="existing_parts[${part.id}][type]" id="pt-${partId}-${t.key}" value="${t.key}" ${part.part_key === t.key ? 'checked' : ''} onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
+        <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
+    `).join('');
 
             const el = document.createElement('div');
             el.className = 'part-card';
@@ -770,37 +782,40 @@
             const partTypeLabel = PART_TYPES.find(t => t.key === part.part_key)?.label || 'Unset';
 
             el.innerHTML = `
-                <input type="hidden" name="existing_parts[${part.id}][id]" value="${part.id}">
-                <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
-                    <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
-                        <span class="badge-soft secondary" id="ptag-${partId}">${partTypeLabel}</span>
-                        <span class="font-weight-bold" id="pname-${partId}">${partTypeLabel} Section</span>
-                        <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
-                    </div>
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+        <input type="hidden" name="existing_parts[${part.id}][id]" value="${part.id}">
+        <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
+            <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
+                <span class="badge-soft secondary" id="ptag-${partId}">${partTypeLabel}</span>
+                <span class="font-weight-bold" id="pname-${partId}">${partTypeLabel} Section</span>
+                <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
+            </div>
+            <div class="d-flex align-items-center" style="gap:8px;">
+                <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+            </div>
+        </div>
+        <div class="card-body-collapse" id="pcollapse-${partId}">
+            <div class="part-card-body">
+                <div class="mb-4">
+                    <label class="form-label">Section Type <span class="text-danger">*</span></label>
+                    <div class="part-type-pills">${pillsHtml}</div>
+                </div>
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                    <div class="section-mini-title mb-0">Content Blocks</div>
+                    <div class="blocks-toolbar">
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','scripture')"><i class="fas fa-bible"></i> Scripture</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','image')"><i class="ti-image"></i> Image</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','video')"><i class="ti-video-camera"></i> Video</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','file')"><i class="ti-file"></i> File</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
                     </div>
                 </div>
-                <div class="card-body-collapse" id="pcollapse-${partId}">
-                    <div class="part-card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Section Type <span class="text-danger">*</span></label>
-                            <div class="part-type-pills">${pillsHtml}</div>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-                            <div class="section-mini-title mb-0">Content Blocks</div>
-                            <div class="blocks-toolbar">
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','media')"><i class="ti-image"></i> Media</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
-                            </div>
-                        </div>
-                        <div id="blocks-${partId}"></div>
-                    </div>
-                </div>
-            `;
+                <div id="blocks-${partId}"></div>
+            </div>
+        </div>
+    `;
 
             document.getElementById('parts-1').appendChild(el);
 
@@ -818,107 +833,264 @@
         function loadExistingBlock(partId, partDbId, block) {
             blockCounter++;
             const blockId = `existing_block_${block.id}`;
-            const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][content]`;
-            const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][type]`;
-
-            let bodyHtml = '';
-            let blockType = 'body';
 
             if (block.body) {
-                blockType = 'body';
-                bodyHtml = `
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][body][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][body][type]`;
+                const bodyBlockId = `${blockId}_body`;
+
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = bodyBlockId;
+
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="body">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${bodyBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="ti-align-left"></i></span>
+                    <span>Body</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${bodyBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${bodyBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${bodyBlockId}">
+                <div class="block-card-body">
                     <div>
                         <label class="form-label">Content</label>
                         <textarea name="${contentFieldName}" class="form-control" rows="8" placeholder="Write the teaching content or message notes here...">${block.body || ''}</textarea>
-                    </div>`;
+                    </div>
+                </div>
+            </div>
+        `;
+
+                document.getElementById('blocks-' + partId).appendChild(el);
             }
 
             if (block.quote) {
-                blockType = 'quote';
-                bodyHtml = `
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][quote][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][quote][type]`;
+                const quoteBlockId = `${blockId}_quote`;
+
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = quoteBlockId;
+
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="quote">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${quoteBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="fas fa-quote-left"></i></span>
+                    <span>Quote</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${quoteBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${quoteBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${quoteBlockId}">
+                <div class="block-card-body">
                     <div class="mb-3">
                         <label class="form-label">Quote</label>
                         <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here...">${block.quote || ''}</textarea>
-                    </div>`;
+                    </div>
+                </div>
+            </div>
+        `;
+
+                document.getElementById('blocks-' + partId).appendChild(el);
             }
 
-            if (block.image || block.video || block.file) {
-                blockType = 'media';
-                let mediaHtml = '<div class="row">';
+            if (block.scripture) {
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][scripture][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][scripture][type]`;
+                const scriptureBlockId = `${blockId}_scripture`;
 
-                if (block.image) {
-                    mediaHtml += `
-                        <div class="col-12 mb-3">
-                            <div class="existing-file">
-                                <img src="{{ asset('') }}${block.image}" alt="Current image">
-                                <span class="text-muted small">Current image</span>
-                            </div>
-                        </div>`;
-                }
-                if (block.video) {
-                    mediaHtml += `
-                        <div class="col-12 mb-3">
-                            <span class="text-muted small">Current video: ${block.video.split('/').pop()}</span>
-                        </div>`;
-                }
-                if (block.file) {
-                    mediaHtml += `
-                        <div class="col-12 mb-3">
-                            <span class="text-muted small">Current file: ${block.file.split('/').pop()}</span>
-                        </div>`;
-                }
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = scriptureBlockId;
 
-                mediaHtml += `
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Image <span class="text-optional">— optional</span></label>
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="scripture">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${scriptureBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="fas fa-bible"></i></span>
+                    <span>Scripture</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${scriptureBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${scriptureBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${scriptureBlockId}">
+                <div class="block-card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Scripture</label>
+                        <textarea name="${contentFieldName}[scripture]" class="form-control" rows="4" placeholder="Enter the scripture reference and text...">${block.scripture || ''}</textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+
+                document.getElementById('blocks-' + partId).appendChild(el);
+            }
+
+            if (block.image) {
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][image][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][image][type]`;
+                const imageBlockId = `${blockId}_image`;
+
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = imageBlockId;
+
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="image">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${imageBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="ti-image"></i></span>
+                    <span>Image</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${imageBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${imageBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${imageBlockId}">
+                <div class="block-card-body">
+                    <div class="existing-file mb-3">
+                        <img src="{{ asset('') }}${block.image}" alt="Current image">
+                        <span class="text-muted small">Current image</span>
+                    </div>
+                    <div>
+                        <label class="form-label">Replace Image <span class="text-optional">— optional</span></label>
                         <input type="file" name="${contentFieldName}[image]" class="form-control" accept="image/*">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Video <span class="text-optional">— optional</span></label>
+                </div>
+            </div>
+        `;
+
+                document.getElementById('blocks-' + partId).appendChild(el);
+            }
+
+            if (block.video) {
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][video][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][video][type]`;
+                const videoBlockId = `${blockId}_video`;
+
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = videoBlockId;
+
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="video">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${videoBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="ti-video-camera"></i></span>
+                    <span>Video</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${videoBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${videoBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${videoBlockId}">
+                <div class="block-card-body">
+                    <div class="mb-3">
+                        <span class="text-muted small">Current video: ${block.video.split('/').pop()}</span>
+                    </div>
+                    <div>
+                        <label class="form-label">Replace Video <span class="text-optional">— optional</span></label>
                         <input type="file" name="${contentFieldName}[video]" class="form-control" accept="video/*">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">File <span class="text-optional">— optional</span></label>
+                </div>
+            </div>
+        `;
+
+                document.getElementById('blocks-' + partId).appendChild(el);
+            }
+
+            if (block.file) {
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][file][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][file][type]`;
+                const fileBlockId = `${blockId}_file`;
+
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = fileBlockId;
+
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="file">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${fileBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="ti-file"></i></span>
+                    <span>File</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${fileBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${fileBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${fileBlockId}">
+                <div class="block-card-body">
+                    <div class="mb-3">
+                        <span class="text-muted small">Current file: ${block.file.split('/').pop()}</span>
+                    </div>
+                    <div>
+                        <label class="form-label">Replace File <span class="text-optional">— optional</span></label>
                         <input type="file" name="${contentFieldName}[file]" class="form-control">
                     </div>
-                </div>`;
+                </div>
+            </div>
+        `;
 
-                bodyHtml = mediaHtml;
+                document.getElementById('blocks-' + partId).appendChild(el);
             }
 
             if (block.url) {
-                blockType = 'url';
-                bodyHtml = `
+                const contentFieldName = `existing_parts[${partDbId}][blocks][${block.id}][url][content]`;
+                const typeFieldName = `existing_parts[${partDbId}][blocks][${block.id}][url][type]`;
+                const urlBlockId = `${blockId}_url`;
+
+                const el = document.createElement('div');
+                el.className = 'block-card';
+                el.id = urlBlockId;
+
+                el.innerHTML = `
+            <input type="hidden" name="${typeFieldName}" value="url">
+            <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
+            <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${urlBlockId}', event)" style="cursor:pointer;">
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span><i class="ti-link"></i></span>
+                    <span>URL</span>
+                </div>
+                <div class="d-flex align-items-center" style="gap:8px;">
+                    <span class="part-chevron" id="bchev-${urlBlockId}"><i class="ti-angle-down"></i></span>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${urlBlockId}', '${partId}', event)">Remove</button>
+                </div>
+            </div>
+            <div class="card-body-collapse" id="bcollapse-${urlBlockId}">
+                <div class="block-card-body">
                     <div>
                         <label class="form-label">URL</label>
                         <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com" value="${block.url || ''}">
-                    </div>`;
+                    </div>
+                </div>
+            </div>
+        `;
+
+                document.getElementById('blocks-' + partId).appendChild(el);
             }
 
-            const container = document.getElementById('blocks-' + partId);
-            const el = document.createElement('div');
-            el.className = 'block-card';
-            el.id = blockId;
-
-            el.innerHTML = `
-                <input type="hidden" name="${typeFieldName}" value="${blockType}">
-                <input type="hidden" name="existing_parts[${partDbId}][blocks][${block.id}][id]" value="${block.id}">
-                <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" style="cursor:pointer;">
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span><i class="${BLOCK_DEFS[blockType].icon}"></i></span>
-                        <span>${BLOCK_DEFS[blockType].label}</span>
-                    </div>
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="bchev-${blockId}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)">Remove</button>
-                    </div>
-                </div>
-                <div class="card-body-collapse" id="bcollapse-${blockId}">
-                    <div class="block-card-body">${bodyHtml}</div>
-                </div>
-            `;
-
-            container.appendChild(el);
+            updatePartBlockCount(partId);
+            updateBlockButtonsState(partId);
         }
 
         function toggleSection(headerEl) {
@@ -1025,7 +1197,10 @@
 
                 if (btnType.includes("'body'")) blockType = 'body';
                 if (btnType.includes("'quote'")) blockType = 'quote';
-                if (btnType.includes("'media'")) blockType = 'media';
+                if (btnType.includes("'scripture'")) blockType = 'scripture';
+                if (btnType.includes("'image'")) blockType = 'image';
+                if (btnType.includes("'video'")) blockType = 'video';
+                if (btnType.includes("'file'")) blockType = 'file';
                 if (btnType.includes("'url'")) blockType = 'url';
 
                 if (existingTypes.includes(blockType)) {
@@ -1047,45 +1222,48 @@
             const partId = `part_${partCounter}`;
 
             const pillsHtml = PART_TYPES.map(t => `
-                <input type="radio" class="btn-check" name="new_parts[${partId}][type]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
-                <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
-            `).join('');
+        <input type="radio" class="btn-check" name="new_parts[${partId}][type]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
+        <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
+    `).join('');
 
             const el = document.createElement('div');
             el.className = 'part-card';
             el.id = partId;
 
             el.innerHTML = `
-                <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
-                    <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
-                        <span class="badge-soft secondary" id="ptag-${partId}">Unset</span>
-                        <span class="font-weight-bold" id="pname-${partId}">Section ${partCounter}</span>
-                        <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
-                    </div>
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+        <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
+            <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
+                <span class="badge-soft secondary" id="ptag-${partId}">Unset</span>
+                <span class="font-weight-bold" id="pname-${partId}">Section ${partCounter}</span>
+                <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
+            </div>
+            <div class="d-flex align-items-center" style="gap:8px;">
+                <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+            </div>
+        </div>
+        <div class="card-body-collapse" id="pcollapse-${partId}">
+            <div class="part-card-body">
+                <div class="mb-4">
+                    <label class="form-label">Section Type <span class="text-danger">*</span></label>
+                    <div class="part-type-pills">${pillsHtml}</div>
+                </div>
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                    <div class="section-mini-title mb-0">Content Blocks</div>
+                    <div class="blocks-toolbar">
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','scripture')"><i class="fas fa-bible"></i> Scripture</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','image')"><i class="ti-image"></i> Image</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','video')"><i class="ti-video-camera"></i> Video</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','file')"><i class="ti-file"></i> File</button>
+                        <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
                     </div>
                 </div>
-                <div class="card-body-collapse" id="pcollapse-${partId}">
-                    <div class="part-card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Section Type <span class="text-danger">*</span></label>
-                            <div class="part-type-pills">${pillsHtml}</div>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-                            <div class="section-mini-title mb-0">Content Blocks</div>
-                            <div class="blocks-toolbar">
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','media')"><i class="ti-image"></i> Media</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
-                            </div>
-                        </div>
-                        <div id="blocks-${partId}"></div>
-                    </div>
-                </div>
-            `;
+                <div id="blocks-${partId}"></div>
+            </div>
+        </div>
+    `;
 
             document.getElementById('parts-1').appendChild(el);
             updatePartBlockCount(partId);
@@ -1192,44 +1370,58 @@
 
             if (type === 'body') {
                 bodyHtml = `
-                    <div>
-                        <label class="form-label">Content</label>
-                        <textarea name="${contentFieldName}" class="form-control" rows="8" placeholder="Write the teaching content or message notes here..."></textarea>
-                    </div>`;
+            <div>
+                <label class="form-label">Content</label>
+                <textarea name="${contentFieldName}" class="form-control" rows="8" placeholder="Write the teaching content or message notes here..."></textarea>
+            </div>`;
             }
 
             if (type === 'quote') {
                 bodyHtml = `
-                    <div class="mb-3">
-                        <label class="form-label">Quote</label>
-                        <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here..."></textarea>
-                    </div>`;
+            <div class="mb-3">
+                <label class="form-label">Quote</label>
+                <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here..."></textarea>
+            </div>`;
             }
 
-            if (type === 'media') {
+            if (type === 'scripture') {
                 bodyHtml = `
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Image <span class="text-optional">— optional</span></label>
-                            <input type="file" name="${contentFieldName}[image]" class="form-control" accept="image/*">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Video <span class="text-optional">— optional</span></label>
-                            <input type="file" name="${contentFieldName}[video]" class="form-control" accept="video/*">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">File <span class="text-optional">— optional</span></label>
-                            <input type="file" name="${contentFieldName}[file]" class="form-control">
-                        </div>
-                    </div>`;
+            <div class="mb-3">
+                <label class="form-label">Scripture</label>
+                <textarea name="${contentFieldName}[scripture]" class="form-control" rows="4" placeholder="Enter the scripture reference and text..."></textarea>
+            </div>`;
+            }
+
+            if (type === 'image') {
+                bodyHtml = `
+            <div>
+                <label class="form-label">Image <span class="text-optional">— optional</span></label>
+                <input type="file" name="${contentFieldName}[image]" class="form-control" accept="image/*">
+            </div>`;
+            }
+
+            if (type === 'video') {
+                bodyHtml = `
+            <div>
+                <label class="form-label">Video <span class="text-optional">— optional</span></label>
+                <input type="file" name="${contentFieldName}[video]" class="form-control" accept="video/*">
+            </div>`;
+            }
+
+            if (type === 'file') {
+                bodyHtml = `
+            <div>
+                <label class="form-label">File <span class="text-optional">— optional</span></label>
+                <input type="file" name="${contentFieldName}[file]" class="form-control">
+            </div>`;
             }
 
             if (type === 'url') {
                 bodyHtml = `
-                    <div>
-                        <label class="form-label">URL</label>
-                        <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com">
-                    </div>`;
+            <div>
+                <label class="form-label">URL</label>
+                <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com">
+            </div>`;
             }
 
             const container = document.getElementById('blocks-' + partId);
@@ -1238,21 +1430,21 @@
             el.id = blockId;
 
             el.innerHTML = `
-                <input type="hidden" name="${typeFieldName}" value="${type}">
-                <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" style="cursor:pointer;">
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span><i class="${BLOCK_DEFS[type].icon}"></i></span>
-                        <span>${BLOCK_DEFS[type].label}</span>
-                    </div>
-                    <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="bchev-${blockId}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)">Remove</button>
-                    </div>
-                </div>
-                <div class="card-body-collapse" id="bcollapse-${blockId}">
-                    <div class="block-card-body">${bodyHtml}</div>
-                </div>
-            `;
+        <input type="hidden" name="${typeFieldName}" value="${type}">
+        <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" style="cursor:pointer;">
+            <div class="d-flex align-items-center" style="gap:8px;">
+                <span><i class="${BLOCK_DEFS[type].icon}"></i></span>
+                <span>${BLOCK_DEFS[type].label}</span>
+            </div>
+            <div class="d-flex align-items-center" style="gap:8px;">
+                <span class="part-chevron" id="bchev-${blockId}"><i class="ti-angle-down"></i></span>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)">Remove</button>
+            </div>
+        </div>
+        <div class="card-body-collapse" id="bcollapse-${blockId}">
+            <div class="block-card-body">${bodyHtml}</div>
+        </div>
+    `;
 
             container.appendChild(el);
             updatePartBlockCount(partId);

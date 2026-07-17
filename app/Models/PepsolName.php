@@ -12,6 +12,7 @@ class PepsolName extends Model
     protected $fillable = [
         'name',
         'code',
+        'image',
     ];
 
     public function lessons()
