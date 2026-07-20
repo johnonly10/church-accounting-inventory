@@ -12,13 +12,11 @@ class PepsolLessonBlock extends Model
 
     protected $fillable = [
         'pepsol_lesson_part_id',
-        'body',
-        'quote',
-        'scripture',
-        'image',
-        'video',
-        'file',
-        'url',
+        'block_type',
+        'content',
+        'reference',
+        'media',
+        'sort_order',
     ];
 
     public function part()

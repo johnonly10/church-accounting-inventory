@@ -54,6 +54,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::resource('/contact', ContactController::class)->names('contact');
 Route::get('/pepsol', [PepsolController::class, 'index'])->name('pepsol.index');
+Route::get('/pepsol/{pepsolName}/lessons', [PepsolController::class, 'lesson'])->name('pepsol.lessons');
+Route::get('/pepsol/{pepsolName}/lessons/{lesson}', [PepsolController::class, 'details'])
+    ->name('pepsol.details');
 
 Route::get('/maintenance', function () {
     return view('maintenance');

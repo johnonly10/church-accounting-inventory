@@ -65,6 +65,7 @@ class LPepsolController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'category' => 'nullable|exists:pepsol_categories,id',
             'pepsol_name_id' => 'nullable|exists:pepsol_names,id',
@@ -101,7 +102,6 @@ class LPepsolController extends Controller
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $destinationPath = public_path('Images/Pepsol/Lesson');
 
-                // Create directory if it doesn't exist
                 if (!file_exists($destinationPath)) {
                     mkdir($destinationPath, 0777, true);
                 }
@@ -121,100 +121,46 @@ class LPepsolController extends Controller
             ]);
 
             if ($request->has('parts') && is_array($request->parts)) {
-                foreach ($request->parts as $partId => $partData) {
-                    if (empty($partData['type'])) {
+                foreach ($request->parts as $partData) {
+                    if (empty($partData['part_key'])) {
                         continue;
                     }
 
                     $part = PepsolLessonParts::create([
                         'pepsol_lesson_id' => $lesson->id,
-                        'part_key' => $partData['type'],
+                        'part_key' => $partData['part_key'],
                     ]);
 
-                    $blockData = [
-                        'pepsol_lesson_part_id' => $part->id,
-                        'body' => null,
-                        'quote' => null,
-                        'source' => null,
-                        'scripture' => null,
-                        'image' => null,
-                        'video' => null,
-                        'file' => null,
-                        'url' => null,
-                    ];
-
                     if (isset($partData['blocks']) && is_array($partData['blocks'])) {
-                        foreach ($partData['blocks'] as $block) {
-                            $type = $block['type'] ?? null;
+                        foreach ($partData['blocks'] as $blockData) {
+                            $blockType = $blockData['block_type'] ?? null;
+                            $content = $blockData['content'] ?? null;
+                            $reference = $blockData['reference'] ?? null;
+                            $media = null;
+                            $sortOrder = $blockData['sort_order'] ?? 0;
 
-                            if ($type === 'body') {
-                                $blockData['body'] = $block['content'] ?? null;
-                            }
+                            if ($blockType && $content instanceof \Illuminate\Http\UploadedFile) {
+                                $filename = time() . '_' . $content->getClientOriginalName();
+                                $destinationPath = public_path('Images/Pepsol/Blocks');
 
-                            if ($type === 'quote') {
-                                $blockData['quote'] = $block['content']['quote'] ?? null;
-                                if (isset($block['content']['source'])) {
-                                    $blockData['source'] = $block['content']['source'];
-                                }
-                            }
-
-                            if ($type === 'media') {
-                                if (isset($block['content']['image']) && $block['content']['image'] instanceof \Illuminate\Http\UploadedFile) {
-                                    $file = $block['content']['image'];
-                                    $filename = time() . '_' . $file->getClientOriginalName();
-                                    $destinationPath = public_path('Images/Pepsol/Media/Image');
-
-                                    if (!file_exists($destinationPath)) {
-                                        mkdir($destinationPath, 0777, true);
-                                    }
-
-                                    $file->move($destinationPath, $filename);
-                                    $blockData['image'] = 'Images/Pepsol/Media/Image/' . $filename;
+                                if (!file_exists($destinationPath)) {
+                                    mkdir($destinationPath, 0777, true);
                                 }
 
-                                if (isset($block['content']['video']) && $block['content']['video'] instanceof \Illuminate\Http\UploadedFile) {
-                                    $file = $block['content']['video'];
-                                    $filename = time() . '_' . $file->getClientOriginalName();
-                                    $destinationPath = public_path('Images/Pepsol/Media/Video');
-
-                                    if (!file_exists($destinationPath)) {
-                                        mkdir($destinationPath, 0777, true);
-                                    }
-
-                                    $file->move($destinationPath, $filename);
-                                    $blockData['video'] = 'Images/Pepsol/Media/Video/' . $filename;
-                                }
-
-                                if (isset($block['content']['file']) && $block['content']['file'] instanceof \Illuminate\Http\UploadedFile) {
-                                    $file = $block['content']['file'];
-                                    $filename = time() . '_' . $file->getClientOriginalName();
-                                    $destinationPath = public_path('Images/Pepsol/Media/File');
-
-                                    if (!file_exists($destinationPath)) {
-                                        mkdir($destinationPath, 0777, true);
-                                    }
-
-                                    $file->move($destinationPath, $filename);
-                                    $blockData['file'] = 'Images/Pepsol/Media/File/' . $filename;
-                                }
+                                $content->move($destinationPath, $filename);
+                                $media = 'Images/Pepsol/Blocks/' . $filename;
+                                $content = null;
                             }
 
-                            if ($type === 'url') {
-                                $blockData['url'] = $block['content']['url'] ?? null;
-                            }
+                            PepsolLessonBlock::create([
+                                'pepsol_lesson_part_id' => $part->id,
+                                'block_type' => $blockType,
+                                'content' => $content,
+                                'reference' => $reference,
+                                'media' => $media,
+                                'sort_order' => $sortOrder,
+                            ]);
                         }
-                    }
-
-                    $hasData = false;
-                    foreach ($blockData as $key => $value) {
-                        if ($key !== 'pepsol_lesson_part_id' && !empty($value)) {
-                            $hasData = true;
-                            break;
-                        }
-                    }
-
-                    if ($hasData) {
-                        PepsolLessonBlock::create($blockData);
                     }
                 }
             }
@@ -226,7 +172,6 @@ class LPepsolController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // Clean up uploaded files on error
             if (isset($coverPath) && $coverPath) {
                 $fullPath = public_path($coverPath);
                 if (file_exists($fullPath)) {
@@ -350,12 +295,12 @@ class LPepsolController extends Controller
                 foreach ($request->existing_parts as $partId => $partData) {
                     $part = PepsolLessonParts::find($partId);
 
-                    if (!$part || empty($partData['type'])) {
+                    if (!$part || empty($partData['part_key'])) {
                         continue;
                     }
 
                     $part->update([
-                        'part_key' => $partData['type'],
+                        'part_key' => $partData['part_key'],
                     ]);
 
                     if (isset($partData['blocks']) && is_array($partData['blocks'])) {
@@ -367,12 +312,12 @@ class LPepsolController extends Controller
                                 $block = PepsolLessonBlock::find($blockId);
 
                                 if ($block) {
-                                    $type = $blockData['type'] ?? 'body';
-                                    $updateData = $this->prepareBlockUpdateData($blockData, $type, $block);
-
-                                    if (!empty($updateData)) {
-                                        $block->update($updateData);
-                                    }
+                                    $block->update([
+                                        'block_type' => $blockData['block_type'] ?? $block->block_type,
+                                        'content' => $blockData['content'] ?? $block->content,
+                                        'reference' => $blockData['reference'] ?? $block->reference,
+                                        'sort_order' => $blockData['sort_order'] ?? $block->sort_order,
+                                    ]);
                                 }
                             }
                         }
@@ -386,22 +331,14 @@ class LPepsolController extends Controller
 
                     if (isset($partData['new_blocks']) && is_array($partData['new_blocks'])) {
                         foreach ($partData['new_blocks'] as $newBlockData) {
-                            $type = $newBlockData['type'] ?? 'body';
-
-                            $blockData = [
+                            PepsolLessonBlock::create([
                                 'pepsol_lesson_part_id' => $part->id,
-                                'body' => null,
-                                'quote' => null,
-                                'source' => null,
-                                'scripture' => null,
-                                'image' => null,
-                                'video' => null,
-                                'file' => null,
-                                'url' => null,
-                            ];
-
-                            $this->fillBlockData($blockData, $newBlockData, $type);
-                            PepsolLessonBlock::create($blockData);
+                                'block_type' => $newBlockData['block_type'] ?? 'paragraph',
+                                'content' => $newBlockData['content'] ?? null,
+                                'reference' => $newBlockData['reference'] ?? null,
+                                'media' => null,
+                                'sort_order' => $newBlockData['sort_order'] ?? 0,
+                            ]);
                         }
                     }
                 }
@@ -410,44 +347,26 @@ class LPepsolController extends Controller
             }
 
             if ($request->has('new_parts') && is_array($request->new_parts)) {
-                foreach ($request->new_parts as $partId => $partData) {
-                    if (empty($partData['type'])) {
+                foreach ($request->new_parts as $partKey => $partData) {
+                    if (empty($partData['part_key'])) {
                         continue;
                     }
 
                     $part = PepsolLessonParts::create([
                         'pepsol_lesson_id' => $lesson->id,
-                        'part_key' => $partData['type'],
+                        'part_key' => $partData['part_key'],
                     ]);
 
                     if (isset($partData['blocks']) && is_array($partData['blocks'])) {
-                        $blockData = [
-                            'pepsol_lesson_part_id' => $part->id,
-                            'body' => null,
-                            'quote' => null,
-                            'source' => null,
-                            'scripture' => null,
-                            'image' => null,
-                            'video' => null,
-                            'file' => null,
-                            'url' => null,
-                        ];
-
-                        foreach ($partData['blocks'] as $block) {
-                            $type = $block['type'] ?? null;
-                            $this->fillBlockData($blockData, $block, $type);
-                        }
-
-                        $hasData = false;
-                        foreach ($blockData as $key => $value) {
-                            if ($key !== 'pepsol_lesson_part_id' && !empty($value)) {
-                                $hasData = true;
-                                break;
-                            }
-                        }
-
-                        if ($hasData) {
-                            PepsolLessonBlock::create($blockData);
+                        foreach ($partData['blocks'] as $blockData) {
+                            PepsolLessonBlock::create([
+                                'pepsol_lesson_part_id' => $part->id,
+                                'block_type' => $blockData['block_type'] ?? 'paragraph',
+                                'content' => $blockData['content'] ?? null,
+                                'reference' => $blockData['reference'] ?? null,
+                                'media' => null,
+                                'sort_order' => $blockData['sort_order'] ?? 0,
+                            ]);
                         }
                     }
                 }
@@ -471,129 +390,7 @@ class LPepsolController extends Controller
         }
     }
 
-    private function fillBlockData(&$blockData, $block, $type)
-    {
-        if ($type === 'body') {
-            $blockData['body'] = $block['content'] ?? null;
-        }
 
-        if ($type === 'quote') {
-            $blockData['quote'] = $block['content']['quote'] ?? null;
-            if (isset($block['content']['source'])) {
-                $blockData['source'] = $block['content']['source'];
-            }
-        }
-
-        if ($type === 'media') {
-            if (isset($block['content']['image']) && $block['content']['image'] instanceof \Illuminate\Http\UploadedFile) {
-                $file = $block['content']['image'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('Images/Pepsol/Media/Image');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $file->move($destinationPath, $filename);
-                $blockData['image'] = 'Images/Pepsol/Media/Image/' . $filename;
-            }
-            if (isset($block['content']['video']) && $block['content']['video'] instanceof \Illuminate\Http\UploadedFile) {
-                $file = $block['content']['video'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('Images/Pepsol/Media/Video');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $file->move($destinationPath, $filename);
-                $blockData['video'] = 'Images/Pepsol/Media/Video/' . $filename;
-            }
-            if (isset($block['content']['file']) && $block['content']['file'] instanceof \Illuminate\Http\UploadedFile) {
-                $file = $block['content']['file'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('Images/Pepsol/Media/File');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $file->move($destinationPath, $filename);
-                $blockData['file'] = 'Images/Pepsol/Media/File/' . $filename;
-            }
-        }
-
-        if ($type === 'url') {
-            $blockData['url'] = $block['content']['url'] ?? null;
-        }
-    }
-
-    private function prepareBlockUpdateData($blockData, $type, $existingBlock = null)
-    {
-        $updateData = [];
-
-        if ($type === 'body') {
-            $updateData['body'] = $blockData['content'] ?? null;
-        }
-
-        if ($type === 'quote') {
-            $updateData['quote'] = $blockData['content']['quote'] ?? null;
-            if (isset($blockData['content']['source'])) {
-                $updateData['source'] = $blockData['content']['source'];
-            }
-        }
-
-        if ($type === 'media') {
-            if (isset($blockData['content']['image']) && $blockData['content']['image'] instanceof \Illuminate\Http\UploadedFile) {
-                if ($existingBlock && $existingBlock->image) {
-                    $oldPath = public_path($existingBlock->image);
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
-                    }
-                }
-                $file = $blockData['content']['image'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('Images/Pepsol/Media/Image');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $file->move($destinationPath, $filename);
-                $updateData['image'] = 'Images/Pepsol/Media/Image/' . $filename;
-            }
-            if (isset($blockData['content']['video']) && $blockData['content']['video'] instanceof \Illuminate\Http\UploadedFile) {
-                if ($existingBlock && $existingBlock->video) {
-                    $oldPath = public_path($existingBlock->video);
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
-                    }
-                }
-                $file = $blockData['content']['video'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('Images/Pepsol/Media/Video');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $file->move($destinationPath, $filename);
-                $updateData['video'] = 'Images/Pepsol/Media/Video/' . $filename;
-            }
-            if (isset($blockData['content']['file']) && $blockData['content']['file'] instanceof \Illuminate\Http\UploadedFile) {
-                if ($existingBlock && $existingBlock->file) {
-                    $oldPath = public_path($existingBlock->file);
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
-                    }
-                }
-                $file = $blockData['content']['file'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('Images/Pepsol/Media/File');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0777, true);
-                }
-                $file->move($destinationPath, $filename);
-                $updateData['file'] = 'Images/Pepsol/Media/File/' . $filename;
-            }
-        }
-
-        if ($type === 'url') {
-            $updateData['url'] = $blockData['content']['url'] ?? null;
-        }
-
-        return $updateData;
-    }
 
     public function destroy($id)
     {

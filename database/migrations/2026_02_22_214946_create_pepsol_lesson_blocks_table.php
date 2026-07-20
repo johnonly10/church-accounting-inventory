@@ -14,14 +14,21 @@ return new class extends Migration
         Schema::create('pepsol_lesson_blocks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pepsol_lesson_part_id')->constrained('pepsol_lesson_parts')->cascadeOnDelete();
-            $table->text('body')->nullable();
-            $table->text('quote')->nullable();
-            $table->string('source')->nullable();
-            $table->text('scripture')->nullable();
-            $table->string('image')->nullable();
-            $table->string('video')->nullable();
-            $table->string('file')->nullable();
-            $table->string('url')->nullable();
+            $table->enum('block_type', [
+                'heading',
+                'subheading',
+                'paragraph',
+                'quote',
+                'scripture',
+                'question',
+                'prayer',
+                'list',
+                'divider'
+            ]);
+            $table->longText('content')->nullable();
+            $table->string('reference')->nullable();
+            $table->string('media')->nullable();
+            $table->integer('sort_order')->default(1);
             $table->timestamps();
         });
     }
