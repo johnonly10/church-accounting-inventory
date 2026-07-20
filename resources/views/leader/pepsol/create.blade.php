@@ -93,6 +93,12 @@
             resize: vertical;
         }
 
+        .content-textarea {
+            min-height: 300px !important;
+            font-size: 15px !important;
+            line-height: 1.8 !important;
+        }
+
         .lesson-badge {
             width: 34px;
             height: 34px;
@@ -139,7 +145,7 @@
         .card-body-collapse {
             overflow: hidden;
             transition: max-height .25s ease, opacity .2s ease;
-            max-height: 2000px;
+            max-height: 5000px;
             opacity: 1;
         }
 
@@ -433,10 +439,6 @@
             vertical-align: middle;
         }
 
-        .block-card-body textarea.form-control {
-            min-height: 180px;
-        }
-
         @media (max-width: 767.98px) {
 
             .ewm-card-header,
@@ -458,42 +460,43 @@
 @endpush
 
 @section('content')
-    <div class="container-fluid page-shell px-3 px-md-4 py-4">
+    <main class="container-fluid page-shell px-3 px-md-4 py-4">
         <x-page-title title="Create Discipleship Module" active="Create Discipleship Module" home="Discipleship"
             :home-route="route('leader.pepsol.index')" />
 
         @if ($errors->any())
-            <div class="alert alert-danger mb-4">
+            <aside class="alert alert-danger mb-4" role="alert">
                 <ul class="mb-0 pl-3">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div>
+            </aside>
         @endif
 
-        <div id="toast-region"></div>
+        <output id="toast-region" aria-live="polite"></output>
 
-        <form id="pepsolForm" action="{{ route('leader.pepsol.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="pepsolForm" action="{{ route('leader.pepsol.store') }}" method="POST" enctype="multipart/form-data"
+            novalidate>
             @csrf
 
-            <div class="ewm-card">
-                <div class="ewm-card-header d-flex align-items-center justify-content-between"
-                    onclick="toggleSection(this)">
+            <section class="ewm-card" aria-labelledby="module-info-heading">
+                <header class="ewm-card-header d-flex align-items-center justify-content-between"
+                    onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="true">
                     <div>
-                        <div class="ewm-card-title">Module Information</div>
+                        <h2 class="ewm-card-title" id="module-info-heading">Module Information</h2>
                         <p class="ewm-card-subtitle">Ministry category, type, status, description, guidelines, and
                             orientation</p>
                     </div>
-                    <span class="ewm-toggle-icon" data-open="true">
+                    <span class="ewm-toggle-icon" data-open="true" aria-hidden="true">
                         <i class="ti-angle-down"></i>
                     </span>
-                </div>
+                </header>
 
                 <div class="ewm-card-body" id="body-info">
                     <div class="row">
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">
+                            <label for="f-cat" class="form-label">
                                 Category <span class="text-optional">— optional</span>
                             </label>
                             <select id="f-cat" name="category" class="form-select">
@@ -508,7 +511,7 @@
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">
+                            <label for="f-type" class="form-label">
                                 Type <span class="text-optional">— optional</span>
                             </label>
                             <select id="f-type" name="type" class="form-select">
@@ -522,68 +525,73 @@
                         </div>
 
                         <div class="col-12 mb-4">
-                            <label class="form-label">Status</label>
-                            <div class="status-pills">
-                                <label class="status-pill-label">
-                                    <input type="radio" name="status" value="published"
-                                        {{ old('status', 'published') === 'published' ? 'checked' : '' }}>
-                                    <span class="status-dot"></span>
-                                    Published
-                                </label>
-                                <label class="status-pill-label">
-                                    <input type="radio" name="status" value="draft"
-                                        {{ old('status') === 'draft' ? 'checked' : '' }}>
-                                    <span class="status-dot"></span>
-                                    Draft
-                                </label>
-                            </div>
+                            <fieldset>
+                                <legend class="form-label">Status</legend>
+                                <div class="status-pills">
+                                    <label class="status-pill-label" for="status-published">
+                                        <input type="radio" id="status-published" name="status" value="published"
+                                            {{ old('status', 'published') === 'published' ? 'checked' : '' }}>
+                                        <span class="status-dot" aria-hidden="true"></span>
+                                        Published
+                                    </label>
+                                    <label class="status-pill-label" for="status-draft">
+                                        <input type="radio" id="status-draft" name="status" value="draft"
+                                            {{ old('status') === 'draft' ? 'checked' : '' }}>
+                                        <span class="status-dot" aria-hidden="true"></span>
+                                        Draft
+                                    </label>
+                                </div>
+                            </fieldset>
                         </div>
 
                         <div class="col-12 mb-4">
-                            <label class="form-label">
+                            <label for="ta-desc" class="form-label">
                                 Description <span class="text-optional">— optional</span>
                             </label>
-                            <textarea id="ta-desc" name="description" class="form-control" rows="6"
+                            <textarea id="ta-desc" name="description" class="form-control content-textarea"
                                 placeholder="Describe what this module covers, who it's for, and what members will grow in spiritually...">{{ old('description') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">Guidelines <span class="text-optional">— optional</span></label>
-                            <textarea id="ta-guidelines" name="guidelines" class="form-control" rows="5"
+                            <label for="ta-guidelines" class="form-label">
+                                Guidelines <span class="text-optional">— optional</span>
+                            </label>
+                            <textarea id="ta-guidelines" name="guidelines" class="form-control content-textarea"
                                 placeholder="Community guidelines or fellowship participation expectations...">{{ old('guidelines') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">Orientation <span class="text-optional">— optional</span></label>
-                            <textarea id="ta-orient" name="orientation" class="form-control" rows="5"
+                            <label for="ta-orient" class="form-label">
+                                Orientation <span class="text-optional">— optional</span>
+                            </label>
+                            <textarea id="ta-orient" name="orientation" class="form-control content-textarea"
                                 placeholder="A pastoral welcome note or orientation for new members joining this group...">{{ old('orientation') }}</textarea>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="ewm-card">
-                <div class="ewm-card-header d-flex align-items-center justify-content-between"
-                    onclick="toggleSection(this)">
+            <section class="ewm-card" aria-labelledby="teaching-session-heading">
+                <header class="ewm-card-header d-flex align-items-center justify-content-between"
+                    onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="true">
                     <div>
-                        <div class="ewm-card-title">Teaching Session</div>
+                        <h2 class="ewm-card-title" id="teaching-session-heading">Teaching Session</h2>
                         <p class="ewm-card-subtitle">One teaching session with sections and content blocks</p>
                     </div>
-                    <span class="ewm-toggle-icon" data-open="true">
+                    <span class="ewm-toggle-icon" data-open="true" aria-hidden="true">
                         <i class="ti-angle-down"></i>
                     </span>
-                </div>
+                </header>
 
                 <div class="ewm-card-body" id="body-lessons">
-                    <div class="d-flex align-items-center mb-4">
-                        <span class="lesson-badge mr-2">1</span>
-                        <h5 class="mb-0 font-weight-bold" id="ld-1">Session 1</h5>
-                    </div>
+                    <header class="d-flex align-items-center mb-4">
+                        <span class="lesson-badge mr-2" aria-hidden="true">1</span>
+                        <h3 class="mb-0 font-weight-bold" id="ld-1">Session 1</h3>
+                    </header>
 
                     <div class="row">
-                        <!-- Add Name and Topic dropdowns here -->
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">
+                            <label for="pepsol-name" class="form-label">
                                 Name <span class="text-optional">— optional</span>
                             </label>
                             <select id="pepsol-name" name="pepsol_name_id" class="form-select">
@@ -598,7 +606,7 @@
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">
+                            <label for="pepsol-topic" class="form-label">
                                 Topic <span class="text-optional">— optional</span>
                             </label>
                             <select id="pepsol-topic" name="pepsol_topic_id" class="form-select">
@@ -613,70 +621,61 @@
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">
-                                Title <span class="text-danger">*</span>
+                            <label for="lesson-title-1" class="form-label">
+                                Title <span class="text-danger" aria-label="required">*</span>
                             </label>
                             <input type="text" id="lesson-title-1" name="lesson_title" class="form-control"
                                 placeholder="e.g. Walking in the Spirit" oninput="onLessonTitleChange(this.value)"
-                                value="{{ old('lesson_title') }}">
-                            <div class="invalid-feedback d-block" id="err-lesson-title" style="display:none!important">
+                                value="{{ old('lesson_title') }}" required>
+                            <div class="invalid-feedback d-block" id="err-lesson-title" style="display:none!important"
+                                role="alert">
                                 Please enter a session title.
                             </div>
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">Subtitle <span class="text-optional">— optional</span></label>
+                            <label for="lesson-subtitle-1" class="form-label">
+                                Subtitle <span class="text-optional">— optional</span>
+                            </label>
                             <input type="text" id="lesson-subtitle-1" name="lesson_subtitle" class="form-control"
                                 placeholder="e.g. A study on Galatians 5" value="{{ old('lesson_subtitle') }}">
                         </div>
 
-                        <!-- Rest of the existing fields... -->
                         <div class="col-12 mb-4">
-                            <label class="form-label">Summary <span class="text-optional">— optional</span></label>
-                            <textarea id="ta-lsum-1" name="lesson_summary" class="form-control" rows="4"
+                            <label for="ta-lsum-1" class="form-label">
+                                Summary <span class="text-optional">— optional</span>
+                            </label>
+                            <textarea id="ta-lsum-1" name="lesson_summary" class="form-control content-textarea"
                                 placeholder="What spiritual truths or biblical principles will members explore?">{{ old('lesson_summary') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">Cover Image <span class="text-optional">— optional</span></label>
-                            <input type="file" name="lesson_cover" accept="image/*" class="form-control">
+                            <label for="lesson-cover" class="form-label">
+                                Cover Image <span class="text-optional">— optional</span>
+                            </label>
+                            <input type="file" id="lesson-cover" name="lesson_cover" accept="image/*"
+                                class="form-control">
                         </div>
 
                         <div class="col-12">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-                                <div class="section-mini-title mb-0">Sections</div>
+                            <header class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                                <h4 class="section-mini-title mb-0">Sections</h4>
                                 <button type="button" class="btn btn-primary btn-sm" id="btn-add-part-1"
-                                    onclick="addPart(1)">
-                                    <i class="ti-plus mr-1"></i> Add Section
+                                    onclick="addPart(1)" aria-label="Add new section">
+                                    <i class="ti-plus mr-1" aria-hidden="true"></i> Add Section
                                 </button>
-                            </div>
-                            <div id="parts-1"></div>
+                            </header>
+                            <div id="parts-1" role="list" aria-label="Lesson sections"></div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <x-buttons.form-action primaryTitle="Create Pepsol " primaryId="createPepsolBtn" :cancel-route="route('leader.pepsol.index')" />
+            <footer>
+                <x-buttons.form-action primaryTitle="Create Pepsol" primaryId="createPepsolBtn" :cancel-route="route('leader.pepsol.index')" />
+            </footer>
         </form>
-    </div>
-
-    {{-- <div class="fixed-bottom-bar">
-        <div class="bottom-bar-inner">
-            <div class="bar-meta">
-                <span class="bar-dot" id="bar-dot"></span>
-                <div>
-                    <div class="bar-name" id="bar-name">Untitled Session</div>
-                    <div class="bar-status" id="bar-status">Enter a session title to continue</div>
-                </div>
-            </div>
-            <div class="bar-actions">
-                <a href="{{ route('leader.pepsol.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                <button type="submit" form="pepsolForm" class="btn btn-primary" id="createPepsolBtn">
-                    Create Module
-                </button>
-            </div>
-        </div>
-    </div> --}}
+    </main>
 @endsection
 
 @push('scripts')
@@ -708,24 +707,52 @@
             }
         ];
 
-        const BLOCK_DEFS = {
-            body: {
-                label: 'Body',
+        const BLOCK_TYPES = [{
+                key: 'heading',
+                label: 'Heading',
+                icon: 'ti-text'
+            },
+            {
+                key: 'subheading',
+                label: 'Subheading',
+                icon: 'ti-paragraph'
+            },
+            {
+                key: 'paragraph',
+                label: 'Paragraph',
                 icon: 'ti-align-left'
             },
-            quote: {
+            {
+                key: 'quote',
                 label: 'Quote',
                 icon: 'fas fa-quote-left'
             },
-            media: {
-                label: 'Media',
-                icon: 'ti-image'
+            {
+                key: 'scripture',
+                label: 'Scripture',
+                icon: 'fas fa-bible'
             },
-            url: {
-                label: 'URL',
-                icon: 'ti-link'
+            {
+                key: 'question',
+                label: 'Question',
+                icon: 'ti-help-alt'
+            },
+            {
+                key: 'prayer',
+                label: 'Prayer',
+                icon: 'fas fa-pray'
+            },
+            {
+                key: 'list',
+                label: 'List',
+                icon: 'ti-list'
+            },
+            {
+                key: 'divider',
+                label: 'Divider',
+                icon: 'ti-minus'
             }
-        };
+        ];
 
         function toggleSection(headerEl) {
             const icon = headerEl.querySelector('[data-open]');
@@ -734,6 +761,7 @@
             if (!body) return;
             body.style.display = isOpen ? 'none' : 'block';
             icon.dataset.open = isOpen ? 'false' : 'true';
+            headerEl.setAttribute('aria-expanded', !isOpen);
             const iconEl = icon.querySelector('i');
             if (iconEl) iconEl.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
         }
@@ -742,16 +770,6 @@
             const trimmed = val.trim();
             const el = document.getElementById('ld-1');
             if (el) el.textContent = trimmed || 'Session 1';
-
-            const nameEl = document.getElementById('bar-name');
-            const statusEl = document.getElementById('bar-status');
-            const dot = document.getElementById('bar-dot');
-
-            if (nameEl) nameEl.textContent = trimmed || 'Untitled Session';
-
-            const ready = !!trimmed;
-            if (statusEl) statusEl.textContent = ready ? 'Ready to save' : 'Enter a session title to continue';
-            if (dot) dot.classList.toggle('ready', ready);
         }
 
         function toast(msg, type = 'ok') {
@@ -759,6 +777,7 @@
             const el = document.createElement('div');
             el.className = 'toastx ' + type;
             el.textContent = msg;
+            el.setAttribute('role', 'alert');
             r.appendChild(el);
             setTimeout(() => {
                 el.style.opacity = '0';
@@ -771,7 +790,6 @@
             const existingTypes = [];
             const parts = document.getElementById('parts-1');
             if (!parts) return existingTypes;
-
             const partCards = parts.querySelectorAll('.part-card');
             partCards.forEach(card => {
                 const selectedRadio = card.querySelector('input[type="radio"]:checked');
@@ -779,7 +797,6 @@
                     existingTypes.push(selectedRadio.value);
                 }
             });
-
             return existingTypes;
         }
 
@@ -787,18 +804,15 @@
             const existingTypes = checkExistingPartTypes();
             const parts = document.getElementById('parts-1');
             if (!parts) return;
-
-            const allRadios = parts.querySelectorAll('input[type="radio"][name*="[type]"]');
+            const allRadios = parts.querySelectorAll('input[type="radio"][name*="[part_key]"]');
             allRadios.forEach(radio => {
                 const label = radio.nextElementSibling;
-                const currentPartId = radio.closest('.part-card').id;
-
                 if (existingTypes.includes(radio.value) && !radio.checked) {
                     radio.disabled = true;
                     if (label) {
                         label.style.opacity = '0.5';
                         label.style.cursor = 'not-allowed';
-                        label.title = `This section type is already used in another section`;
+                        label.title = 'This section type is already used in another section';
                     }
                 } else {
                     radio.disabled = false;
@@ -811,94 +825,51 @@
             });
         }
 
-        function checkExistingBlockTypes(partId) {
-            const container = document.getElementById('blocks-' + partId);
-            if (!container) return [];
-
-            const existingTypes = [];
-            const blocks = container.children;
-
-            for (let i = 0; i < blocks.length; i++) {
-                const block = blocks[i];
-                const typeInput = block.querySelector('input[name*="[type]"]');
-                if (typeInput && typeInput.value) {
-                    existingTypes.push(typeInput.value);
-                }
-            }
-
-            return existingTypes;
-        }
-
-        function updateBlockButtonsState(partId) {
-            const existingTypes = checkExistingBlockTypes(partId);
-            const partCard = document.getElementById(partId);
-            if (!partCard) return;
-
-            const addButtons = partCard.querySelectorAll('.add-block-btn');
-            addButtons.forEach(btn => {
-                const btnType = btn.getAttribute('onclick');
-                let blockType = '';
-
-                if (btnType.includes("'body'")) blockType = 'body';
-                if (btnType.includes("'quote'")) blockType = 'quote';
-                if (btnType.includes("'media'")) blockType = 'media';
-                if (btnType.includes("'url'")) blockType = 'url';
-
-                if (existingTypes.includes(blockType)) {
-                    btn.disabled = true;
-                    btn.style.opacity = '0.5';
-                    btn.style.cursor = 'not-allowed';
-                    btn.title = `This section already has a ${blockType} block`;
-                } else {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                    btn.title = `Add ${blockType} block`;
-                }
-            });
-        }
-
         function addPart(ln) {
             partCounter++;
             const partId = `part_${partCounter}`;
-
             const pillsHtml = PART_TYPES.map(t => `
-                <input type="radio" class="btn-check" name="parts[${partId}][type]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
+                <input type="radio" class="btn-check" name="parts[${partId}][part_key]" id="pt-${partId}-${t.key}" value="${t.key}" onchange="updatePartTypeLabel('${partId}', '${t.key}', '${t.label}'); updatePartTypeButtonsState('${partId}');">
                 <label class="btn btn-outline-secondary btn-sm" id="lbl-${partId}-${t.key}" for="pt-${partId}-${t.key}">${t.label}</label>
+            `).join('');
+
+            const blockButtonsHtml = BLOCK_TYPES.map(bt => `
+                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','${bt.key}')" aria-label="Add ${bt.label} block">
+                    <i class="${bt.icon}" aria-hidden="true"></i> ${bt.label}
+                </button>
             `).join('');
 
             const el = document.createElement('div');
             el.className = 'part-card';
             el.id = partId;
+            el.setAttribute('role', 'listitem');
+            el.setAttribute('aria-labelledby', `pname-${partId}`);
 
             el.innerHTML = `
-                <div class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)">
+                <header class="part-card-header d-flex align-items-center justify-content-between" onclick="togglePartCard('${partId}', event)" role="button" tabindex="0" aria-expanded="true">
                     <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
                         <span class="badge-soft secondary" id="ptag-${partId}">Unset</span>
                         <span class="font-weight-bold" id="pname-${partId}">Section ${partCounter}</span>
-                        <span class="part-block-count" id="pbc-${partId}">0 blocks</span>
+                        <span class="part-block-count" id="pbc-${partId}" aria-label="0 blocks">0 blocks</span>
                     </div>
                     <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="pchev-${partId}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)">Remove</button>
+                        <span class="part-chevron" id="pchev-${partId}" aria-hidden="true"><i class="ti-angle-down"></i></span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePart('${partId}', event)" aria-label="Remove section ${partCounter}">Remove</button>
                     </div>
-                </div>
+                </header>
                 <div class="card-body-collapse" id="pcollapse-${partId}">
                     <div class="part-card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Section Type <span class="text-danger">*</span></label>
+                        <fieldset class="mb-4">
+                            <legend class="form-label">Section Type <span class="text-danger" aria-label="required">*</span></legend>
                             <div class="part-type-pills">${pillsHtml}</div>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-                            <div class="section-mini-title mb-0">Content Blocks</div>
-                            <div class="blocks-toolbar">
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','body')"><i class="ti-align-left"></i> Body</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','quote')"><i class="fas fa-quote-left"></i> Quote</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','media')"><i class="ti-image"></i> Media</button>
-                                <button type="button" class="add-block-btn" onclick="addBlock('${partId}','url')"><i class="ti-link"></i> URL</button>
-                            </div>
-                        </div>
-                        <div id="blocks-${partId}"></div>
+                        </fieldset>
+                        <header class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                            <h5 class="section-mini-title mb-0">Content Blocks</h5>
+                            <nav class="blocks-toolbar" aria-label="Add content blocks">
+                                ${blockButtonsHtml}
+                            </nav>
+                        </header>
+                        <div id="blocks-${partId}" role="list" aria-label="Content blocks for this section"></div>
                     </div>
                 </div>
             `;
@@ -924,16 +895,19 @@
             const collapse = document.getElementById('pcollapse-' + partId);
             const chev = document.getElementById('pchev-' + partId);
             const card = document.getElementById(partId);
+            const header = card.querySelector('.part-card-header');
             if (!collapse || !chev || !card) return;
             const isCollapsed = collapse.classList.contains('collapsed');
             if (isCollapsed) {
                 collapse.classList.remove('collapsed');
                 chev.classList.remove('closed');
                 card.classList.remove('is-collapsed');
+                header.setAttribute('aria-expanded', 'true');
             } else {
                 collapse.classList.add('collapsed');
                 chev.classList.add('closed');
                 card.classList.add('is-collapsed');
+                header.setAttribute('aria-expanded', 'false');
             }
         }
 
@@ -942,16 +916,19 @@
             const collapse = document.getElementById('bcollapse-' + blockId);
             const chev = document.getElementById('bchev-' + blockId);
             const card = document.getElementById(blockId);
+            const header = card.querySelector('.block-card-header');
             if (!collapse || !chev || !card) return;
             const isCollapsed = collapse.classList.contains('collapsed');
             if (isCollapsed) {
                 collapse.classList.remove('collapsed');
                 chev.classList.remove('closed');
                 card.classList.remove('is-collapsed');
+                header.setAttribute('aria-expanded', 'true');
             } else {
                 collapse.classList.add('collapsed');
                 chev.classList.add('closed');
                 card.classList.add('is-collapsed');
+                header.setAttribute('aria-expanded', 'false');
             }
         }
 
@@ -980,81 +957,113 @@
             });
         }
 
-        function addBlock(partId, type) {
-            const existingTypes = checkExistingBlockTypes(partId);
-            if (existingTypes.includes(type)) {
-                toast(`A ${type} block already exists in this section. Only one ${type} block is allowed per section.`,
-                    'bad');
-                return;
-            }
-
+        function addBlock(partId, blockType) {
             blockCounter++;
             const blockId = `block_${blockCounter}`;
-            const contentFieldName = `parts[${partId}][blocks][${blockId}][content]`;
-            const typeFieldName = `parts[${partId}][blocks][${blockId}][type]`;
+            const container = document.getElementById('blocks-' + partId);
+            const blockCount = container.children.length;
 
             let bodyHtml = '';
 
-            if (type === 'body') {
-                bodyHtml = `
-                    <div>
-                        <label class="form-label">Content</label>
-                        <textarea name="${contentFieldName}" class="form-control" rows="8" placeholder="Write the teaching content or message notes here..."></textarea>
-                    </div>`;
-            }
-
-            if (type === 'quote') {
-                bodyHtml = `
-                    <div class="mb-3">
-                        <label class="form-label">Quote</label>
-                        <textarea name="${contentFieldName}[quote]" class="form-control" rows="4" placeholder="Enter the inspirational or theological quote here..."></textarea>
-                    </div>
-                    `;
-            }
-
-            if (type === 'media') {
-                bodyHtml = `
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Image <span class="text-optional">— optional</span></label>
-                            <input type="file" name="${contentFieldName}[image]" class="form-control" accept="image/*">
+            switch (blockType) {
+                case 'heading':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Heading Text</label>
+                            <input type="text" id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control" placeholder="Enter heading text...">
+                        </div>`;
+                    break;
+                case 'subheading':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Subheading Text</label>
+                            <input type="text" id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control" placeholder="Enter subheading text...">
+                        </div>`;
+                    break;
+                case 'paragraph':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Content</label>
+                            <textarea id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control content-textarea" placeholder="Write the teaching content or message notes here..."></textarea>
+                        </div>`;
+                    break;
+                case 'quote':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Quote</label>
+                            <textarea id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control content-textarea" placeholder="Enter the quote here..."></textarea>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Video <span class="text-optional">— optional</span></label>
-                            <input type="file" name="${contentFieldName}[video]" class="form-control" accept="video/*">
+                        <div class="mb-3">
+                            <label for="reference-${blockId}" class="form-label">Reference <span class="text-optional">— optional</span></label>
+                            <input type="text" id="reference-${blockId}" name="parts[${partId}][blocks][${blockId}][reference]" class="form-control" placeholder="e.g. John Piper, Desiring God">
+                        </div>`;
+                    break;
+                case 'scripture':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Scripture Text</label>
+                            <textarea id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control content-textarea" placeholder="Enter the scripture passage..."></textarea>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">File <span class="text-optional">— optional</span></label>
-                            <input type="file" name="${contentFieldName}[file]" class="form-control">
+                        <div class="mb-3">
+                            <label for="reference-${blockId}" class="form-label">Scripture Reference <span class="text-optional">— optional</span></label>
+                            <input type="text" id="reference-${blockId}" name="parts[${partId}][blocks][${blockId}][reference]" class="form-control" placeholder="e.g. John 3:16">
+                        </div>`;
+                    break;
+                case 'question':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Question</label>
+                            <textarea id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control content-textarea" placeholder="Enter the discussion or reflection question..."></textarea>
                         </div>
-                    </div>`;
+                        <div class="mb-3">
+                            <label for="reference-${blockId}" class="form-label">Reference <span class="text-optional">— optional</span></label>
+                            <input type="text" id="reference-${blockId}" name="parts[${partId}][blocks][${blockId}][reference]" class="form-control" placeholder="e.g. Related scripture or source">
+                        </div>`;
+                    break;
+                case 'prayer':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">Prayer</label>
+                            <textarea id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control content-textarea" placeholder="Enter the prayer text..."></textarea>
+                        </div>`;
+                    break;
+                case 'list':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <label for="content-${blockId}" class="form-label">List Items</label>
+                            <textarea id="content-${blockId}" name="parts[${partId}][blocks][${blockId}][content]" class="form-control content-textarea" placeholder="Enter list items, one per line..."></textarea>
+                            <small class="text-muted">Enter each item on a new line</small>
+                        </div>`;
+                    break;
+                case 'divider':
+                    bodyHtml = `
+                        <div class="mb-3">
+                            <input type="hidden" name="parts[${partId}][blocks][${blockId}][content]" value="">
+                            <p class="text-muted mb-0">A visual divider will be displayed between content blocks.</p>
+                        </div>`;
+                    break;
             }
 
-            if (type === 'url') {
-                bodyHtml = `
-                    <div>
-                        <label class="form-label">URL</label>
-                        <input type="url" name="${contentFieldName}[url]" class="form-control" placeholder="https://example.com">
-                    </div>`;
-            }
-
-            const container = document.getElementById('blocks-' + partId);
             const el = document.createElement('div');
             el.className = 'block-card';
             el.id = blockId;
+            el.setAttribute('role', 'listitem');
+
+            const blockDef = BLOCK_TYPES.find(bt => bt.key === blockType);
 
             el.innerHTML = `
-                <input type="hidden" name="${typeFieldName}" value="${type}">
-                <div class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" style="cursor:pointer;">
+                <input type="hidden" name="parts[${partId}][blocks][${blockId}][block_type]" value="${blockType}">
+                <input type="hidden" name="parts[${partId}][blocks][${blockId}][sort_order]" value="${blockCount}">
+                <header class="block-card-header d-flex align-items-center justify-content-between" onclick="toggleBlockCard('${blockId}', event)" role="button" tabindex="0" aria-expanded="true">
                     <div class="d-flex align-items-center" style="gap:8px;">
-                        <span><i class="${BLOCK_DEFS[type].icon}"></i></span>
-                        <span>${BLOCK_DEFS[type].label}</span>
+                        <span aria-hidden="true"><i class="${blockDef.icon}"></i></span>
+                        <span>${blockDef.label}</span>
                     </div>
                     <div class="d-flex align-items-center" style="gap:8px;">
-                        <span class="part-chevron" id="bchev-${blockId}"><i class="ti-angle-down"></i></span>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)">Remove</button>
+                        <span class="part-chevron" id="bchev-${blockId}" aria-hidden="true"><i class="ti-angle-down"></i></span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeBlock('${blockId}', '${partId}', event)" aria-label="Remove ${blockDef.label} block">Remove</button>
                     </div>
-                </div>
+                </header>
                 <div class="card-body-collapse" id="bcollapse-${blockId}">
                     <div class="block-card-body">${bodyHtml}</div>
                 </div>
@@ -1062,7 +1071,7 @@
 
             container.appendChild(el);
             updatePartBlockCount(partId);
-            updateBlockButtonsState(partId);
+            updateBlockSortOrders(partId);
         }
 
         function removeBlock(blockId, partId, e) {
@@ -1080,7 +1089,7 @@
                 const el = document.getElementById(blockId);
                 if (el) el.remove();
                 updatePartBlockCount(partId);
-                updateBlockButtonsState(partId);
+                updateBlockSortOrders(partId);
                 Swal.fire({
                     title: 'Removed',
                     text: 'The block was removed successfully.',
@@ -1095,26 +1104,37 @@
             const container = document.getElementById('blocks-' + partId);
             const count = container ? container.children.length : 0;
             const badge = document.getElementById('pbc-' + partId);
-            if (badge) badge.textContent = `${count} block${count === 1 ? '' : 's'}`;
+            if (badge) {
+                badge.textContent = `${count} block${count === 1 ? '' : 's'}`;
+                badge.setAttribute('aria-label', `${count} block${count === 1 ? '' : 's'}`);
+            }
+        }
+
+        function updateBlockSortOrders(partId) {
+            const container = document.getElementById('blocks-' + partId);
+            if (!container) return;
+            const blocks = container.children;
+            for (let i = 0; i < blocks.length; i++) {
+                const sortInput = blocks[i].querySelector('input[name*="[sort_order]"]');
+                if (sortInput) {
+                    sortInput.value = i;
+                }
+            }
         }
 
         document.getElementById('pepsolForm').addEventListener('submit', function(e) {
             const lessonTitle = document.getElementById('lesson-title-1')?.value?.trim();
-
             if (!lessonTitle) {
                 e.preventDefault();
                 document.getElementById('lesson-title-1').classList.add('is-invalid');
                 document.getElementById('err-lesson-title').style.display = 'block';
                 toast('Please enter a session title.', 'bad');
-
                 const lessonsBody = document.getElementById('body-lessons');
                 if (lessonsBody && lessonsBody.style.display === 'none') {
                     lessonsBody.previousElementSibling?.click();
                 }
                 return false;
             }
-
-            document.getElementById('bar-status').textContent = 'Saving…';
             return true;
         });
     </script>
