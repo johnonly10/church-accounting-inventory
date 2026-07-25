@@ -242,6 +242,16 @@
                     --pepsol-primary-light: #eef0fe;
                     --card-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
                     --card-radius: 1.5rem;
+
+                    /* Improved type scale for better accessibility */
+                    --text-xs: 0.75rem;
+                    --text-sm: 0.875rem;
+                    --text-base: 1rem;
+                    --text-md: 1.0625rem;
+                    --text-lg: 1.125rem;
+                    --text-xl: 1.25rem;
+                    --text-2xl: 1.5rem;
+                    --text-3xl: 1.75rem;
                 }
 
                 .back-btn {
@@ -251,7 +261,7 @@
                     color: var(--pepsol-primary-dark);
                     border: 1px solid #e5e7eb;
                     font-weight: 600;
-                    font-size: .95rem;
+                    font-size: var(--text-base);
                     border-radius: .75rem;
                     padding: .6rem 1.25rem;
                     box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
@@ -271,28 +281,34 @@
                 }
 
                 .lesson-nav-title {
-                    font-size: 1.1rem;
+                    font-size: var(--text-lg);
                     font-weight: 700;
                     color: #1f2937;
                 }
 
                 .lesson-nav-topic {
-                    font-size: .8rem;
+                    font-size: var(--text-sm);
                     font-weight: 700;
                     text-transform: uppercase;
-                    letter-spacing: .04em;
+                    letter-spacing: 0.06em;
                     color: var(--pepsol-primary-dark);
+                    line-height: 1.4;
+                }
+
+                .lesson-nav-list {
+                    margin-bottom: 1.5rem;
                 }
 
                 .lesson-nav-link {
                     display: flex;
                     align-items: center;
-                    gap: .6rem;
-                    padding: .5rem .6rem;
+                    gap: .75rem;
+                    padding: .625rem .75rem;
                     border-radius: .6rem;
                     text-decoration: none;
                     color: #374151;
-                    font-size: .9rem;
+                    font-size: var(--text-base);
+                    line-height: 1.5;
                     transition: background .15s ease, color .15s ease;
                 }
 
@@ -311,12 +327,12 @@
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    width: 24px;
-                    height: 24px;
+                    width: 28px;
+                    height: 28px;
                     border-radius: 50%;
                     background: rgba(99, 102, 241, .12);
                     color: var(--pepsol-primary-dark);
-                    font-size: .75rem;
+                    font-size: var(--text-sm);
                     font-weight: 700;
                     flex-shrink: 0;
                 }
@@ -329,7 +345,7 @@
                 .lesson-badge {
                     background: var(--pepsol-primary);
                     color: #fff;
-                    font-size: .9rem;
+                    font-size: var(--text-sm);
                     font-weight: 600;
                     padding: .55rem 1.1rem;
                 }
@@ -348,23 +364,26 @@
                 }
 
                 .lesson-detail-title {
-                    font-size: 1.75rem;
+                    font-size: var(--text-3xl);
                     font-weight: 700;
                     color: #1f2937;
+                    line-height: 1.3;
                 }
 
                 .lesson-detail-subtitle {
-                    font-size: 1.05rem;
+                    font-size: var(--text-lg);
+                    line-height: 1.5;
                 }
 
                 .lesson-detail-summary {
-                    font-size: 1rem;
+                    font-size: var(--text-md);
                     color: #4b5563;
                     margin-top: .75rem;
+                    line-height: 1.6;
                 }
 
                 .lesson-part-title {
-                    font-size: 1.25rem;
+                    font-size: var(--text-2xl);
                     font-weight: 700;
                     color: var(--pepsol-primary-dark);
                     border-bottom: 2px solid var(--pepsol-primary-light);
@@ -373,36 +392,40 @@
                 }
 
                 .lesson-block-heading {
-                    font-size: 1.35rem;
+                    font-size: var(--text-xl);
                     font-weight: 700;
                     color: #1f2937;
                     margin-top: 1rem;
+                    line-height: 1.4;
                 }
 
                 .lesson-block-subheading {
-                    font-size: 1.1rem;
+                    font-size: var(--text-lg);
                     font-weight: 700;
                     color: #374151;
                     margin-top: .75rem;
+                    line-height: 1.4;
                 }
 
                 .lesson-block-body {
-                    font-size: 1rem;
-                    line-height: 1.7;
+                    font-size: var(--text-base);
+                    line-height: 1.8;
                     color: #374151;
                 }
 
                 .lesson-block-quote {
                     border-left: 4px solid var(--pepsol-primary);
                     background: var(--pepsol-primary-light);
-                    padding: 1rem 1.25rem;
+                    padding: 1.25rem 1.5rem;
                     border-radius: .5rem;
                     font-style: italic;
                     color: #374151;
+                    font-size: var(--text-md);
+                    line-height: 1.7;
                 }
 
                 .lesson-block-quote-footer {
-                    font-size: .85rem;
+                    font-size: var(--text-sm);
                     font-style: normal;
                     font-weight: 600;
                     color: var(--pepsol-primary-dark);
@@ -419,12 +442,15 @@
                     font-weight: 700;
                     color: var(--pepsol-primary-dark);
                     margin-bottom: .25rem;
+                    font-size: var(--text-base);
                 }
 
                 .scripture-text {
                     font-style: italic;
                     color: #4b5563;
                     margin-bottom: 0;
+                    font-size: var(--text-md);
+                    line-height: 1.7;
                 }
 
                 .lesson-block-question {
@@ -436,6 +462,8 @@
                     padding: 1rem 1.25rem;
                     color: #92400e;
                     font-weight: 600;
+                    font-size: var(--text-base);
+                    line-height: 1.6;
                 }
 
                 .lesson-block-prayer {
@@ -447,13 +475,19 @@
                     padding: 1rem 1.25rem;
                     color: #166534;
                     font-style: italic;
-                    line-height: 1.7;
+                    line-height: 1.8;
+                    font-size: var(--text-base);
                 }
 
                 .lesson-block-list {
-                    padding-left: 1.25rem;
+                    padding-left: 1.5rem;
                     color: #374151;
-                    line-height: 1.7;
+                    line-height: 1.8;
+                    font-size: var(--text-base);
+                }
+
+                .lesson-block-list li {
+                    margin-bottom: 0.5rem;
                 }
 
                 .lesson-block-divider {
@@ -472,11 +506,54 @@
                     color: var(--pepsol-primary-dark);
                     font-weight: 600;
                     text-decoration: none;
+                    font-size: var(--text-base);
                 }
 
                 .lesson-block-file:hover,
                 .lesson-block-url:hover {
                     text-decoration: underline;
+                }
+
+                /* Responsive adjustments */
+                @media (max-width: 767.98px) {
+
+                    .lesson-nav-card,
+                    .lesson-detail-card {
+                        padding: 1.25rem !important;
+                    }
+
+                    .lesson-detail-title {
+                        font-size: var(--text-2xl);
+                    }
+
+                    .lesson-part-title {
+                        font-size: var(--text-xl);
+                    }
+
+                    .lesson-nav-link {
+                        padding: .5rem .625rem;
+                        font-size: var(--text-sm);
+                    }
+                }
+
+                /* High contrast mode support */
+                @media (prefers-contrast: high) {
+                    .lesson-nav-link {
+                        border: 1px solid currentColor;
+                    }
+
+                    .lesson-block-quote {
+                        border-left-width: 5px;
+                    }
+                }
+
+                /* Reduced motion preference */
+                @media (prefers-reduced-motion: reduce) {
+
+                    .back-btn,
+                    .lesson-nav-link {
+                        transition: none;
+                    }
                 }
             </style>
         @endpush

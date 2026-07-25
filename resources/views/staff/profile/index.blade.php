@@ -18,7 +18,7 @@
 
                     <!-- Edit Button Floating -->
                     <div class="cover-actions position-absolute top-0 end-0 p-4">
-                        <a href="{{ route('staff.profile.edit', Auth::user()->id) }}"
+                        <a href="{{ route('profile.edit', Auth::user()->id) }}"
                             class="btn btn-white btn-sm px-4 rounded-pill shadow-sm hover-lift">
                             <i class="fa fa-edit me-2"></i>Edit Profile
                         </a>

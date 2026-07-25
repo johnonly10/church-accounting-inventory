@@ -2,15 +2,14 @@
 
 @section('content')
     <div class="row">
-        <x-page-title title="Edit Profile" active="Edit Profile" :home-route="route('staff.profile.index')" home="Profile" />
+        <x-page-title title="Edit Profile" active="Edit Profile" :home-route="route('profile.index')" home="Profile" />
 
         <div class="col-lg-12">
             <div class="white_card card_height_100 mb_30 border-0 shadow-sm overflow-hidden">
                 <div class="profile-cover position-relative"
                     style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <div class="position-absolute top-0 end-0 p-4">
-                        <a href="{{ route('staff.profile.index') }}"
-                            class="btn btn-light btn-sm px-4 rounded-pill shadow-sm">
+                        <a href="{{ route('profile.index') }}" class="btn btn-light btn-sm px-4 rounded-pill shadow-sm">
                             <i class="fa fa-arrow-left me-2"></i>Back to Profile
                         </a>
                     </div>
@@ -18,7 +17,7 @@
 
                 <div class="white_card_body bg-white">
                     <div class="card-body px-4 pb-4">
-                        <form action="{{ route('staff.profile.update', Auth::user()->id) }}" method="POST"
+                        <form action="{{ route('profile.update', Auth::user()->id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
@@ -271,7 +270,7 @@
                                             </div>
 
                                             <x-buttons.form-action primaryTitle="Edit Profile"
-                                                primaryId="updateProfileBtn" :cancel-route="route('staff.profile.index')" />
+                                                primaryId="updateProfileBtn" :cancel-route="route('profile.index')" />
                                         </div>
                                     </div>
                                 </div>
