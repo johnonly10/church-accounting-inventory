@@ -72,6 +72,6 @@ class ProfileController extends Controller
             'path' => $user->path,
         ]);
 
-        return redirect()->route('staff.profile.index')->with('success', 'Profile updated successfully!');
+        return redirect()->route('profile.index')->with('success', 'Profile updated successfully!');
     }
 }

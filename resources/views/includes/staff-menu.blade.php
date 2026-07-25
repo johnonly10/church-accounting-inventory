@@ -99,20 +99,11 @@
                                 <p>{{ auth()->user()->name }}</p>
                             </div>
                             <div class="profile_info_details">
-
-                                @if ($user && $user->roletype === 'STAFF')
-                                    <a href="{{ route('staff.profile.index') }}">My Profile </a>
+                                @if ($user && ($user->roletype === 'STAFF' || $user->roletype === 'LEADER'))
+                                    <a href="{{ route('profile.index') }}">My Profile</a>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit"> Log Out </button>
-                                    </form>
-                                @endif
-
-                                @if ($user && $user->roletype === 'LEADER')
-                                    <a href="#">My Profile </a>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit"> Log Out </button>
+                                        <button type="submit">Log Out</button>
                                     </form>
                                 @endif
                             </div>

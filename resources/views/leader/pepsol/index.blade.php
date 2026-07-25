@@ -22,10 +22,10 @@
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
-
                                 <th>Category</th>
                                 <th>Lesson Title</th>
-                                <th>Summary</th>
+                                <th>Pepsol Name</th>
+                                <th>Pepsol Topic</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -35,7 +35,6 @@
                             @forelse ($pepsols as $i => $pepsol)
                                 @php $first = $pepsol->lessons->first(); @endphp
                                 <tr>
-
                                     <td>
                                         @if ($pepsol->category)
                                             <span class="badge bg-secondary">{{ $pepsol->category->name }}</span>
@@ -59,8 +58,15 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if ($first && $first->summary)
-                                            <div class="text-secondary">{{ Str::limit($first->summary, 100) }}</div>
+                                        @if ($first && $first->name)
+                                            <span>{{ $first->name->name }}</span>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($first && $first->topic)
+                                            <span>{{ $first->topic->name }}</span>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
@@ -73,7 +79,6 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-
                                         <x-icons.action-edit :route="route('leader.pepsol.edit', $pepsol->id)" />
                                         <x-icons.action-form :route="route('leader.pepsol.destroy', $pepsol->id)" method="DELETE" name="force-delete"
                                             title="Delete" aClass="btn btn-sm btn-outline-danger border-0"

@@ -83,8 +83,10 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
-
-
+// Profile for leader and staff
+Route::middleware(['auth', 'roletype:STAFF,LEADER'])->group(function () {
+    Route::resource('profile', ProfileController::class)->names('profile');
+});
 
 // Member Routes
 
@@ -239,7 +241,7 @@ Route::middleware(['auth', 'roletype:STAFF'])->prefix('staff')->name('staff.')->
     Route::delete('revenueCashCounts/{id}/force-delete', [RevenueCashCountController::class, 'forceDelete'])->name('revenue-cash-counts.forceDelete');
 
     // ADMIN PROFILE
-    Route::resource('profile', ProfileController::class);
+    // Route::resource('profile', ProfileController::class);
 });
 
 require __DIR__ . '/auth.php';

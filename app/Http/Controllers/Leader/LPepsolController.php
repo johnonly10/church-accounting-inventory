@@ -23,7 +23,8 @@ class LPepsolController extends Controller
             'category',
             'type',
             'creator',
-            'lessons',
+            'lessons.name',
+            'lessons.topic',
         ]);
 
         if ($request->filled('search')) {

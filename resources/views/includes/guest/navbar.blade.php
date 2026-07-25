@@ -109,8 +109,8 @@
             <i class="fas fa-home"></i>
             Home
         </a>
-        <a href="{{ route('pepsol.index') }}" class="nav-link {{ Request::routeIs('pepsol.index') ? 'active' : '' }}"
-            {{ Request::routeIs('pepsol.index') ? 'aria-current="page"' : '' }}>
+        <a href="{{ route('pepsol.index') }}" class="nav-link {{ Request::routeIs('pepsol.*') ? 'active' : '' }}"
+            {{ Request::routeIs('pepsol.*') ? 'aria-current="page"' : '' }}>
             <i class="fas fa-info-circle"></i>
             Pepsol
         </a>

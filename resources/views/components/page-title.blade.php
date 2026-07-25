@@ -1,10 +1,20 @@
 @props([
-    'dashboard' => route('staff.index'),
+    'dashboard' => null,
     'title' => '',
     'active' => null,
     'home' => null,
     'homeRoute' => null,
 ])
+
+@php
+
+    if ($dashboard === null) {
+        $dashboard = match (auth()->user()->roletype ?? null) {
+            'STAFF' => route('staff.index'),
+            'LEADER' => route('leader.dashboard.index'),
+        };
+    }
+@endphp
 
 <div class="page_title_box d-flex flex-wrap align-items-center justify-content-between">
     <div class="page_title_left d-flex align-items-center">
