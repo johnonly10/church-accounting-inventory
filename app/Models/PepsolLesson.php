@@ -39,4 +39,9 @@ class PepsolLesson extends Model
     {
         return $this->belongsTo(PepsolTopic::class, 'pepsol_topic_id');
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany(PepsolQuiz::class, 'pepsol_lesson_id');
+    }
 }
