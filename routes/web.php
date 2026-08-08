@@ -18,6 +18,8 @@ use App\Http\Controllers\Guest\AboutController;
 use App\Http\Controllers\Guest\ContactController;
 use App\Http\Controllers\Guest\HomeController;
 use App\Http\Controllers\Guest\PepsolController;
+use App\Http\Controllers\guest\PepsolLessonProgressController;
+use App\Http\Controllers\Guest\PepsolQuizController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\Leader\LDashboardController;
 use App\Http\Controllers\Leader\LEventController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\Leader\LPepsolController;
 use App\Http\Controllers\Leader\LPepsolName;
 use App\Http\Controllers\Leader\LPepsolNameController;
 use App\Http\Controllers\Leader\LPepsolQuizController;
+use App\Http\Controllers\Leader\LPepsolQuizResultController;
 use App\Http\Controllers\Leader\LPepsolTypes;
 use App\Http\Controllers\Leader\LPepsolTypesController;
 use App\Http\Controllers\Leader\LSilderController;
@@ -60,11 +63,14 @@ Route::get('/pepsol/{pepsolName}/lessons/{lesson}', [PepsolController::class, 'd
     ->name('pepsol.details');
 
 
-Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}', [PepsolController::class, 'showQuiz'])->name('pepsol.quiz.show');
-Route::post('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/start', [PepsolController::class, 'startQuiz'])->name('pepsol.quiz.start');
-Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/take/{attempt}', [PepsolController::class, 'takeQuiz'])->name('pepsol.quiz.take');
-Route::post('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/submit/{attempt}', [PepsolController::class, 'submitQuiz'])->name('pepsol.quiz.submit');
-Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/result/{attempt}', [PepsolController::class, 'quizResult'])->name('pepsol.quiz.result');
+Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}', [PepsolQuizController::class, 'showQuiz'])->name('pepsol.quiz.show');
+Route::post('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/start', [PepsolQuizController::class, 'startQuiz'])->name('pepsol.quiz.start');
+Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/take/{attempt}', [PepsolQuizController::class, 'takeQuiz'])->name('pepsol.quiz.take');
+Route::post('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/submit/{attempt}', [PepsolQuizController::class, 'submitQuiz'])->name('pepsol.quiz.submit');
+Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/result/{attempt}', [PepsolQuizController::class, 'quizResult'])->name('pepsol.quiz.result');
+
+Route::post('/pepsol/{pepsolName}/lesson/{lesson}/complete', [PepsolLessonProgressController::class, 'complete'])->name('pepsol.lesson.complete')->middleware('auth');
+Route::post('/pepsol/{pepsolName}/lesson/{lesson}/uncomplete', [PepsolLessonProgressController::class, 'uncomplete'])->name('pepsol.lesson.uncomplete')->middleware('auth');
 
 
 
@@ -128,12 +134,16 @@ Route::middleware(['auth', 'roletype:LEADER'])->prefix('leader')->name('leader.'
     Route::delete('pepsol=types/{id}/force-delete', [LPepsolTypesController::class, 'forceDelete'])->name('pepsol-types.forceDelete');
 
 
+
+
     Route::resource('pepsol', LPepsolController::class);
 
     Route::resource('sliders', LSilderController::class);
     Route::resource('pepsol-names', LPepsolNameController::class);
 
     Route::resource('pepsol-quiz', LPepsolQuizController::class);
+
+    Route::resource('pepsol-results', LPepsolQuizResultController::class);
 });
 
 

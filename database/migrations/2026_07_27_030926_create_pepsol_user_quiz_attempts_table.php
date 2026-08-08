@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('passed')->default(false);
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-            $table->enum('status', ['in_progress', 'completed', 'abondoned'])->default('in_progress');
+            $table->enum('status', ['in_progress', 'completed', 'abondoned'])->default('abondoned');
             $table->timestamps();
         });
     }

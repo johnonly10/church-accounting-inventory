@@ -20,10 +20,42 @@
             </div>
         </nav>
 
+        @php
+            $allLessons = $lessonsByTopic->flatMap(function ($lessons, $topicName) {
+                return $lessons->map(function ($lesson) use ($topicName) {
+                    $lesson->topicName = $topicName;
+                    return $lesson;
+                });
+            });
+
+            $totalLessonsAll = $allLessons->count();
+            $completedCountAll = $allLessons
+                ->filter(fn($lesson) => in_array($lesson->id, $completedLessonIds ?? []))
+                ->count();
+            $progressPct = $totalLessonsAll > 0 ? round(($completedCountAll / $totalLessonsAll) * 100) : 0;
+        @endphp
+
+        @if ($totalLessonsAll > 0)
+            <section class="progress-summary mb-4" aria-label="Your progress">
+                <div class="progress-summary-inner">
+                    <div class="progress-summary-text">
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        <span><strong>{{ $completedCountAll }}</strong> of <strong>{{ $totalLessonsAll }}</strong> lessons
+                            completed</span>
+                    </div>
+                    <div class="progress-track" role="progressbar" aria-valuenow="{{ $progressPct }}" aria-valuemin="0"
+                        aria-valuemax="100" aria-label="{{ $progressPct }}% complete">
+                        <div class="progress-fill" style="width: {{ $progressPct }}%;"></div>
+                    </div>
+                    <span class="progress-pct">{{ $progressPct }}%</span>
+                </div>
+            </section>
+        @endif
+
         <section class="lesson-filters mb-4" aria-label="Lesson filters">
             <form role="search" aria-label="Filter and sort lessons">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="input-group">
                             <label for="lessonSearch" class="input-group-text bg-white border-end-0">
                                 <i class="fas fa-search text-muted" aria-hidden="true"></i>
@@ -33,7 +65,7 @@
                                 id="lessonSearch" aria-label="Search lessons by title or topic">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="sortLessons" class="visually-hidden">Sort lessons</label>
                         <select class="form-select" id="sortLessons" aria-label="Sort lessons by order">
                             <option value="newest">Newest First</option>
@@ -42,18 +74,19 @@
                             <option value="z-a">Z-A</option>
                         </select>
                     </div>
+                    <div class="col-md-4">
+                        <label for="filterCompleted" class="visually-hidden">Filter completed lessons</label>
+                        <select class="form-select" id="filterCompleted" aria-label="Filter completed lessons">
+                            <option value="all">All Lessons</option>
+                            <option value="incomplete">Incomplete Only</option>
+                            <option value="completed">Completed Only</option>
+                        </select>
+                    </div>
                 </div>
             </form>
         </section>
 
         @php
-            $allLessons = $lessonsByTopic->flatMap(function ($lessons, $topicName) {
-                return $lessons->map(function ($lesson) use ($topicName) {
-                    $lesson->topicName = $topicName;
-                    return $lesson;
-                });
-            });
-
             $perPage = 20;
             $currentPage = request()->get('page', 1);
             $offset = ($currentPage - 1) * $perPage;
@@ -62,7 +95,6 @@
             $lastPage = ceil($totalLessons / $perPage);
         @endphp
 
-        <!-- Skeleton Loading State -->
         <section id="skeletonLoader" aria-label="Loading lessons" aria-busy="true" aria-live="polite">
             <h2 class="visually-hidden">Loading lessons...</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4">
@@ -92,39 +124,59 @@
             </div>
         </section>
 
-        <!-- Lessons Content -->
         <section id="lessonsContainer" style="display:none;" aria-label="Lesson cards" aria-live="polite">
             @if ($paginatedLessons->isNotEmpty())
                 <h2 class="visually-hidden">Available Lessons</h2>
                 <ul class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4 list-unstyled"
                     aria-label="All Pepsol lessons">
                     @foreach ($paginatedLessons as $lesson)
+                        @php
+                            $isCompleted = in_array($lesson->id, $completedLessonIds ?? []);
+                        @endphp
                         <li class="col lesson-item" data-topic="{{ $lesson->topicName }}"
                             data-level="{{ $lesson->level ?? 'beginner' }}" data-title="{{ $lesson->title }}"
                             data-date="{{ $lesson->created_at ?? now() }}"
+                            data-completed="{{ $isCompleted ? 'true' : 'false' }}"
                             aria-labelledby="lesson-title-{{ $lesson->id }}">
                             <article class="h-100 lesson-card-wrapper">
                                 <a href="{{ route('pepsol.details', ['pepsolName' => $pepsolName, 'lesson' => $lesson]) }}"
-                                    class="text-decoration-none lesson-card-link d-block h-100"
-                                    aria-label="View lesson: {{ $lesson->title }}">
-                                    <x-white-card class="h-100 lesson-card">
-                                        <div class="lesson-card-inner d-flex flex-column h-100">
+                                    class="text-decoration-none lesson-card-link d-block h-100 {{ $isCompleted ? 'completed-lesson-link' : '' }}"
+                                    aria-label="{{ $isCompleted ? 'Completed. Review lesson: ' : 'View lesson: ' }}{{ $lesson->title }}">
+                                    <x-white-card
+                                        class="h-100 lesson-card {{ $isCompleted ? 'completed-lesson-card' : '' }}">
+                                        <div class="lesson-card-inner d-flex flex-column h-100 position-relative">
                                             <header class="lesson-card-header">
-                                                <span class="badge rounded-pill mb-3 lesson-badge">
-                                                    <i class="fas fa-graduation-cap me-1" aria-hidden="true"></i>
-                                                    {{ $lesson->topicName }}
-                                                </span>
+                                                <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                                                    <span
+                                                        class="badge rounded-pill lesson-badge {{ $isCompleted ? 'completed-badge-topic' : '' }}">
+                                                        <i class="fas fa-graduation-cap me-1" aria-hidden="true"></i>
+                                                        {{ $lesson->topicName }}
+                                                    </span>
+
+                                                    @if ($isCompleted)
+                                                        <span class="completed-pill">
+                                                            <i class="fas fa-check" aria-hidden="true"></i>
+                                                            Completed
+                                                        </span>
+                                                    @endif
+                                                </div>
 
                                                 <figure class="lesson-image-wrap mb-3">
                                                     @if ($lesson->image)
-                                                        <img src="{{ asset($lesson->image) }}" alt="{{ $lesson->title }}"
-                                                            class="lesson-image" loading="lazy" width="400"
-                                                            height="275">
+                                                        <img src="{{ asset($lesson->image) }}"
+                                                            alt="{{ $lesson->title }}" class="lesson-image"
+                                                            loading="lazy" width="400" height="275">
                                                     @else
                                                         <div class="lesson-image-placeholder" role="img"
                                                             aria-label="Lesson illustration placeholder">
                                                             <i class="fas fa-book-open" aria-hidden="true"></i>
                                                         </div>
+                                                    @endif
+
+                                                    @if ($isCompleted)
+                                                        <span class="completed-check-badge" aria-hidden="true">
+                                                            <i class="fas fa-check"></i>
+                                                        </span>
                                                     @endif
                                                 </figure>
                                             </header>
@@ -157,6 +209,10 @@
                                                 </p>
 
                                                 <h3 class="lesson-title mb-1" id="lesson-title-{{ $lesson->id }}">
+                                                    @if ($isCompleted)
+                                                        <i class="fas fa-check-circle completed-title-icon"
+                                                            aria-hidden="true"></i>
+                                                    @endif
                                                     {{ $lesson->title }}
                                                 </h3>
 
@@ -168,16 +224,23 @@
                                             </div>
 
                                             <footer class="d-flex gap-2 align-items-center mt-auto">
-                                                <span class="btn lesson-action-btn flex-grow-1" role="button">
-                                                    View Lesson
-                                                    <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                                <span
+                                                    class="btn lesson-action-btn flex-grow-1 {{ $isCompleted ? 'completed-action-btn' : '' }}"
+                                                    role="button">
+                                                    @if ($isCompleted)
+                                                        Review Lesson
+                                                        <i class="fas fa-rotate-right ms-1" aria-hidden="true"></i>
+                                                    @else
+                                                        View Lesson
+                                                        <i class="fas fa-arrow-right ms-1" aria-hidden="true"></i>
+                                                    @endif
                                                 </span>
-                                                <button class="btn btn-outline-secondary rounded-circle bookmark-btn"
+                                                {{-- <button class="btn btn-outline-secondary rounded-circle bookmark-btn"
                                                     data-lesson="{{ $lesson->id }}"
                                                     aria-label="Bookmark lesson: {{ $lesson->title }}"
                                                     aria-pressed="false">
                                                     <i class="far fa-bookmark" aria-hidden="true"></i>
-                                                </button>
+                                                </button> --}}
                                             </footer>
                                         </div>
                                     </x-white-card>
@@ -249,6 +312,9 @@
             --pepsol-primary: #6366f1;
             --pepsol-primary-dark: #4f46e5;
             --pepsol-primary-light: #eef0fe;
+            --pepsol-success: #10b981;
+            --pepsol-success-dark: #059669;
+            --pepsol-success-light: #ecfdf5;
             --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             --card-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
             --hover-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
@@ -284,6 +350,22 @@
             }
         }
 
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
         .back-btn {
             display: inline-flex;
             align-items: center;
@@ -312,6 +394,57 @@
         main {
             width: 100%;
             align-self: stretch;
+        }
+
+        /* Progress summary */
+        .progress-summary-inner {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, .04);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            flex-wrap: wrap;
+        }
+
+        .progress-summary-text {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .95rem;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .progress-summary-text i {
+            color: var(--pepsol-success);
+            font-size: 1.1rem;
+        }
+
+        .progress-track {
+            flex: 1;
+            min-width: 140px;
+            height: 10px;
+            border-radius: 999px;
+            background: #eef0fe;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--pepsol-success), #34d399);
+            transition: width .5s ease;
+        }
+
+        .progress-pct {
+            font-weight: 700;
+            font-size: .9rem;
+            color: var(--pepsol-success-dark);
+            min-width: 3ch;
+            text-align: right;
         }
 
         .lesson-card-link {
@@ -383,6 +516,7 @@
             overflow: hidden;
             background: #f3f4f6;
             margin-top: .5rem;
+            position: relative;
         }
 
         .lesson-image {
@@ -539,6 +673,95 @@
             }
         }
 
+        /* --- Completed lesson state ---
+                       Full colour is kept (no grayscale/opacity fade) so completed cards
+                       stay just as easy to read; a green accent border, corner check
+                       badge, and pill make the "done" status obvious at a glance instead. */
+        .completed-lesson-card {
+            border: 2px solid var(--pepsol-success) !important;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.12);
+        }
+
+        .completed-lesson-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--card-radius);
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.05), transparent 40%);
+            pointer-events: none;
+        }
+
+        .completed-lesson-link:hover .completed-lesson-card,
+        .completed-lesson-link:focus-visible .completed-lesson-card {
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.22);
+        }
+
+        .completed-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            background: var(--pepsol-success-light);
+            color: var(--pepsol-success-dark);
+            border: 1px solid rgba(16, 185, 129, .25);
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .02em;
+            text-transform: uppercase;
+            padding: .4rem .75rem;
+            border-radius: 999px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .completed-pill i {
+            font-size: .7rem;
+        }
+
+        .completed-check-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--pepsol-success);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, .4), 0 0 0 3px #fff;
+            animation: popIn .4s ease;
+        }
+
+        .completed-title-icon {
+            color: var(--pepsol-success);
+            font-size: .95em;
+            margin-right: .35rem;
+        }
+
+        .completed-badge-topic {
+            opacity: .85;
+        }
+
+        .completed-action-btn {
+            background: #fff !important;
+            color: var(--pepsol-success-dark) !important;
+            border: 1.5px solid var(--pepsol-success);
+            box-shadow: none;
+        }
+
+        .completed-action-btn::after {
+            display: none !important;
+        }
+
+        .completed-lesson-link:hover .completed-action-btn,
+        .completed-lesson-link:focus-visible .completed-action-btn {
+            background: var(--pepsol-success-light) !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
         .toast-container {
             position: fixed;
             top: 20px;
@@ -636,6 +859,14 @@
             .lesson-title {
                 font-size: 1rem;
             }
+
+            .progress-summary-inner {
+                padding: .85rem 1.1rem;
+            }
+
+            .progress-summary-text {
+                font-size: .85rem;
+            }
         }
 
         @media (max-width: 576px) {
@@ -656,6 +887,7 @@
             const lessonSearch = document.getElementById('lessonSearch');
             const sortLessons = document.getElementById('sortLessons');
             const viewToggle = document.getElementById('viewToggle');
+            const filterCompleted = document.getElementById('filterCompleted');
             let currentView = 'grid';
 
             setTimeout(function() {
@@ -720,17 +952,44 @@
                 });
             }
 
+            function filterCompletedLessons() {
+                if (!filterCompleted) return;
+                const value = filterCompleted.value;
+                const items = document.querySelectorAll('.lesson-item');
+
+                items.forEach(function(item) {
+                    const isCompleted = item.dataset.completed === 'true';
+
+                    if (value === 'all') {
+                        item.style.display = '';
+                    } else if (value === 'incomplete') {
+                        item.style.display = isCompleted ? 'none' : '';
+                    } else if (value === 'completed') {
+                        item.style.display = isCompleted ? '' : 'none';
+                    }
+                });
+            }
+
             if (lessonSearch) {
                 let searchTimeout;
                 lessonSearch.addEventListener('input', function() {
                     clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(filterLessons, 300);
+                    searchTimeout = setTimeout(function() {
+                        filterLessons();
+                        filterCompletedLessons();
+                    }, 300);
                 });
             }
 
             if (sortLessons) {
                 sortLessons.addEventListener('change', function() {
                     sortLessonsFunction();
+                });
+            }
+
+            if (filterCompleted) {
+                filterCompleted.addEventListener('change', function() {
+                    filterCompletedLessons();
                 });
             }
 

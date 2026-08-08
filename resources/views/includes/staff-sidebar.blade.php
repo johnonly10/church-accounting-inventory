@@ -142,6 +142,11 @@
                 <li><a href="{{ route('leader.pepsol-quiz.create') }}"> Add Quiz</a></li>
             </x-includes.sidebar-item>
 
+            <x-includes.sidebar-item title="Pepsol Results" icon="fas fa-clipboard-check" :hasArrow="true">
+                <li><a href="{{ route('leader.pepsol-results.index') }}">Results </a></li>
+                {{-- <li><a href="{{ route('leader.pepsol-quiz.create') }}"> Add Quiz</a></li> --}}
+            </x-includes.sidebar-item>
+
             <x-includes.sidebar-item title="Images" icon="fas fa-solid fa-image" :hasArrow="true">
                 <li><a href="{{ route('leader.images.index') }}">Images </a></li>
                 <li><a href="{{ route('leader.images.create') }}"> Add Image</a></li>
