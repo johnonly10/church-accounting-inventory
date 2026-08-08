@@ -613,10 +613,10 @@
 
 
                 <div class="lp-forgot-row">
-                    <div class="lp-left-links">
+                    {{-- <div class="lp-left-links">
 
                         <a href="{{ route('register') }}" class="lp-forgot-link">New Here? Register Now</a>
-                    </div>
+                    </div> --}}
 
                     <a href="{{ route('password.request') }}" class="lp-forgot-link">Forgot your password?</a>
                 </div>

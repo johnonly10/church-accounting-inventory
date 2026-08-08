@@ -351,6 +351,91 @@
             transform: translateY(8px);
         }
 
+        .faq-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: box-shadow 300ms ease, transform 300ms ease;
+        }
+
+        .faq-card:hover {
+            box-shadow: 0 12px 32px -8px rgba(99, 102, 241, .15);
+            transform: translateY(-2px);
+        }
+
+        .faq-card__header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.4;
+            transition: color 200ms ease;
+        }
+
+        .faq-card__header:hover {
+            color: #6366f1;
+        }
+
+        .faq-card__header:focus-visible {
+            outline: 2px solid #818cf8;
+            outline-offset: -2px;
+            border-radius: 16px;
+        }
+
+        .faq-card__icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #eef2ff;
+            display: grid;
+            place-items: center;
+            transition: transform 300ms ease, background 300ms ease;
+        }
+
+        .faq-card__icon svg {
+            width: 14px;
+            height: 14px;
+            color: #6366f1;
+            transition: transform 300ms ease;
+        }
+
+        .faq-card.is-open .faq-card__icon {
+            background: #6366f1;
+        }
+
+        .faq-card.is-open .faq-card__icon svg {
+            color: #fff;
+            transform: rotate(45deg);
+        }
+
+        .faq-card__body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1), padding 400ms ease;
+        }
+
+        .faq-card.is-open .faq-card__body {
+            max-height: 400px;
+        }
+
+        .faq-card__body-inner {
+            padding: 0 24px 20px;
+            color: #4b5563;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
         @media (max-width: 1024px) {
             .tour-hero {
                 min-height: 92vh;
@@ -414,6 +499,15 @@
                 width: 36px;
                 height: 36px;
             }
+
+            .faq-card__header {
+                padding: 16px 18px;
+                font-size: 15px;
+            }
+
+            .faq-card__body-inner {
+                padding: 0 18px 16px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -470,11 +564,6 @@
                                     aria-label="Explore {{ $first->name }}">
                                     Explore
                                 </a>
-                                {{-- @if ($events->count() > 1)
-                                    <a href="{{ route('events.index') }}" class="btn-outline" aria-label="View all events">
-                                        View All Events
-                                    </a>
-                                @endif --}}
                             </div>
                         </div>
                     </div>
@@ -680,6 +769,415 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
             </a>
+        </div>
+    </section>
+
+    <section class="py-28 relative overflow-hidden" style="background:#f8fafc;" aria-labelledby="cellgroup-heading">
+        <div class="pointer-events-none absolute -bottom-20 -left-20 w-80 h-80 rounded-full opacity-[0.06]"
+            style="background:#6366f1;" aria-hidden="true"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div class="relative">
+                    <div class="relative rounded-3xl overflow-hidden"
+                        style="box-shadow: 0 25px 60px -20px rgba(99,102,241,.3);">
+                        <img src="{{ asset('Images/Home/cell.jpg') }}"
+                            alt="Cellgroup gathering - Bible study and fellowship"
+                            class="w-full h-80 lg:h-[440px] object-cover" loading="lazy" decoding="async"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden w-full h-80 lg:h-[440px] items-center justify-center"
+                            style="background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                            <svg class="w-20 h-20 text-white/80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0"
+                            style="background:linear-gradient(135deg, rgba(99,102,241,.15) 0%, transparent 60%);"
+                            aria-hidden="true"></div>
+                    </div>
+
+                    <div class="absolute -bottom-6 -right-6 bg-white rounded-2xl px-6 py-4 hidden sm:block"
+                        style="box-shadow: 0 20px 40px -12px rgba(0,0,0,.12);">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                                style="background:#eef2ff;">
+                                <svg class="w-5 h-5" style="color:#6366f1;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Find Your Group</p>
+                                <p class="text-xs text-gray-500">Small, authentic community awaits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-5"
+                        style="background:#eef2ff; color:#4f46e5;">
+                        <span class="w-1.5 h-1.5 rounded-full" style="background:#4f46e5;" aria-hidden="true"></span>
+                        Join Our Cellgroup
+                    </span>
+                    <h2 id="cellgroup-heading" class="text-3xl sm:text-4xl font-bold text-gray-900 mb-5 tracking-tight">
+                        Grow Together in Small Groups
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        A cellgroup is more than just a Bible study — it's a family where you can listen, share, and have
+                        fun while
+                        diving deep into God's Word. Experience authentic community, meaningful discussions, and genuine
+                        encouragement
+                        as we grow in faith together.
+                    </p>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                                style="background:#eef2ff;">
+                                <svg class="w-4 h-4" style="color:#6366f1;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s4.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Interactive Bible Study</p>
+                                <p class="text-sm text-gray-500">Engage in lively discussions where everyone's voice is
+                                    heard and valued.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                                style="background:#eef2ff;">
+                                <svg class="w-4 h-4" style="color:#6366f1;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Authentic Fellowship</p>
+                                <p class="text-sm text-gray-500">Build lasting friendships in a warm, welcoming
+                                    environment.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                                style="background:#eef2ff;">
+                                <svg class="w-4 h-4" style="color:#6366f1;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Fun & Encouraging Atmosphere</p>
+                                <p class="text-sm text-gray-500">Learn God's Word while enjoying games, activities, and
+                                    shared meals together.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ route('contact.index') }}"
+                        class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        style="background:#6366f1; box-shadow: 0 4px 14px rgba(99,102,241,.35);">
+                        Join a Cellgroup
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-28 relative overflow-hidden" style="background:#fff;" aria-labelledby="posterity-heading">
+        <div class="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full opacity-[0.08]"
+            style="background:#f59e0b;" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -bottom-24 -left-24 w-96 h-96 rounded-full opacity-[0.05]"
+            style="background:#f59e0b;" aria-hidden="true"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-4"
+                    style="background:#fef3c7; color:#d97706;">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Posterity
+                </span>
+                <h2 id="posterity-heading" class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                    Bible Study for Kids
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Helping children ages 12 and below discover God's love through fun, engaging Bible lessons.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div class="order-2 lg:order-1">
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-5 tracking-tight">
+                        Plant Seeds of Faith Early
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        Posterity is a vibrant Bible study program designed specifically for children aged 12 and below.
+                        Through age-appropriate lessons, creative activities, and interactive storytelling, we help kids
+                        build a strong foundation of faith in a safe, nurturing environment.
+                    </p>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                                style="background:#fef3c7;">
+                                <svg class="w-4 h-4" style="color:#f59e0b;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Engaging Bible Stories</p>
+                                <p class="text-sm text-gray-500">Bringing Scripture to life through creative storytelling
+                                    and visuals.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                                style="background:#fef3c7;">
+                                <svg class="w-4 h-4" style="color:#f59e0b;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Fun Activities & Games</p>
+                                <p class="text-sm text-gray-500">Learning through play with crafts, songs, and interactive
+                                    games.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                                style="background:#fef3c7;">
+                                <svg class="w-4 h-4" style="color:#f59e0b;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Safe & Nurturing Environment</p>
+                                <p class="text-sm text-gray-500">A loving space where children feel valued, supported, and
+                                    encouraged.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ route('contact.index') }}"
+                        class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                        style="background:#f59e0b; box-shadow: 0 4px 14px rgba(245,158,11,.35);">
+                        Enroll Your Child
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="relative order-1 lg:order-2">
+                    <div class="relative rounded-3xl overflow-hidden"
+                        style="box-shadow: 0 25px 60px -20px rgba(245,158,11,.3);">
+                        <img src="{{ asset('Images/Home/posterity_2.jpg') }}" alt="Posterity - Kids Bible study program"
+                            class="w-full h-80 lg:h-[440px] object-cover" loading="lazy" decoding="async"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden w-full h-80 lg:h-[440px] items-center justify-center"
+                            style="background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            <svg class="w-20 h-20 text-white/80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <div class="absolute inset-0"
+                            style="background:linear-gradient(135deg, rgba(245,158,11,.15) 0%, transparent 60%);"
+                            aria-hidden="true"></div>
+                    </div>
+
+                    <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl px-6 py-4 hidden sm:block"
+                        style="box-shadow: 0 20px 40px -12px rgba(0,0,0,.12);">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                                style="background:#fef3c7;">
+                                <svg class="w-5 h-5" style="color:#f59e0b;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s4.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Ages 12 & Below</p>
+                                <p class="text-xs text-gray-500">Age-appropriate lessons & activities</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-28 relative overflow-hidden" style="background:#fafafa;" aria-labelledby="faq-heading">
+        <div class="pointer-events-none absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-[0.06]"
+            style="background:#6366f1;" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -bottom-24 -left-24 w-80 h-80 rounded-full opacity-[0.04]"
+            style="background:#6366f1;" aria-hidden="true"></div>
+
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center mb-16">
+                <span
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-4"
+                    style="background:#eef2ff; color:#4f46e5;">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Common Questions
+                </span>
+                <h2 id="faq-heading" class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                    It's About Relationship, Not Religion
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Christianity isn't about rules and rituals — it's about knowing God personally.
+                    Here are some common questions about faith and relationship with God.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="faq-card">
+                    <button class="faq-card__header" aria-expanded="false">
+                        <span>What does it mean to have a personal relationship with God?</span>
+                        <span class="faq-card__icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq-card__body">
+                        <div class="faq-card__body-inner">
+                            Having a personal relationship with God means knowing Him not just as a distant Creator,
+                            but as a loving Father who desires intimate connection with you. It's about talking to Him
+                            through prayer, listening to His voice through Scripture, and experiencing His presence in
+                            your daily life. Just like any relationship, it grows through time, trust, and communication.
+                            God doesn't want religious performance — He wants your heart.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <button class="faq-card__header" aria-expanded="false">
+                        <span>Why is relationship with God more important than religious rituals?</span>
+                        <span class="faq-card__icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq-card__body">
+                        <div class="faq-card__body-inner">
+                            Religious rituals can become empty when done without heart connection. Jesus often challenged
+                            religious leaders who followed rules but missed the heart of God. God desires mercy, love,
+                            and genuine relationship — not empty religious performance. When you focus on relationship,
+                            obedience flows naturally out of love, not obligation. The goal is to know God intimately,
+                            not just follow a set of rules.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <button class="faq-card__header" aria-expanded="false">
+                        <span>How can I start building a relationship with God today?</span>
+                        <span class="faq-card__icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq-card__body">
+                        <div class="faq-card__body-inner">
+                            Start by simply talking to God — He's listening. Share your thoughts, fears, joys, and questions
+                            with Him honestly. Begin reading the Gospel of John in the Bible to discover who Jesus is.
+                            Join a community of believers who can encourage and support your journey. Remember, it's not
+                            about being perfect — it's about being present. God meets you right where you are, not where
+                            you think you should be.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <button class="faq-card__header" aria-expanded="false">
+                        <span>What's the difference between knowing about God and knowing God?</span>
+                        <span class="faq-card__icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq-card__body">
+                        <div class="faq-card__body-inner">
+                            Knowing about God is like reading a biography about someone — you learn facts but don't truly
+                            know the person. Knowing God is like having a close friendship where you experience their
+                            presence, understand their heart, and share life together. Many people know about God
+                            intellectually, but He invites you into an experiential, transformative relationship where
+                            you encounter His love, grace, and power personally.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-card">
+                    <button class="faq-card__header" aria-expanded="false">
+                        <span>Does God really love me despite my mistakes and failures?</span>
+                        <span class="faq-card__icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq-card__body">
+                        <div class="faq-card__body-inner">
+                            Absolutely. God's love for you is not based on your performance — it's based on His character.
+                            The Bible tells us that God demonstrated His love for us in this: while we were still sinners,
+                            Christ died for us. Your mistakes don't surprise God, and they don't diminish His love for you.
+                            He doesn't love a future, perfect version of you — He loves you right now, completely and
+                            unconditionally. That's the beauty of grace.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-14">
+                <p class="text-gray-500 mb-6">Have more questions? We'd love to walk this journey with you.</p>
+                <a href="{{ route('contact.index') }}"
+                    class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    style="background:#6366f1; box-shadow: 0 4px 14px rgba(99,102,241,.35);">
+                    Reach Out to Us
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -1018,6 +1516,29 @@
                 setActive(initialCard);
             }
             startAutoplay();
+        })();
+
+        (function() {
+            const faqCards = document.querySelectorAll('.faq-card');
+
+            faqCards.forEach(card => {
+                const header = card.querySelector('.faq-card__header');
+
+                header.addEventListener('click', () => {
+                    const isOpen = card.classList.contains('is-open');
+
+                    faqCards.forEach(otherCard => {
+                        otherCard.classList.remove('is-open');
+                        otherCard.querySelector('.faq-card__header').setAttribute(
+                            'aria-expanded', 'false');
+                    });
+
+                    if (!isOpen) {
+                        card.classList.add('is-open');
+                        header.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
         })();
     </script>
 @endpush

@@ -52,6 +52,25 @@
                                         <span class="lesson-nav-number">{{ $number }}</span>
                                         <span class="lesson-nav-label">{{ $navLesson->title }}</span>
                                     </a>
+
+                                    {{-- Quiz link for each lesson --}}
+                                    @if ($navLesson->quizzes && $navLesson->quizzes->where('status', 'published')->count() > 0)
+                                        <div class="quiz-nav-items">
+                                            @foreach ($navLesson->quizzes->where('status', 'published') as $quiz)
+                                                @php
+                                                    $isQuizActive = isset($activeQuiz) && $activeQuiz->id === $quiz->id;
+                                                @endphp
+                                                <a href="{{ route('pepsol.quiz.show', ['pepsolName' => $pepsolName, 'lesson' => $navLesson, 'quiz' => $quiz]) }}"
+                                                    class="lesson-nav-link quiz-nav-link {{ $isQuizActive ? 'active' : '' }}"
+                                                    @if ($isQuizActive) aria-current="page" @endif>
+                                                    <span class="lesson-nav-number quiz-number">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </span>
+                                                    <span class="lesson-nav-label">{{ $quiz->title }}</span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
@@ -228,6 +247,49 @@
                                     <p class="text-muted">This lesson doesn't have any content yet.</p>
                                 @endforelse
                             </div>
+
+                            {{-- Quiz Section at the bottom of lesson content --}}
+                            @if ($lesson->quizzes && $lesson->quizzes->where('status', 'published')->count() > 0)
+                                <div class="lesson-quiz-section mt-5">
+                                    <h2 class="lesson-part-title">Lesson Quiz</h2>
+                                    <div class="row g-3">
+                                        @foreach ($lesson->quizzes->where('status', 'published') as $quiz)
+                                            <div class="col-md-6">
+                                                <div class="quiz-card">
+                                                    <div class="quiz-card-body">
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <div class="quiz-card-icon">
+                                                                <i class="fas fa-clipboard-check"></i>
+                                                            </div>
+                                                            <div class="ms-3">
+                                                                <h3 class="quiz-card-title">{{ $quiz->title }}</h3>
+                                                                @if ($quiz->description)
+                                                                    <p class="quiz-card-desc">
+                                                                        {{ Str::limit($quiz->description, 100) }}</p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div class="quiz-card-stats">
+                                                            <span class="quiz-stat">
+                                                                <i class="fas fa-question-circle"></i>
+                                                                {{ $quiz->questions_count ?? $quiz->questions->count() }} Questions
+                                                            </span>
+                                                            <span class="quiz-stat">
+                                                                <i class="fas fa-trophy"></i>
+                                                                Passing: {{ $quiz->passing_score }}%
+                                                            </span>
+                                                        </div>
+                                                        <a href="{{ route('pepsol.quiz.show', ['pepsolName' => $pepsolName, 'lesson' => $lesson, 'quiz' => $quiz]) }}"
+                                                            class="btn btn-primary w-100 mt-3">
+                                                            <i class="fas fa-play me-2"></i>Take Quiz
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         </x-white-card>
                     </section>
                 </div>
@@ -340,6 +402,86 @@
                 .lesson-nav-link.active .lesson-nav-number {
                     background: rgba(255, 255, 255, .25);
                     color: #fff;
+                }
+
+                /* Quiz navigation styles */
+                .quiz-nav-items {
+                    margin-top: 0.25rem;
+                }
+
+                .quiz-nav-link {
+                    padding-left: 2.5rem !important;
+                    font-size: 0.875rem !important;
+                }
+
+                .quiz-number {
+                    background: rgba(251, 191, 36, 0.1) !important;
+                    color: #f59e0b !important;
+                }
+
+                .quiz-nav-link.active .quiz-number {
+                    background: rgba(255, 255, 255, 0.25) !important;
+                    color: #fff !important;
+                }
+
+                /* Quiz card styles for lesson bottom */
+                .quiz-card {
+                    background: #fff;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 1rem;
+                    padding: 1.5rem;
+                    transition: all 0.3s ease;
+                    height: 100%;
+                }
+
+                .quiz-card:hover {
+                    border-color: var(--pepsol-primary);
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+                    transform: translateY(-2px);
+                }
+
+                .quiz-card-icon {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 12px;
+                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-size: 1.25rem;
+                    flex-shrink: 0;
+                }
+
+                .quiz-card-title {
+                    font-size: 1.125rem;
+                    font-weight: 700;
+                    color: #1f2937;
+                    margin-bottom: 0.25rem;
+                }
+
+                .quiz-card-desc {
+                    font-size: 0.875rem;
+                    color: #6b7280;
+                    margin-bottom: 0;
+                }
+
+                .quiz-card-stats {
+                    display: flex;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                }
+
+                .quiz-stat {
+                    font-size: 0.875rem;
+                    color: #6b7280;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .quiz-stat i {
+                    color: var(--pepsol-primary);
                 }
 
                 .lesson-badge {

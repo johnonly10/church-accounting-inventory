@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('passing_score')->default(5);
             $table->boolean('allow_retake')->default(true);
             $table->integer('max_attempts')->nullable();
-            $table->enum('status', ['default', 'published'])->default('default');
+            $table->enum('status', ['draft', 'published'])->default('draft');
             $table->timestamps();
         });
     }
