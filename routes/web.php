@@ -25,6 +25,7 @@ use App\Http\Controllers\Leader\LPepsolCategoriesController;
 use App\Http\Controllers\Leader\LPepsolController;
 use App\Http\Controllers\Leader\LPepsolName;
 use App\Http\Controllers\Leader\LPepsolNameController;
+use App\Http\Controllers\Leader\LPepsolQuizController;
 use App\Http\Controllers\Leader\LPepsolTypes;
 use App\Http\Controllers\Leader\LPepsolTypesController;
 use App\Http\Controllers\Leader\LSilderController;
@@ -57,6 +58,15 @@ Route::get('/pepsol', [PepsolController::class, 'index'])->name('pepsol.index');
 Route::get('/pepsol/{pepsolName}/lessons', [PepsolController::class, 'lesson'])->name('pepsol.lessons');
 Route::get('/pepsol/{pepsolName}/lessons/{lesson}', [PepsolController::class, 'details'])
     ->name('pepsol.details');
+
+
+Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}', [PepsolController::class, 'showQuiz'])->name('pepsol.quiz.show');
+Route::post('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/start', [PepsolController::class, 'startQuiz'])->name('pepsol.quiz.start');
+Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/take/{attempt}', [PepsolController::class, 'takeQuiz'])->name('pepsol.quiz.take');
+Route::post('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/submit/{attempt}', [PepsolController::class, 'submitQuiz'])->name('pepsol.quiz.submit');
+Route::get('/{pepsolName}/lesson/{lesson}/quiz/{quiz}/result/{attempt}', [PepsolController::class, 'quizResult'])->name('pepsol.quiz.result');
+
+
 
 Route::get('/maintenance', function () {
     return view('maintenance');
@@ -122,6 +132,8 @@ Route::middleware(['auth', 'roletype:LEADER'])->prefix('leader')->name('leader.'
 
     Route::resource('sliders', LSilderController::class);
     Route::resource('pepsol-names', LPepsolNameController::class);
+
+    Route::resource('pepsol-quiz', LPepsolQuizController::class);
 });
 
 
