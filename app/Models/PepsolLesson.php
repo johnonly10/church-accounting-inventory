@@ -44,4 +44,11 @@ class PepsolLesson extends Model
     {
         return $this->hasMany(PepsolQuiz::class, 'pepsol_lesson_id');
     }
+
+    public function completedBy()
+    {
+        return $this->belongsToMany(User::class, 'pepsol_user_lesson_progress')
+            ->withPivot('completed', 'completed_at')
+            ->withTimestamps();
+    }
 }

@@ -26,7 +26,7 @@
                                 <th>Lesson</th>
                                 <th>Questions</th>
                                 <th>Passing Score</th>
-                                <th>Time Limit</th>
+                                {{-- <th>Time Limit</th> --}}
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -59,13 +59,13 @@
                                     <td>
                                         <span class="badge bg-primary">{{ $quiz->passing_score }}%</span>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         @if ($quiz->time_limit)
                                             <span>{{ $quiz->time_limit }} min</span>
                                         @else
                                             <span class="text-muted">No limit</span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td class="text-center">
                                         @if ($quiz->status === 'published')
                                             <span class="badge bg-success">Published</span>

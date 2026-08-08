@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role_id',
         'ministry_id',
         'position_id',
+        'pepsol_type_id',
         'name',
         'path',
         'email',
@@ -99,5 +100,25 @@ class User extends Authenticatable
     public function pepsolCategory()
     {
         return $this->hasMany(PepsolCategory::class);
+    }
+
+    public function pepsolType()
+    {
+        return $this->belongsTo(PepsolType::class, 'pepsol_type_id');
+    }
+
+    public function completedLessons()
+    {
+        return $this->belongsToMany(PepsolLesson::class, 'pepsol_user_lesson_progress')
+            ->withPivot('completed', 'completed_at')
+            ->withTimestamps();
+    }
+
+    public function hasCompletedLesson($lessonId)
+    {
+        return $this->completedLessons()
+            ->where('pepsol_lesson_id', $lessonId)
+            ->wherePivot('completed', true)
+            ->exists();
     }
 }

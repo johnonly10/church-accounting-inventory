@@ -16,46 +16,46 @@ class EventSeeder extends Seeder
 
         $events = [
             [
-                'name' => 'Sunday Worship Service',
-                'short_description' => 'A time of praise, worship, and the preaching of God’s Word.',
-                'description' => 'Join us for our Sunday worship service featuring congregational singing, prayer, Scripture reading, and a sermon. All are welcome.',
-                'image_file' => 'sunday-worship.jpg',
+                'name' => 'Posterity',
+                'short_description' => 'A Christian gathering focused on faith, fellowship, and building a godly generation.',
+                'description' => 'Join us for Posterity, a Christian gathering dedicated to strengthening faith, encouraging fellowship, and inspiring the next generation to live according to God’s Word.',
+                'image_file' => 'posterity.jpg',
+                'location' => 'EMWC, Paradahan 1, Tanza, Cavite',
+                'start_at' => $base->copy()->next(Carbon::SATURDAY)->setTime(14, 0),
+                'ends_at' => $base->copy()->next(Carbon::SATURDAY)->setTime(17, 0),
+            ],
+            [
+                'name' => 'Sunday Worship',
+                'short_description' => 'A time of praise, worship, prayer, and hearing God’s Word.',
+                'description' => 'Join us every Sunday as we gather together to worship God through music, prayer, Scripture, fellowship, and the preaching of His Word. Everyone is welcome.',
+                'image_file' => 'sunday.jpg',
                 'location' => 'EMWC, Paradahan 1, Tanza, Cavite',
                 'start_at' => $base->copy()->next(Carbon::SUNDAY)->setTime(9, 0),
                 'ends_at' => $base->copy()->next(Carbon::SUNDAY)->setTime(11, 0),
             ],
             [
-                'name' => 'Midweek Bible Study',
-                'short_description' => 'Grow in the Word through teaching and discussion.',
-                'description' => 'A midweek gathering for Bible study, fellowship, and prayer. Bring your Bible and invite a friend.',
-                'image_file' => 'bible-study.jpg',
+                'name' => 'Worship Thru Music',
+                'short_description' => 'Experience worship and draw closer to God through music and songs.',
+                'description' => 'A special worship gathering where we express our love and devotion to God through music, songs, and heartfelt praise. Come and worship with us.',
+                'image_file' => 'WTM.jpg',
                 'location' => 'EMWC, Paradahan 1, Tanza, Cavite',
-                'start_at' => $base->copy()->next(Carbon::WEDNESDAY)->setTime(19, 0),
-                'ends_at' => $base->copy()->next(Carbon::WEDNESDAY)->setTime(20, 30),
-            ],
-            [
-                'name' => 'Prayer Night',
-                'short_description' => 'United prayer for the church, community, and nations.',
-                'description' => 'An evening of guided prayer, worship, and intercession. Come and experience the power of praying together.',
-                'image_file' => 'prayer-night.jpg',
-                'location' => 'EMWC, Paradahan 1, Tanza, Cavite',
-                'start_at' => $base->copy()->next(Carbon::FRIDAY)->setTime(19, 30),
+                'start_at' => $base->copy()->next(Carbon::FRIDAY)->setTime(19, 0),
                 'ends_at' => $base->copy()->next(Carbon::FRIDAY)->setTime(21, 0),
             ],
             [
                 'name' => 'Youth Fellowship',
-                'short_description' => 'Games, worship, and Bible teaching for youth.',
-                'description' => 'A weekly fellowship for teens and young adults with worship, interactive teaching, and small group sharing.',
-                'image_file' => 'youth-fellowship.jpg',
+                'short_description' => 'A Christ-centered fellowship for young people to grow in faith and friendship.',
+                'description' => 'Join our youth fellowship for worship, Bible teaching, games, meaningful discussions, and fellowship. A place where young people can grow together in faith and build lasting friendships.',
+                'image_file' => 'youth fellowship.jpg',
                 'location' => 'EMWC, Paradahan 1, Tanza, Cavite',
                 'start_at' => $base->copy()->next(Carbon::SATURDAY)->setTime(16, 0),
                 'ends_at' => $base->copy()->next(Carbon::SATURDAY)->setTime(18, 30),
             ],
-
         ];
 
         foreach ($events as $event) {
             $slug = Str::slug($event['name']);
+
             if (DB::table('events')->where('slug', $slug)->exists()) {
                 $slug .= '-' . Str::lower(Str::random(5));
             }

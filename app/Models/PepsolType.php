@@ -19,4 +19,9 @@ class PepsolType extends Model
     {
         return $this->hasMany(Pepsol::class);
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

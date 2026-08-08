@@ -248,6 +248,51 @@
                                 @endforelse
                             </div>
 
+                            @auth
+                                @php
+                                    $isCompleted = auth()->user()->hasCompletedLesson($lesson->id);
+                                @endphp
+
+                                <div class="lesson-completion-section mt-5 pt-3 border-top">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            @if ($isCompleted)
+                                                <div class="d-flex align-items-center text-success">
+                                                    <i class="fas fa-check-circle me-2" style="font-size: 1.5rem;"></i>
+                                                    <div>
+                                                        <strong>Lesson Completed!</strong>
+                                                        <p class="mb-0 text-muted small">You've successfully completed this lesson.</p>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div>
+                                                    <strong>Mark as Complete</strong>
+                                                    <p class="mb-0 text-muted small">Click the button when you've finished this lesson.
+                                                    </p>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <form
+                                            action="{{ route('pepsol.lesson.complete', ['pepsolName' => $pepsolName, 'lesson' => $lesson]) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            @if ($isCompleted)
+                                                <button type="submit"
+                                                    formaction="{{ route('pepsol.lesson.uncomplete', ['pepsolName' => $pepsolName, 'lesson' => $lesson]) }}"
+                                                    class="btn btn-outline-secondary rounded-pill px-4">
+                                                    <i class="fas fa-undo me-2"></i>Undo Complete
+                                                </button>
+                                            @else
+                                                <button type="submit" class="btn btn-success rounded-pill px-4">
+                                                    <i class="fas fa-check me-2"></i>Complete Lesson
+                                                </button>
+                                            @endif
+                                        </form>
+                                    </div>
+                                </div>
+                            @endauth
+
                             {{-- Quiz Section at the bottom of lesson content --}}
                             @if ($lesson->quizzes && $lesson->quizzes->where('status', 'published')->count() > 0)
                                 <div class="lesson-quiz-section mt-5">
