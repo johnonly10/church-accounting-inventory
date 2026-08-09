@@ -25,13 +25,13 @@ class PepsolNameSeeder extends Seeder
                 'image' => 'prayer.jpg'
             ],
             [
-                'code' => 'SG-1',
-                'name' => 'Small Group',
+                'code' => 'WN-1',
+                'name' => 'Win',
                 'image' => 'youth_group.jpg'
             ],
             [
-                'code' => 'BSI-1',
-                'name' => 'Bible Study Intensive',
+                'code' => 'D-1',
+                'name' => 'Disciple',
                 'image' => 'bible_study.jpg'
             ],
             [
@@ -75,8 +75,8 @@ class PepsolNameSeeder extends Seeder
                 'image' => 'bible_study.jpg'
             ],
             [
-                'code' => 'SAN-1',
-                'name' => 'Sanctification',
+                'code' => 'D-1',
+                'name' => 'Discipleship',
                 'image' => 'discipleship.jpg'
             ],
             [

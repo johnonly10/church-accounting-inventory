@@ -18,6 +18,7 @@ use App\Models\PepsolUserQuizAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class PepsolController extends Controller
 {
     public function index(Request $request)

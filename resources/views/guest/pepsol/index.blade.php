@@ -119,9 +119,9 @@
                             <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>
                                 Title Z-A
                             </option>
-                            <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>
+                            {{-- <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>
                                 Most Popular
-                            </option>
+                            </option> --}}
                         </select>
                     </div>
                 </header>
