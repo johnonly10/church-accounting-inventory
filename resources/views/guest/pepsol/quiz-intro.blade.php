@@ -128,7 +128,8 @@
                                         <i class="fas fa-trophy" aria-hidden="true"></i>
                                     </div>
                                     <div class="quiz-stat-info">
-                                        <span class="quiz-stat-value" data-count="{{ $quiz->passing_score }}">0</span>
+                                        <span class="quiz-stat-value" data-count="{{ $quiz->passing_score }}">0 %</span>
+                                        {{-- <span>% </span> --}}
                                         <span class="quiz-stat-label">Passing Score</span>
                                     </div>
                                 </div>

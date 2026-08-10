@@ -33,6 +33,10 @@ class DatabaseSeeder extends Seeder
             PepsolTypeSeeder::class,
             PepsolNameSeeder::class,
             PepsolTopicSeeder::class,
+            PepsolLessonSeeder::class,
+            PepsolQuizSeeder::class,
+            PepsolWinSeeder::class,
+            PepsolDiscipleshipSeeder::class,
 
 
         ]);

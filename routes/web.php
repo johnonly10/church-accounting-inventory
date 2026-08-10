@@ -16,6 +16,7 @@ use App\Http\Controllers\FinancePDFController;
 use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\Guest\AboutController;
 use App\Http\Controllers\Guest\ContactController;
+use App\Http\Controllers\guest\GProfileController;
 use App\Http\Controllers\Guest\HomeController;
 use App\Http\Controllers\Guest\PepsolController;
 use App\Http\Controllers\guest\PepsolLessonProgressController;
