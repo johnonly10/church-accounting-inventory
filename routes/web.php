@@ -22,6 +22,7 @@ use App\Http\Controllers\Guest\PepsolController;
 use App\Http\Controllers\guest\PepsolLessonProgressController;
 use App\Http\Controllers\Guest\PepsolQuizController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\Leader\LContactController;
 use App\Http\Controllers\Leader\LDashboardController;
 use App\Http\Controllers\Leader\LEventController;
 use App\Http\Controllers\Leader\LPepsolCategoriesController;
@@ -145,6 +146,13 @@ Route::middleware(['auth', 'roletype:LEADER'])->prefix('leader')->name('leader.'
     Route::resource('pepsol-quiz', LPepsolQuizController::class);
 
     Route::resource('pepsol-results', LPepsolQuizResultController::class);
+
+
+    Route::get('contacts', [LContactController::class, 'index'])->name('contacts.index');
+    Route::get('contacts/show/{id}', [LContactController::class, 'show'])->name('contacts.show');
+    Route::get('contacts/reply/{id}', [LContactController::class, 'reply'])->name('contacts.reply');
+    Route::post('contacts/send-reply/{id}', [LContactController::class, 'sendReply'])->name('contacts.send-reply');
+    Route::delete('contacts/{id}', [LContactController::class, 'destroy'])->name('destroy');
 });
 
 

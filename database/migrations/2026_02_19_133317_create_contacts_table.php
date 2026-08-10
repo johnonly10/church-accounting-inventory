@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('message');
-            $table->softDeletes();
+            $table->text('reply_message')->nullable();
+            $table->timestamp('replied_at')->nullable();
+            $table->unsignedBigInteger('replied_by')->nullable();
             $table->timestamps();
         });
     }

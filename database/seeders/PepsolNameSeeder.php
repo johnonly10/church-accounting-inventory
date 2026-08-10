@@ -30,7 +30,7 @@ class PepsolNameSeeder extends Seeder
                 'image' => 'youth_group.jpg'
             ],
             [
-                'code' => 'D-1',
+                'code' => 'D-2',
                 'name' => 'Disciple',
                 'image' => 'bible_study.jpg'
             ],

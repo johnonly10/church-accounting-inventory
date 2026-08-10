@@ -17,7 +17,7 @@ class PepsolDiscipleshipSeeder extends Seeder
 {
     public function run(): void
     {
-        $category = PepsolCategory::where('code', 'B-1')->first();
+        $category = PepsolCategory::where('code', 'DP-1')->first();
         $type = PepsolType::where('code', 'SOL 1-A')->first();
         $pepsolName = PepsolName::where('code', 'D-1')->first();
         $user = User::first();

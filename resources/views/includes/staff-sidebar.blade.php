@@ -152,6 +152,11 @@
                 <li><a href="{{ route('leader.images.create') }}"> Add Image</a></li>
             </x-includes.sidebar-item>
 
+            <x-includes.sidebar-item title="Contacts" icon="fas fa-clipboard-check" :hasArrow="true">
+                <li><a href="{{ route('leader.contacts.index') }}">Index </a></li>
+                {{-- <li><a href="{{ route('leader.contacts.show') }}"> Show</a></li> --}}
+            </x-includes.sidebar-item>
+
 
             <x-includes.sidebar-item title="Slider" icon="fas fa-solid fa-sliders" :hasArrow="true">
                 <li><a href="{{ route('leader.sliders.index') }}">Sliders </a></li>
