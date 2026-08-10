@@ -20,6 +20,7 @@ class PepsolCategorySeeder extends Seeder
             ['code' => 'D-1', 'name' => 'Devotional'],
             ['code' => 'DP-1', 'name' => 'Discipleship'],
             ['code' => 'P-1', 'name' => 'Prayer'],
+            ['code' => 'E-1', 'name' => 'Evangelism'],
         ];
 
         foreach ($rows as $row) {
